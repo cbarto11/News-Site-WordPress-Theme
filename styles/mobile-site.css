@@ -1,0 +1,440 @@
+
+/****************************************************************************************
+ * General
+ ****************************************************************************************/
+
+	#page,
+	body .site {
+		width:100%;
+	}
+	
+	h1 {
+		padding:0px 5px;
+		margin-left:-5px;
+		margin-right:-5px;
+	}
+	
+	input {
+		outline:none;
+	}
+	
+/****************************************************************************************
+ * UNCC Header
+ ****************************************************************************************/
+
+	#headerblock {
+		width:100%;
+		text-align:center;	
+	}
+
+	#headerblock img.uncc-logo {
+		margin-top:20px;
+	}
+
+	#masthead #links {
+		position:absolute;
+		right:10px;
+		top:10px;
+		font-family:Arial, sanserif;
+		text-align:right;
+		font-size:0.8em;
+	}
+	
+	#masthead #links a {
+		display:block;
+		color:white;
+		margin-bottom:5px;
+	}
+
+/****************************************************************************************
+ * Search Form
+ ****************************************************************************************/
+
+	body.search #main form#searchform {
+		border-top:solid 1px #ccc;
+		border-bottom:solid 1px #ccc;
+		background-color:#f6f6f6;
+		padding:5px;
+		margin-left:-5px;
+		margin-right:-5px;
+	}
+	
+	body.search #main form#searchform:before,
+	body.search #main form#searchform:after {
+		content:"";
+		display:table;
+	}
+	
+	body.search #main form#searchform:after {
+		clear:both;
+	}
+	
+	/* For IE 6/7 (trigger hasLayout) */
+	body.search #main form#searchform {
+		zoom:1;
+	}
+	
+	body.search #main form#searchform {
+		padding:10px 5px;
+		border-left-width:0px;
+		border-right-width:0px;
+	}
+	
+	body.search #main form#searchform .screen-reader-text {
+		display:block;
+	}
+	
+	body.search #main form#searchform .textbox_wrapper {
+		display:block;
+		padding:0px;
+		width:100%;
+		border:solid 1px #ccc;
+		overflow:hidden;
+		margin:5px 0px;
+		background-color:white;
+	}
+	
+	body.search #main form#searchform #s {
+		display:block;
+		width:100%;
+		margin:5px;
+		border:none;
+	}
+	
+	body.search #main form#searchform #searchsubmit {
+		display:block;
+		float:right;
+		margin:0px;
+	}
+
+/****************************************************************************************
+ * Subheader (site name and logo)
+ ****************************************************************************************/
+
+	#subheader {
+		position:relative;
+		margin-top:5px;
+	}
+
+	img.subheader-image {
+		width:85%;
+		margin-left:5px;
+	}
+
+/****************************************************************************************
+ * Mobile Menu
+ ****************************************************************************************/
+
+	#mobile-menu > .menu {
+		margin-top:20px;
+	}
+	
+	#mobile-menu > .menu > ul {
+		display:block;
+		padding:0px;
+		list-style-type:none;
+		text-align:center;
+		margin:5px;
+		margin-bottom:0px;
+		z-index:10;
+	}
+	
+	#mobile-menu > .menu > ul > li {
+		display:inline-block;
+	}
+	
+	#mobile-menu > .menu > ul > li > a {
+		display:inline-block;
+		width:100px;
+		height:50px;
+		background-image:url('../images/tab.png');
+		line-height:38px;
+	}
+
+	#mobile-menu > .menu > ul > li.mm-show > a {
+		background-image:url('../images/tab-select.png');
+	}
+
+	#mobile-menu > .menu > ul > li.mm-hide > a {
+		background-image:url('../images/tab.png');
+	}
+	
+	#mobile-menu > .menu > div {
+		margin:0px 5px 5px 5px;
+		border:solid 1px #ccc;
+		padding:20px;
+	}
+
+	#sections-menu > .menu > ul {
+		display:block;
+		padding:0px;
+		margin:0px;
+		list-style-type:none;
+		text-align:center;
+	}
+	
+	#sections-menu > .menu > ul > li > a {
+		display:block;
+		padding:0px 15px;
+		border:solid 1px #ccc;
+		line-height:2em;
+		margin-bottom:2px;
+	}
+
+/****************************************************************************************
+ * Main
+ ****************************************************************************************/
+	
+	#main {
+		padding:5px;
+	}
+	
+	#content .column {
+		width:100%;
+	}
+
+	#sidebar .column {
+		margin-top:20px;
+	}
+	
+	body.front #main #sidebar .column {
+		margin-top:0px;
+	}
+		
+/****************************************************************************************
+ * Banner Slider
+ ****************************************************************************************/
+
+	#featured-slider.nivoSlider {
+		height:auto;
+	}
+
+	#featured-slider img {
+		width:100%;
+	}
+
+	.nivo-directionNav a {
+		height:auto;
+		bottom:0px !important;
+	}
+	
+/****************************************************************************************
+ * News Site specific
+ ****************************************************************************************/
+
+	#secondary .section-box > h2,
+	#secondary h3.widget-title {
+		background-color: #f6f6f6;
+		color: #006633;
+		border-bottom: solid 1px #bbb;
+		margin:0px;
+		line-height:1.8em;
+		height:1.8em;
+		padding-left:5px;
+		padding-top:2px;
+		font-weight:normal;
+		font-size:1em;
+		font-family: Times, "Times New Roman", serif;
+		text-transform:uppercase;
+		margin-left:-5px;
+		margin-right:-5px;
+	}
+	
+	.section-box > h2 {
+		padding:0px 5px;
+		margin-left:-5px;
+		margin-right:-5px;
+	}
+
+	.section-box .more {
+		margin:5px;
+	}
+	
+	.story {
+		padding:5px 0px;
+	}
+	
+	.story.portrait-image .image,
+	.story.landscape-image .image {
+		float:left;
+		width:20%;
+		min-width:20%;
+		margin-right:10px;
+	}
+
+	.story.portrait-image .image img,
+	.story.landscape-image .image img {
+		width:100%;
+	}
+	
+	body.archive .story.landscape-image .description {
+		overflow:hidden;
+	}
+
+	
+/****************************************************************************************
+ * Sidebar
+ ****************************************************************************************/
+
+	
+
+/****************************************************************************************
+ * Footer
+ ****************************************************************************************/
+
+	#footer {
+		text-align:center;
+		padding:20px 0px;
+	}
+
+	#footer .widget-area {
+		text-align:center;
+		margin:0 auto;
+	}
+	
+	#footer .widget-area .widget {
+		padding:20px;
+		border-bottom:solid 1px #ccc;
+	}
+
+	#footer .widget-area .widget:first-child {
+		padding-top:0px;
+	}
+
+/****************************************************************************************
+ * ClearFix
+ ****************************************************************************************/
+
+	
+
+/****************************************************************************************
+ * Single Page
+ ****************************************************************************************/
+
+	body.single #main .section-archive-link {
+		padding:0px;
+	}
+
+	body.single #main #content.portrait-image .image {
+		margin-right: 10px;
+		margin-bottom: 10px;
+	}
+
+	body.single #main #content.portrait-image .image {
+		width:50%;
+	}
+		
+	body.single #main #content.portrait-image .image img,
+	body.single #main #content.landscape-image .image,
+	body.single #main #content.landscape-image .image img {
+		width:100%;
+	}
+
+	body.single #main #content.landscape-image .image {
+		margin-bottom:10px;
+	}
+	
+	body.single #main #content.events-section table.event {
+		width:100%;
+	}
+	
+	body.error404 form.searchform #s {
+		border:solid 1px #ccc;
+	}
+	
+	body.single #main #content .text img,
+	body.single #main #content .text img.alignleft,
+	body.single #main #content .text img.alignright {
+		max-width:50% !important;
+		height:auto !important;
+	}
+	
+	body.single #main #content .text img.aligncenter {
+		max-width:90% !important;
+		height:auto !important;
+	}
+
+/****************************************************************************************
+ * Archives Page
+ ****************************************************************************************/
+
+	body.single #main #content.none-image .story,
+	body.single #main #content.none-image .story {
+		border-bottom:solid 1px #ccc;
+		padding:5px;
+		margin-left:-5px;
+		margin-right:-5px;
+	}
+	
+	#page-navigation {
+		padding:5px;
+	}
+	
+	body.archive #main #content.events-section .agenda-day {
+		margin:0px;
+	}
+	
+	body.archive #main #content.events-section .story {
+		margin:0px;
+		margin-bottom:10px;
+	}
+	
+	body.archive #main #content.events-section .date-label {
+		background-color:#eedeb9;
+		border:solid 1px #ccb55c;
+		border-radius:5px;
+		text-align:center;
+		padding:10px;
+		margin-bottom:10px;
+	}
+	
+	body.archive #main #content.events-section .date-label > div {
+		display:inline;
+	}
+	
+	body.archive #main #content.events-section .event-info {
+		margin-bottom:5px;
+		border-bottom:solid 1px #efefef;
+		padding-bottom:5px;
+	}
+	
+	body.archive #main #content.events-section .story {
+		padding:0px;
+	}
+
+	body.archive #main #content.events-section .story h3 {
+		margin-bottom:5px;
+	}
+	
+	body.archive #main #content.events-section .event-info:before,
+	body.archive #main #content.events-section .event-info:after {
+		content:"";
+		display:table;
+	}
+	
+	body.archive #main #content.events-section .event-info:after {
+		clear:both;
+	}
+	
+	/* For IE 6/7 (trigger hasLayout) */
+	body.archive #main #content.events-section .event-info {
+		zoom:1;
+	}
+	
+	body.archive #main #content.events-section .event-info > div {
+		display:inline;
+		padding-top:5px;
+		padding-bottom:5px;
+	}
+	
+	body.archive #main #content.events-section .event-info > div.time {
+		display:inline-block;
+		padding-right:10px;
+		text-align:right;
+	}
+	
+	body.archive #main #content.events-section .event-info > div.location {
+		float:right;
+	}
+	
+

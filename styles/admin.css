@@ -1,0 +1,127 @@
+
+	#slider-banner-list {
+		width:950px;
+		padding:20px;
+	}
+	.banner-list {
+		width:630px;
+		padding:5px;
+		float:left;
+	}
+	.banner-list > div {
+		position:relative;
+		display:inline-block;
+	}
+	.banner-list img.banner {
+		width:200px;
+		height:70px;
+	}
+	.banner-list img.delete-button {
+		width:16px;
+		height:16px;
+		position:absolute;
+		top:5px;
+		right:5px;
+		z-index:10;
+	}
+	.banner-list img.delete-button:hover {
+		cursor:pointer;
+	}
+	.slider-list {
+		float:left;
+		border:solid 1px gray;
+		width:220px;
+		padding:5px;
+		margin:0px;
+	}
+	.slider-list ol {
+		list-style-type:none;
+		margin:0px;
+		padding:0px;
+	}
+	.slider-list ol li.banner {
+		margin:5px;
+		padding:5px;
+		cursor:move;
+		background-color:silver;
+	}
+	.slider-list ol li.banner.out {
+		background-color:red;
+	}
+	.slider-list ol li.banner span {
+		position: absolute;
+		margin-left: -1.3em;
+	}
+	.slider-list .banner img {
+		width:200px;
+		height:70px;
+	}
+	.slider-list .banner input {
+		width:188px;
+		padding:3px 5px;
+		border:solid 1px #cccccc;
+		background-color:#f6f6f6;
+	}
+	.slider-list .banner label {
+		display:block;
+		font-size:0.8em;
+		font-weight:bold;
+	}
+	h4 {
+		margin:0; padding:0;
+		margin-bottom:10px;
+	}
+
+
+	.selected-story-wrapper {
+		border: solid 1px #ccc;
+	    padding: 1em;
+	    margin-bottom:5px;
+	    min-height:2em;
+	    width:800px;
+	}
+	.selected-story-wrapper input[type="text"] {
+		float:left;
+		display:inline-block;
+		width:200px;
+	}
+	.selected-story-wrapper .search-results {
+    	clear:both;
+    	margin-top:10px;
+    	border:solid 1px #ccc;
+   	}
+   	.selected-story-wrapper div {
+   		padding:3px;
+   	}
+   	.selected-story-wrapper .result.odd {
+   		background-color:#ddd;
+   	}
+   	.selected-story-wrapper .result.even {
+   		background-color:#eee
+   	}
+   	.selected-story-wrapper .result:hover {
+   		background-color:#ccc;
+   		cursor:pointer;
+   	}
+   	.selected-story-wrapper .reset-item {
+		width: 2em;
+		height: 2em;
+		background-image:url('../images/delete-icon.png');
+		background-repeat:no-repeat;
+		background-position:center center;
+		display:inline-block;
+		margin-left:20px;
+		float:left;
+   	}
+   	.selected-story-wrapper .reset-item:hover {
+   		cursor:pointer;
+   	}
+   	.selected-story-wrapper .selected-item {
+		margin-left: 4px;
+		display: inline-block;
+		height: 2em;
+		line-height: 2em;
+		width:530px;
+		overflow:auto;
+   	}
+   	

@@ -1,0 +1,654 @@
+/*
+Theme Name: News Site
+Theme URI: http://clas-pages.uncc.edu/exchange
+Description: A custom WordPress theme for the College of Liberal Arts & Science's online magazine.
+Version: 2.0.0
+Author: Crystal Barton
+Author URI: http://clas.uncc.edu
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags: 
+*/
+
+
+/****************************************************************************************
+ * General
+ ****************************************************************************************/
+
+	html, body {
+		padding:0px;
+		margin:0px;
+		background-color:#fff;
+		font-family:Arial, sanserif;
+		font-size:0.95em;
+	}
+
+	#page,
+	body .site {
+		margin:0 auto;
+		padding:0;
+		background-color:#fff;
+		border:0;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		margin:0; padding:0;
+		font-family: Times, "Times New Roman", serif;
+	}
+	
+	h1, h2, h3 {
+		margin-bottom:10px;
+	}
+	
+	h4, h5, h6 {
+		margin-bottom:5px;
+	}
+	
+	h1 {
+		font-size:1.5em;
+	}
+	
+	h2 {
+		font-size:1.4em;
+	}
+	
+	h3 {
+		font-size:1.3em;
+	}
+	
+	h4 {
+		font-size:1.2em;
+	}
+	
+	h5 {
+		font-size:1.1em;
+	}
+	
+	h6 {
+		font-size:1.0em;
+	}
+	
+	#content > h1 {
+		border-bottom:solid 1px #ccc;
+	}
+	
+	a {
+		color:#006633;
+		text-decoration:none;
+		outline:none;
+	}
+	
+	a img {
+		outline:none;
+		border:0;
+	}
+	
+	p {
+		margin:5px 0px;
+	}
+	
+	blockquote {
+		padding:10px 30px;
+		margin:0px;
+		border-top:solid 1px #ccc;
+		border-bottom:solid 1px #ccc;
+		font-size:1.05em;
+		line-height:1.2em;
+	}
+	
+	blockquote > div,
+	blockquote > p {
+		margin:0px;
+	}
+	
+	hr {
+		
+	}
+	
+	.alignleft {
+		float:left;
+		margin-right:15px;
+	}
+	
+	.alignright {
+		float:right;
+		margin-left:15px;
+	}
+	
+	.aligncenter {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+/****************************************************************************************
+ * UNCC Header
+ ****************************************************************************************/
+
+	#header {
+		position:relative;
+		font-family:Times New Roman, Times, serif;
+	}
+
+	#header .title-box-wrapper {
+		position:absolute;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		display:table;
+		width:100%;
+	}
+	
+	#header .title-box {
+		display:table-cell;
+		font-family:Helvetica, Arial, sanserif;
+		width:950px;
+		padding:1em;
+	}
+	
+	#header .title-box .name {
+		font-size:2em;
+	}
+	
+	#header .title-box .description {
+		font-size:1.5em;
+	}
+	
+	#header .title-box.hleft {
+		text-align:left;
+	}
+	
+	#header .title-box.hcenter {
+		text-align:center;
+	}
+
+	#header .title-box.hright {
+		text-align:right;
+	}
+
+	#header .title-box.vtop {
+		vertical-align:top;
+	}
+
+	#header .title-box.vcenter {
+		vertical-align:middle;
+	}
+
+	#header .title-box.vbottom {
+		vertical-align:bottom;
+		padding-bottom:1em;
+	}
+	
+	html.old-ie #header .title-box-wrapper {
+		display:block;
+	}
+
+	html.old-ie #header .title-box {
+		display:block;
+	}
+	
+	
+	
+	#header .click-box {
+		display:block;
+		position:absolute;
+		top:0;
+		left:0;
+		bottom:0;
+		right:0;
+	}
+
+	#header .click-box:hover {
+		background-color:rgba(0,0,0,0.2);
+	}
+	
+
+/****************************************************************************************
+ * Search Form
+ ****************************************************************************************/
+
+	.searchform input[type="text"] {
+		margin: 0px;
+		padding: 0 0 0 3px;
+		border: 0px;
+		min-height: 19px;
+		border-radius:0;
+		width:160px;
+	}
+
+	.searchform input[type="image"] {
+		margin: 0px;
+		padding: 0px;
+		min-height: 19px;
+		display: inline-block;
+		outline: none;
+		vertical-align:bottom;
+		border-radius:0;
+	}
+	
+	body.search #main .searchform {
+		background-color:#f6f6f6;
+		margin-bottom:10px;
+	}
+	
+	body.search #main .searchform input[type="text"] {
+		margin:0px;
+		min-height:2em;
+		border-radius:0;
+		width:440px;
+		margin-left:5px;
+		border:solid 1px #ddd;
+		padding-left:5px;
+		padding-right:5px;
+	}
+	
+	body.search #main .searchform input[type="submit"] {
+		width:120px;
+		border-radius:0;
+		font-size:1.3em;
+		margin-left:5px;
+	}
+	
+	body.search-no-results #content p {
+		margin:10px 0px;
+	}
+		
+	#uncc-searchform,
+	#uncc-searchform #q,
+	#uncc-searchform #edit-submit {
+		vertical-align:middle;
+	}
+
+/****************************************************************************************
+ * Subheader (site name and logo)
+ ****************************************************************************************/
+
+	#subheader {
+		position:relative;
+		border-bottom:solid 3px #cbb563;
+		margin-top:10px;
+	}
+
+	#social-media-buttons {
+		position:absolute;
+		right:0px;
+		top:0px;
+	}
+
+/****************************************************************************************
+ * Main
+ ****************************************************************************************/
+
+	#main-wrapper {
+		font-family:Arial, sanserif;
+		margin:10px 0px;
+	}
+
+/****************************************************************************************
+ * Banner Slider
+ ****************************************************************************************/
+
+	#featured-slider-wrapper {
+		position:relative;
+	}
+
+	#featured-slider.nivoSlider {
+		overflow:hidden;
+	}
+
+	.nivo-directionNav a {
+		width:40px;
+		z-index:999;
+		display:inline-block;
+		background-repeat:no-repeat;
+		background-position:center;
+		top:0px !important;
+		background-color:transparent;
+		text-indent:-999px;
+		overflow:hidden;
+		background-color:rgba(128,128,128,0.2);
+	}
+
+	.nivo-prevNav {
+		background-image:url('./images/white_arrow_left.png');
+	}
+
+	.nivo-nextNav {
+		background-image:url('./images/white_arrow_right.png');
+	}
+
+	.nivo-controlNav {
+		background-color:#CCC;
+		background-color:rgba(128,128,128,0.2);
+		padding:5px !important;
+		border-radius:5px;
+		display:inline-block;
+		position:absolute;
+		right:50px;
+		bottom:10px;
+		z-index:999;
+		height:14px;
+	}
+	
+	.nivo-control {
+		width:12px;
+		height:12px;
+		margin:2px;
+		display:inline-block;
+		background-image:url('./images/btn-circle-off.png');
+		background-repeat:no-repeat;
+		text-indent:-999px;
+		overflow:hidden;
+	}
+	
+	.nivo-control.active {
+		background-image:url('./images/btn-circle-on.png');
+	}
+	
+	html.no-js .nivoSlider {
+		height:auto;
+	}
+		
+/****************************************************************************************
+ * Exchange Online specific
+ ****************************************************************************************/
+
+	.section-box {
+		margin-bottom:30px;
+	}
+
+	.section-box > h2 {
+		margin:0px;
+		font-family:Times, "Times New Roman", serif;
+		font-size:1.2em;
+		line-height:1.2em;
+		height:1.2em;
+		font-weight:bold;
+		white-space:nowrap;
+		word-wrap:normal;
+		border-bottom:solid 1px #bbb;
+		white-space:nowrap;
+		word-wrap:normal;
+		margin-bottom:5px;
+		color:#000;
+	}
+
+	.section-box .no-posts {
+		margin:10px;
+	}
+
+	.section-box .more {
+		text-align:right;
+	}
+
+	.section-box .more > a {
+		color:#333;
+		text-decoration:none;
+	}
+
+	.story > a {
+		color:#000;
+	}
+
+	.story .details > h3 {
+		font-size:1.1em;
+		line-height:1.2em;
+		margin-bottom:5px;
+	}
+	
+	.story .image {
+		text-align:center;
+		background-color:#ccc;
+	}
+	
+	.story .image img {
+		vertical-align:middle;
+	}
+
+	.story.portrait-image .description {
+		margin-left:10px;
+	}
+
+	.story .description {
+		margin:0px;
+		color:#666;
+		padding-bottom:5px;
+		font-size:0.9em;
+		line-height:1.2em;
+	}
+
+	.story .description > .more {
+		display:block;
+		text-align:right;
+	}
+	
+	.story .description > .more a {
+		color:#333;
+		text-decoration:none;
+	}
+	
+	.story.events-section .date {
+		display:inline;
+	}
+	
+	.story.events-section .time {
+		display:inline;
+	}	
+
+/****************************************************************************************
+ * - Sidebar
+ ****************************************************************************************/
+
+	#secondary h3.widget-title {
+		margin-bottom:0px;
+	}
+	
+
+/****************************************************************************************
+ * Footer
+ ****************************************************************************************/
+
+	#footer {
+		background-color:#e8e8e4;
+	}
+	
+	#footer .copyright {
+		margin-top:20px;
+		text-align:center;
+	}
+	
+/****************************************************************************************
+ * ClearFix
+ ****************************************************************************************/
+
+	#masthead:before,
+	#masthead:after,
+	#main:before,
+	#main:after,
+	#footer:before,
+	#footer:after,
+	.clearfix:before,
+	.clearfix:after,
+	.container:before,
+	.container:after {
+		content:"";
+		display:table;
+	}
+	
+	#masthead:after,
+	#main:after,
+	#footer:after,
+	.clearfix:before,
+	.clearfix:after,
+	.container:after {
+		clear:both;
+	}
+	
+	/* For IE 6/7 (trigger hasLayout) */
+	#masthead,
+	#main,
+	#footer,
+	.clearfix,
+	.container {
+		zoom:1;
+	}
+	
+/****************************************************************************************
+ * Single Page
+ ****************************************************************************************/
+
+	body.single .section-archive-link {
+		margin-bottom:2px;
+	}
+	
+	body.single .section-archive-link a {
+		color:#666;
+	}
+
+	body.single .story.portrait-image .image {
+		min-height:0px;
+		float:left;
+		margin-right:20px;
+		margin-bottom:10px;
+	}
+		
+	body.single .story.portrait-image .image {
+		margin-bottom:10px;
+	}
+
+	body.single .story.portrait-image .details {
+		margin-left:0px;
+	}
+	
+	body.single .story {
+		padding:0px;
+	}
+	
+	body.single .story .description {
+		color:#000;
+		font-size:1.0em;
+		line-height:1.5em;
+	}
+	
+	body.single .story .description p {
+		margin-bottom:1.0em;
+	}
+	
+	body.single .story .description blockquote {
+		margin-bottom:1.0em;
+	}
+
+	body.single .story .description blockquote p {
+		margin-bottom:1.0em;
+	}
+
+/****************************************************************************************
+ * - Event Single Page
+ ****************************************************************************************/
+
+	.single-page.events-section #content .image {
+		width:260px;
+	}
+
+	.single-page.events-section #content .image img {
+		width:260px;
+	}
+
+	.single-page.events-section #content .text {
+	}
+	
+	.single-page.events-section #content .text p {
+	}
+
+	.single-page.events-section #content table.event {
+		border-collapse:collapse;
+		border:dotted 1px #c0c0c0;
+	}
+	
+	.single-page.events-section #content table.event p {
+		margin: 0px;
+	}
+	
+	.single-page.events-section #content table.event tr {
+		border-bottom:dotted 1px #c0c0c0;
+	}
+	
+	.single-page.events-section #content table.event th {
+		text-align:right;
+		padding:5px;
+		width:140px;
+		min-width:140px;
+		background-color:#F6F6F6;
+	}
+	
+	.single-page.events-section #content table.event td {
+		padding:5px;
+	}
+
+
+/****************************************************************************************
+ * Archives Page
+ ****************************************************************************************/
+
+	body.archive #content.none-image .story,
+	body.search #content.none-image .story {
+		border-bottom:solid 1px #ccc;
+		margin:0px;
+	}
+
+	body.archive .story.portrait-image .description {
+		overflow:hidden;
+	}
+
+	#page-navigation {
+		display:block;
+		clear:both;
+		background-color:#e6e6e6;
+		padding:5px 20px;
+		margin-top:15px;
+	}
+	
+	#page-navigation .nav-older {
+		float:left;
+	}
+	
+	#page-navigation .nav-newer {
+		float:right;
+	}
+	
+/****************************************************************************************
+ * - Events Archive Page
+ ****************************************************************************************/
+
+	body.archive #content.events-section .agenda-day {
+		padding:5px 0px;
+		margin-bottom:20px;
+	}
+
+	body.archive #content.events-section .story {
+		margin-bottom:10px;
+		padding:0px;
+		border-bottom:solid 1px #ddd;
+	}
+
+	body.archive #content.events-section .story {
+		color:#666;
+		margin-bottom:15px;
+	}
+
+	body.archive #content.events-section .story h3 {
+		display:block;
+		padding:5px 10px;
+		padding-top:7px;
+		border-bottom:solid 1px #ddd;
+		margin-bottom:8px;
+		background-color:#f6f6f6;
+	}
+
+	body.archive #content.events-section .story {
+		color:#666;
+		margin-bottom:15px;
+		padding:5px 10px;
+	}
+
