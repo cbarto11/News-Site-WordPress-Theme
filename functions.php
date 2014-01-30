@@ -507,6 +507,15 @@ function ns_get_image_info( $image_info )
 }
 
 
+function ns_str_starts_with($haystack, $needle)
+{
+    return $needle === "" || strpos($haystack, $needle) === 0;
+}
+
+function ns_str_ends_with($haystack, $needle)
+{
+    return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+}
 
 
 /**
