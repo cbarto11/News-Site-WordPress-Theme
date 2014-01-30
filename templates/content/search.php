@@ -1,6 +1,6 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars; ?>
+<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $wp_query; ?>
 
 
 <?php 

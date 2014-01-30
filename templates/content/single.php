@@ -1,6 +1,6 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $post; ?>
+<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $post, $wp_query; ?>
 <?php 
 $section = $ns_template_vars['section'];
 $story = $section->get_single_story( $post ); 

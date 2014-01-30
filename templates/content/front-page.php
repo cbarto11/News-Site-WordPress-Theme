@@ -1,8 +1,4 @@
-
-
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars; ?>
-
-
+<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $wp_query; ?>
 <?php
 $num_columns = $ns_config->get_num_columns('front-page');
 
