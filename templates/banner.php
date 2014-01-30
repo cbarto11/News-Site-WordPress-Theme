@@ -29,7 +29,11 @@
 			
 		<div id="featured-slider">
 			<?php foreach( $banner_images as $slide ): ?>
-				<?php echo newssite_get_anchor( $slide['url'], htmlentities($slide['alt']), null, '<img src="'.$slide['src'].'" alt="'.htmlentities($slide['alt']).'" />' ); ?>
+				<?php echo ns_get_anchor( 
+					$slide['url'], 
+					htmlentities($slide['alt']), 
+					null, 
+					'<img src="'.$slide['src'].'" alt="'.htmlentities($slide['alt']).'" />' ); ?>
 			<?php endforeach; ?>
 		</div>
 	</div>
