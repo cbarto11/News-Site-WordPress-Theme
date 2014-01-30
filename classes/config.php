@@ -14,8 +14,12 @@ class NS_Config
 	//============================================================= Class Properties =====
 
 
-	const CONFIG_INI_FILENAME = 'config.ini';
+	const CONFIG_DEFAULT_INI_FILENAME = 'config/config-default.ini';
+	const CONFIG_INI_FILENAME = 'config/config.ini';
+	const OPTIONS_DEFAULT_INI_FILENAME = 'config/options-default.ini';
+	const OPTIONS_INI_FILENAME = 'config/options.ini';
 	private $config;
+	private $options;
 	
 
 	//====================================================================================
@@ -34,21 +38,54 @@ class NS_Config
 	public function load_config()
 	{
 		$this->config = array();
-
-		if( file_exists(get_template_directory().'/'.self::CONFIG_INI_FILENAME) )
-			$this->load_from_ini( get_template_directory().'/'.self::CONFIG_INI_FILENAME );
+		
+		if( file_exists(get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME) )
+			$this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME );
+		elseif( file_exists(get_template_directory().'/'.self::CONFIG_INI_FILENAME) )
+			$this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_INI_FILENAME );
 		else
-			exit( 'Unable to locate theme config.ini file.' );
+			exit( 'Unable to locate theme '.self::CONFIG_DEFAULT_INI_FILENAME.' file.' );
 
 		if( is_child_theme() )
 		{
 			if( file_exists(get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME) )
-				$this->load_from_ini( get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME );
+				$this->load_from_ini( $this->config, get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME );
+		}
+
+
+		$this->options = array();
+
+		if( file_exists(get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME) )
+			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME );
+		elseif( file_exists(get_template_directory().'/'.self::OPTIONS_INI_FILENAME) )
+			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_INI_FILENAME );
+		else
+			exit( 'Unable to locate theme '.self::OPTIONS_DEFAULT_INI_FILENAME.' file.' );
+		
+		if( is_child_theme() )
+		{
+			/* RESTORE THIS CODE FOR PRODUCTION:
+			if( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
+			*/
+			
+			$subdomain = array_shift(explode(".",$_SERVER['HTTP_HOST']));
+			$subdomain = 'exchange';
+			if( file_exists(get_stylesheet_directory().'/config/options-'.$subdomain.'.ini') )
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/options-'.$subdomain.'.ini' );
+			elseif( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
 		}
 		
+		$this->options = array_replace_recursive( $this->options, get_option('ns-theme-options', array()) );
+
+		$this->config = array_replace_recursive($this->options, $this->config);
+		//ns_print($this->options);
+		//ns_print($this->config);
+
 		$this->verify_settings();
 		$this->populate_widget_areas();
-		
+
 		//ns_print($this->config);
 	}
 	
@@ -58,11 +95,11 @@ class NS_Config
 	// 
 	// @param	$config_filname	string		The path to the config INI file.
 	//------------------------------------------------------------------------------------
-	private function load_from_ini( $config_filename )
+	private function load_from_ini( &$config, $config_filename )
 	{
-		$config = parse_ini_file( $config_filename, true);
-		$this->fix_keys( $config );
-		$this->config = array_replace_recursive($this->config, $config);
+		$ini_config = parse_ini_file( $config_filename, true);
+		$this->fix_keys( $ini_config );
+		$config = array_replace_recursive($config, $ini_config);
     }
     
 
@@ -76,14 +113,27 @@ class NS_Config
 		foreach( $array AS $key => &$value )
 		{
 			if( is_array($value) )
+			{
 				$this->fix_keys( $value );
+				continue;
+			}
 			
-			if( $value === "yes" )
-				$value = true;
-			elseif( $value === "no" )
-				$value = false;
-			elseif( is_numeric($value) )
-				$value = intval($value);
+			if( (strlen($value) > 2) && ($value[1] == ':') )
+			{
+				switch( $value[0] )
+				{
+					case 'b':
+						if( substr($value, 2) == 'true' )
+							$value = true;
+						else
+							$value = false;
+						break;
+						
+					case 'i':
+						$value = intval( substr($value, 2) );
+						break;
+				}
+			}
 		}
 	}
     
@@ -165,6 +215,9 @@ class NS_Config
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_mobile_widget_areas()
 	{
 		$mobile_widgets = array();
@@ -185,6 +238,9 @@ class NS_Config
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_footer_widget_areas()
 	{
 		$footer_widgets = array();
@@ -321,7 +377,7 @@ class NS_Config
 		
 		if( $tag === null ) $tag = array();
 		elseif( !is_array($tag) ) $tag = array( $tag );
-		
+
 		// 
 		// 
 		// 
@@ -417,22 +473,24 @@ class NS_Config
 	{
 		global $ns_mobile_support;
 		
-		$options = $this->get_options( 'banner_images', array() );
-
+		$options = $this->get_value( 'banner', 'images' );
+		if( $options == null ) $options = array();
+		
 		$image_type = 'full';
 		if( $ns_mobile_support->use_mobile_site )
 			$image_type = 'thumbnail_landscape';
 
 		$images = array();
-		foreach( $options as $image_id )
+		foreach( $options as $option )
 		{
 			$src = wp_get_attachment_image_src(
-				intval($image_id), $image_type
+				intval($option['id']), $image_type
 			);
 			if( !$src ) continue;
 			$src = $src[0];
 			
 			$images[] = array(
+				'id'  => $option['id'],
 				'src' => $src,
 				'url' => $option['url'],
 				'alt' => stripslashes($option['alt'])
@@ -466,6 +524,69 @@ class NS_Config
 
 		return $config;
 	}
+	
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function get_option_value()
+	{
+		$args = func_get_args();
+		
+		$config = $this->options;
+		foreach( $args as $arg )
+		{
+			if( array_key_exists($arg, $config) )
+			{
+				$config = $config[$arg];
+			}
+			else
+			{
+				$config = null;
+				break;
+			}
+		}
+
+		return $config;
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function set_option_value()
+	{
+		$args = func_get_args();
+		$value = array_pop($args);
+		$key = array_pop($args);
+		
+		if( ($key === null) || ($value === null) ) return;
+		
+		$config = &$this->options;		
+		foreach( $args as $arg )
+		{
+			if( !array_key_exists($arg, $config) )
+			{
+			}
+
+			$config = &$config[$arg];
+		}
+		
+		$config[$key] = $value;
+	}
+		
+		
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function save_options()
+	{
+		update_option( 'ns-theme-options', $this->options );
+		$this->config = array_replace_recursive($this->config, $this->options);
+		$this->verify_settings();
+		//ns_print($this->config);
+	}
+	
 	
 }
 
