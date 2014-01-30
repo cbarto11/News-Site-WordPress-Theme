@@ -496,6 +496,62 @@ class NS_Config
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
+	public function get_admin_options( $page )
+	{
+		$options = array();
+		
+		switch( $page )
+		{
+			case( 'front-page' ):
+				
+				$options['num-columns'] = $this->config['content']['num-columns']['front-page'];
+				
+				$options['sections'] = array();
+				for( $i = 0; $i < $options['num-columns']; $i++ )
+				{
+					$column_name = 'column-'.($i+1);
+					if( isset($this->config['front-page-sections'][$column_name]) )
+						$options['sections'][$column_name] = $this->config['front-page-sections'][$column_name];
+					else
+						$options['sections'][$column_name] = array();
+				}
+				
+				$options['stories'] = array();
+				if( isset($this->config['front-page-stories']) )
+					$options['stories'] = $this->config['front-page-stories'];
+				
+				break;
+				
+			case( 'sidebar' ):
+
+				$options['sections'] = array();
+				if( isset($this->config['sidebar-sections']['column-1']) )
+					$options['sections']['column-1'] = $this->config['sidebar-sections']['column-1'];
+
+				$options['stories'] = array();
+				if( isset($this->config['sidebar-stories']) )
+					$options['stories'] = $this->config['sidebar-stories'];
+					
+				break;
+				
+			case( 'news' ):
+				
+				if( isset($this->config['news-stories']) )
+					$options['stories'] = $this->config['news-stories'];
+				else
+					$options['stories'] = array();
+				
+				break;
+		}
+		
+		$options = apply_filters( 'ns-get-admin-options', $options, $page );
+		return $options;
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_value()
 	{
 		$args = func_get_args();
@@ -559,6 +615,7 @@ class NS_Config
 		{
 			if( !array_key_exists($arg, $config) )
 			{
+				$config[$arg] = array();
 			}
 
 			$config = &$config[$arg];
@@ -580,5 +637,26 @@ class NS_Config
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function set_stories( $page, $stories )
+	{
+		$this->options[$page.'-stories'] = $stories;
+		$this->save_options();
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function get_todays_datetime()
+	{
+		if( isset($this->config['timezone']) )
+			date_default_timezone_set('America/New_York');
+		$todays_datetime = new DateTime;
+		return $todays_datetime;
+	}
+
 }
 

@@ -3,7 +3,7 @@
 /**
  *
  */
-class Exchange_BannerAdminPage
+class NS_BannerAdminPage
 {
 	private $messages;
 	private $config;
@@ -15,9 +15,9 @@ class Exchange_BannerAdminPage
 	 */
 	public function __construct()
 	{
-		global $exchange_config;
+		global $ns_config;
 		$this->messages = array();
-		$this->config = $exchange_config->get_banner_config();
+		$this->config = $ns_config->get_value('banner');
 	}
 	
 	
@@ -27,14 +27,13 @@ class Exchange_BannerAdminPage
 	 */
 	public function show_page()
 	{
-		global $exchange_config;
+		global $ns_config;
 		$this->process_post();
 		
-		$banner_options = new Exchange_BannerOptions;
-		$options = $banner_options->get_options();
-		
-		$nonce = wp_create_nonce("exchange-banner-options-nonce");
-		
+		$options = $ns_config->get_banner_images();
+		$nonce = wp_create_nonce("ns-banner-options-nonce");
+
+		if( $options === null ) $options = array();		
 		?>
 		
 		<div class="banner-editor">
@@ -42,7 +41,7 @@ class Exchange_BannerAdminPage
 		<h2>Banner Editor</h2>
 		<div class="instructions">Instruction go here...</div>
 		
-		<input type="hidden" name="exchange-banner-options-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="ns-banner-options-nonce" value="<?php echo $nonce; ?>" />
 		
 		<form id="upload-form" class="wp-upload-form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 			<label for="upload"><?php _e( 'Choose an image from your computer:' ); ?></label><br />
@@ -81,7 +80,7 @@ class Exchange_BannerAdminPage
 				?>
 				<div>
 					<img src="<?php echo $thumbnail_url; ?>" banner_id="<?php echo get_the_ID(); ?>" class="banner" />
-					<img src="<?php echo get_stylesheet_directory_uri(); ?>/images/delete-icon.png" banner_id="<?php echo get_the_ID(); ?>" class="delete-button" />
+					<img src="<?php echo ns_get_theme_file_url('/images/delete-icon.png'); ?>" banner_id="<?php echo get_the_ID(); ?>" class="delete-button" />
 				</div>
 				<?php
 			}
@@ -170,7 +169,7 @@ class Exchange_BannerAdminPage
 	 */
 	private function save_file()
 	{
-		global $exchange_config;
+		global $ns_config;
 		$overrides = array('test_form' => false);
 
 		$uploaded_file = $_FILES['import'];
@@ -238,6 +237,7 @@ class Exchange_BannerAdminPage
 	 */
 	private function save_options()
 	{
+		global $ns_config;
 		$slider_banners = array();
 		
 		$count = 0;
@@ -262,7 +262,7 @@ class Exchange_BannerAdminPage
 			$count++;
 		}
 		
-		$banner_options = new Exchange_BannerOptions;
-		$banner_options->save_options( $slider_banners );
+		$banner_options = $ns_config->set_option_value( 'banner', 'images', $slider_banners );
+		$ns_config->save_options();
 	}
 }

@@ -3,9 +3,9 @@
 /**
  *
  */
-class NS_SidebarAdminPage
+class NS_FrontPageAdminPage
 {
-	private $COLUMNS = array( 'sidebar' );
+	private $COLUMNS = array( '1', '2' );
 
 
 
@@ -26,16 +26,14 @@ class NS_SidebarAdminPage
 	{
 		global $ns_config;
 		$this->process_post();
-		
-		$options = $ns_config->get_admin_options( 'sidebar' );
+
+		$options = $ns_config->get_admin_options( 'front-page' );
 		$nonce = wp_create_nonce("ns-stories-options-nonce");
 		
 		//ns_print($options, 'SHOW PAGE OPTIONS');
 		
 		?>
-		<div id="sidebar-stories-editor">
-		
-		<h2>Sidebar Stories Editor</h2>
+		<h2>Featured Stories Editor</h2>
 		<div class="instructions">Instruction go here...</div>
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
@@ -56,10 +54,10 @@ class NS_SidebarAdminPage
 				
 					<?php
 					$post_title = '';
-					if( (isset($options['stories'][$section->key])) && 
-					    (count($options['stories'][$section->key]) > $i) )
+					if( (isset($options['stories'][$section_key])) && 
+					    (count($options['stories'][$section_key]) > $i) )
 					{
-						$post_id = $options['stories'][$section->key][$i];
+						$post_id = $options['stories'][$section_key][$i];
 						if( $post_id > 0 ) $post_title = get_the_title($post_id);
 					}
 					else
@@ -68,10 +66,10 @@ class NS_SidebarAdminPage
 					}
 					?>
 					
-					<input type="hidden" name="stories[<?php echo $section->key; ?>][]" 
+					<input type="hidden" name="stories[<?php echo $section_key; ?>][]" 
 					                     value="<?php echo $post_id; ?>" 
 					                     post_title="<?php echo $post_title; ?>"
-					                     section="<?php echo $section->key; ?>"
+					                     section="<?php echo $section_key; ?>"
 					                     class="story-selector" />
 
 				<?php endfor; ?>
@@ -80,11 +78,9 @@ class NS_SidebarAdminPage
 
 		<?php endforeach; ?>
 		
-		<input type="submit" name="set_sidebar_stories" value="Update Stories" />
+		<input type="submit" name="set_front_page_stories" value="Update Stories" />
 		
 		</form>
-		
-		</div><!-- #sidebar-stories-editor -->
 
 		<?php
 	}
@@ -98,11 +94,11 @@ class NS_SidebarAdminPage
 	{
 		global $ns_config;
 		
-		if( !isset($_POST['set_sidebar_stories']) ) { return; }
+		if( !isset($_POST['set_front_page_stories']) ) { return; }
 		if( !isset($_POST['stories']) ) { return; }
 
 		//ns_print( $_POST['stories'], 'STORIES' );
 
-		$ns_config->set_stories( 'sidebar', $_POST['stories'] );
+		$ns_config->set_stories( 'front-page', $_POST['stories'] );
 	}
 }

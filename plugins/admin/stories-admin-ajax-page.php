@@ -3,7 +3,7 @@
 /**
  *
  */
-class Exchange_StoriesAdminAjaxPage
+class NS_StoriesAdminAjaxPage
 {
 	private $_error_messages;
 	private $_title;
@@ -32,7 +32,7 @@ class Exchange_StoriesAdminAjaxPage
 	public function process_post()
 	{
 		if( !isset($_POST['nonce']) || 
-			!wp_verify_nonce($_POST['nonce'], "exchange-stories-options-nonce") )
+			!wp_verify_nonce($_POST['nonce'], "ns-stories-options-nonce") )
 		{
 			$this->_status = false;
 			$this->_message = 'Invalid nonce code ('.$_POST['nonce'].').';
@@ -89,7 +89,7 @@ class Exchange_StoriesAdminAjaxPage
 	 */
 	private function get_search_results()
 	{
-		global $exchange_config;
+		global $ns_config;
 		
 		if( !isset($_POST['section']) )
 		{
@@ -105,7 +105,7 @@ class Exchange_StoriesAdminAjaxPage
 			return;
 		}
 		
-		$section = $exchange_config->get_section( $_POST['section'] );
+		$section = $ns_config->get_section_by_key( $_POST['section'] );
 		
 		if( $section === null )
 		{
@@ -125,4 +125,6 @@ class Exchange_StoriesAdminAjaxPage
 		$this->_output = $search_results;
 		$this->_message = 'The search results were successfully retrieved.';
 	}
+
 }
+

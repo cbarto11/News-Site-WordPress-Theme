@@ -3,7 +3,7 @@
 /**
  *
  */
-class Exchange_BannerAdminAjaxPage
+class NS_BannerAdminAjaxPage
 {
 	private $_error_messages;
 	private $_title;
@@ -30,7 +30,7 @@ class Exchange_BannerAdminAjaxPage
 	public function process_post()
 	{
 		if( !isset($_POST['nonce']) || 
-			!wp_verify_nonce($_POST['nonce'], "exchange-banner-options-nonce") )
+			!wp_verify_nonce($_POST['nonce'], "ns-banner-options-nonce") )
 		{
 			$this->_status = false;
 			$this->_message = 'Invalid nonce code ('.$_POST['nonce'].').';
