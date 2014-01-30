@@ -99,31 +99,53 @@ function ns_enqueue_scripts()
 	global $ns_mobile_support, $ns_config;
 	
 	wp_enqueue_script( 'jquery' );
+	ns_enqueue_files( 'style', 'main-style', '/style.css' );
 	
 	if( $ns_mobile_support->use_mobile_site )
 	{
-		wp_register_script( 'mobile-menu', ns_get_theme_file_url('/scripts/mobile-menu.js') );
-		wp_enqueue_script( 'mobile-menu' );
-
-		wp_register_style( 'mobile-menu', ns_get_theme_file_url('/styles/mobile-site.css') );
-		wp_enqueue_style( 'mobile-menu' );
+		ns_enqueue_file( 'script', 'mobile-menu', '/scripts/mobile-menu.js' );
+		ns_enqueue_files( 'style', 'mobile-site', '/styles/mobile-site.css');
 	}
 	else
 	{
-		wp_register_style( 'full-site', ns_get_theme_file_url('/styles/full-site.css') );
-		wp_enqueue_style( 'full-site' );
+		ns_enqueue_files( 'style', 'full-site', '/styles/full-site.css');
 	}
 	
 	if( is_front_page() )
 	{
-		wp_register_script( 'nivo-slider', ns_get_theme_file_url('/scripts/nivo-slider/jquery.nivo.slider.js') );
-		wp_enqueue_script( 'nivo-slider' );
+		ns_enqueue_file( 'script', 'nivo-slider', '/scripts/nivo-slider/jquery.nivo.slider.js' );
+		ns_enqueue_file( 'style', 'nivo-slider', '/scripts/nivo-slider/nivo-slider.css' );
+		ns_enqueue_file( 'style', 'nivo-slider-default-theme', '/scripts/nivo-slider/themes/default/default.css' );
+	}
+}
 
-		wp_register_style( 'nivo-slider-css', ns_get_theme_file_url('/scripts/nivo-slider/nivo-slider.css') );
-		wp_enqueue_style( 'nivo-slider-css');
 
-		wp_register_style( 'nivo-slider-css-default-theme', ns_get_theme_file_url('/scripts/nivo-slider/themes/default/default.css') );
-		wp_enqueue_style( 'nivo-slider-css-default-theme' );
+//----------------------------------------------------------------------------------------
+// Enqueues the theme version of the the file specified.
+// 
+// @param	$type		string		The type of file to enqueue (script or style).
+// @param	$name		string		The name to give te file.
+// @param	$filepath	string		The relative path to filename.
+//----------------------------------------------------------------------------------------
+function ns_enqueue_files( $type, $name, $filepath )
+{
+	if( $type !== 'script' && $type !== 'style' ) return;
+
+	$paths = array();
+	
+	if( file_exists(get_template_directory().'/'.$filepath) )
+		$paths['p'] = get_template_directory_uri().'/'.$filepath;
+
+	if( (is_child_theme()) && (file_exists(get_stylesheet_directory().'/'.$filepath)) )
+		$paths['c'] = get_stylesheet_directory_uri().'/'.$filepath;
+	
+	foreach( $paths as $key => $theme_filepath )
+	{	
+		if( $theme_filepath !== null )
+		{
+			call_user_func( 'wp_register_'.$type, $name.'-'.$key, $theme_filepath );
+			call_user_func( 'wp_enqueue_'.$type, $name.'-'.$key );
+		}
 	}
 }
 
