@@ -80,6 +80,7 @@ class NS_Config
 		$this->options = array_replace_recursive( $this->options, get_option('ns-theme-options', array()) );
 
 		$this->config = array_replace_recursive($this->options, $this->config);
+
 		//ns_print($this->options);
 		//ns_print($this->config);
 
@@ -297,31 +298,11 @@ class NS_Config
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_num_columns( $name )
+	public function get_number_of_columns( $name )
 	{
-		switch( $name )
-		{
-			case( 'front-page' ):
-				return $this->config['content']['num-columns']['front'];
-				break;
-				
-			case( 'portrait' ):
-				return $this->config['content']['num-columns']['portrait'];
-				break;
-				
-			case( 'landscape' ):
-				return $this->config['content']['num-columns']['landscape'];
-				break;
-				
-			case( 'none' ):
-				return $this->config['content']['num-columns']['none'];
-				break;
-				
-			default:
-				return 1;
-				break;
-		}
-		
+		if( isset($this->config['content']['num-columns'][$name]) )
+			return $this->config['content']['num-columns'][$name];
+			
 		return 1;
 	}
 
@@ -392,7 +373,6 @@ class NS_Config
 						($section->tag == $t) &&
 						(!in_array($section->key, $exclude_sections)) )
 					{
-						ns_print('match');
 						return $section;
 					}
 				}
@@ -430,6 +410,18 @@ class NS_Config
 				{
 					return $section;
 				}
+			}
+		}
+		
+		// 
+		// 
+		// 
+		foreach( $this->config['sections'] as $section )
+		{
+			if( ($section->type == $post_type) && 
+				(!in_array($section->key, $exclude_sections)) )
+			{
+				return $section;
 			}
 		}
 		

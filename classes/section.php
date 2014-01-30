@@ -67,8 +67,8 @@ class NS_Section
 
 		return null;
 	}
-
-
+	
+	
 	//------------------------------------------------------------------------------------
 	// Get a list of posts.
 	// 
@@ -111,20 +111,21 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	public function get_stories( $type = 'front-page' )
 	{
-		$stories_option = get_option( 'ns-'.$type.'-stories', array() );
-		$recent_posts = $this->get_post_list( 0, $this->num_stories[$type] );
+		global $ns_config;
 		
-		if( array_key_exists($this->key, $stories_option) )
+		$stories_ids = $ns_config->get_value( $type.'-stories', $this->key );		
+		if( $type == 'sidebar' ) $type = 'front-page';
+		$recent_posts = $this->get_post_list( 0, $this->num_stories[$type] );
+		$story_posts = array();
+		
+		if( $stories_ids == null )
 		{
-			$stories_ids = $stories_option[$this->key];
-			$story_posts = array();
-			
+			$story_posts = $recent_posts;
+		}
+		else
+		{
 			foreach( $stories_ids as $post_id )
 			{
-				$post_id = -1;
-				if( count($stories_ids) > $i )
-					$post_id = $stories_ids[$i];
-
 				$post = null;
 				if( $post_id !== -1 )
 				{
@@ -137,7 +138,7 @@ class NS_Section
 							break;
 						}
 					}
-					
+				
 					if( $post === null )
 						$post = get_post( $post_id );
 				}
@@ -146,33 +147,30 @@ class NS_Section
 					$post = $recent_posts[0];
 					unset($recent_posts[0]);
 				}
-				
+			
 				if( $post === null ) continue;
-				
+			
 				$story_posts[] = $post;
 			}
 
 			$story_posts = array_slice( array_merge($story_posts, $recent_posts), 0, $this->num_stories[$type] );
-		}
-		else
-		{
-			$story_posts = $recent_posts;
 		}
 		
 		$stories = array();
 		switch( $type )
 		{
 			case 'front-page':
+			case 'sidebar':
 				foreach( $story_posts as $post )
 				{
 					$stories[] = $this->get_featured_story( $post );
 				}
 				break;
 				
-			case 'archive-page':
+			case 'listing':
 				foreach( $story_posts as $post )
 				{
-					$stories[] = $this->get_archive_story( $post );
+					$stories[] = $this->get_listing_story( $post );
 				}
 				break;
 				
@@ -184,7 +182,6 @@ class NS_Section
 				}
 				break;
 		}
-		
 		
 		return $stories;
 	}
@@ -231,6 +228,19 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
+	private function apply_filters( $name, $story, $post )
+	{
+		$story = apply_filters( 'ns-'.$name, $story, $post );
+		$story = apply_filters( 'ns-'.$this->key.'-'.$name, $story, $post );
+		$story = apply_filters( 'ns-'.$post->post_type.'-'.$name, $story, $post );
+		
+		return $story;
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_featured_story( $post )
 	{
 		if( empty($post) ) return null;
@@ -238,15 +248,14 @@ class NS_Section
 		$story = array();
 		$story['title'] = $this->get_title( $post );
 		$story['link'] = $this->get_link( $post );
-		//$story['target'] = $this->get_target( $story['link'] );
+		$story['target'] = $this->get_link_target( $story['link'] );
 		$story['image'] = $this->get_image( $post->ID, 'thumbnail' );
 		$story['description'] = array();
 		$story['description']['excerpt'] = $this->get_excerpt( $post );
 		
-		$story = apply_filters( 'ns-excerpt-story', $story, $post );
-		$story = apply_filters( 'ns-'.$this->key.'-excerpt-story', $story, $post );
-
-		return $story;
+		//ns_print($story);
+		
+		return $this->apply_filters( 'featured-story', $story, $post );		
 	}
 	
 	
@@ -260,15 +269,12 @@ class NS_Section
 		$story = array();
 		$story['title'] = $this->get_title( $post );
 		$story['link'] = $this->get_link( $post );
-		//$story['target'] = $this->get_target( $story['link'] );
+		$story['target'] = $this->get_link_target( $story['link'] );
 		$story['image'] = $this->get_image( $post->ID, 'thumbnail' );
 		$story['description'] = array();
 		$story['description']['excerpt'] = $this->get_excerpt( $post );
 
-		$story = apply_filters( 'ns-archive-story', $story, $post );
-		$story = apply_filters( 'ns-'.$this->key.'-archive-story', $story, $post );
-		
-		return $story;
+		return $this->apply_filters( 'listing-story', $story, $post );		
 	}
 	
 	
@@ -279,10 +285,7 @@ class NS_Section
 	{
 		$story = $post;
 		
-		$story = apply_filters( 'ns-rss-story', $story, $post );
-		$story = apply_filters( 'ns-'.$this->key.'-rss-story', $story, $post );
-
-		return $story;
+		return $this->apply_filters( 'rss-story', $story, $post );		
 	}
 	
 	
@@ -297,10 +300,7 @@ class NS_Section
 		$story['description'] = array();
 		$story['description']['text'] = $this->get_content( $post );
 
-		$story = apply_filters( 'ns-single-story', $story, $post );
-		$story = apply_filters( 'ns-'.$this->key.'-single-story', $story, $post );
-
-		return $story;
+		return $this->apply_filters( 'single-story', $story, $post );
 	}
 	
 	
@@ -310,11 +310,7 @@ class NS_Section
 	public function get_title( $post )
 	{
 		$title = $post->post_title;
-		
-		$title = apply_filters( 'ns-story-title', $title, $post );
-		$title = apply_filters( 'ns-'.$this->key.'-story-title', $title, $post );
-
-		return $title;
+		return $this->apply_filters( 'story-title', $title, $post );
 	}
 	
 	
@@ -324,11 +320,7 @@ class NS_Section
 	public function get_link( $post )
 	{
 		$link = get_permalink( $post->ID );
-		
-		$link = apply_filters( 'ns-story-link', $link, $post );
-		$link = apply_filters( 'ns-'.$this->key.'-story-link', $link, $post );
-		
-		return $link;
+		return $this->apply_filters( 'story-link', $link, $post );
 	}
 	
 	
@@ -338,10 +330,7 @@ class NS_Section
 	public function get_link_target( $link )
 	{
 		$target = '';
-
-		$target = apply_filters( 'ns-story-link-target', $target, $link );
-		$target = apply_filters( 'ns-'.$this->key.'-story-link-target', $target, $link );
-
+		return $this->apply_filters( 'story-link-target', $target, $post );
 		return $target;
 	}
 	
@@ -367,10 +356,7 @@ class NS_Section
 			}
 		}
 		
-		$excerpt = apply_filters( 'ns-story-excerpt', $excerpt, $post );
-		$excerpt = apply_filters( 'ns-'.$this->key.'-story-excerpt', $excerpt, $post );
-
-		return $excerpt;
+		return $this->apply_filters( 'story-excerpt', $excerpt, $post );
 	}
 	
 	
@@ -381,10 +367,7 @@ class NS_Section
 	{
 		$content = apply_filters( 'the_content', $post->post_content );
 		
-		$content = apply_filters( 'ns-story-content', $content, $post );
-		$content = apply_filters( 'ns-'.$this->key.'-story-content', $content, $post );
-
-		return $content;
+		return $this->apply_filters( 'story-content', $content, $post );
 	}
 	
 	
