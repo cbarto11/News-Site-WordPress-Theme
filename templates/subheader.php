@@ -10,7 +10,11 @@
 	<?php ns_use_widget( 'subheader', 'top' ); ?>
 	
 	
-	<?php ns_image( $ns_config->get_value('subheader', 'image') ); ?>
+	<?php
+	$image = $ns_config->get_value('subheader', 'image');
+	$image['link'] = get_home_url();
+	ns_image( $image );
+	?>
 	
 
 	<?php ns_use_widget( 'subheader', 'bottom' ); ?>
