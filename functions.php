@@ -31,6 +31,11 @@ require_once( get_template_directory().'/classes/config.php' );
 $ns_config = new NS_Config;
 $ns_config->load_config();
 
+// 
+// Include the custom post types. 
+//----------------------------------------------------------------------------------------
+ns_include_custom_post_types();
+
 //
 // Include the admin backend. 
 //----------------------------------------------------------------------------------------
@@ -102,10 +107,12 @@ function ns_setup_widget_areas()
 	$widgets = $ns_config->get_widget_areas();
 	
 	$widget_area = array();
-	$widget_area['before_widget'] = '<div id="%1$s" class="widget %2$s">';
-	$widget_area['after_widget'] = "</div>";
-	$widget_area['before_title'] = '<h3 class="widget-title">';
-	$widget_area['after_title'] = '</h3>';
+	$widget_area['before_widget'] = '<div id="%1$s" class="widget section-box %2$s">';
+	$widget_area['after_widget'] = '</div>';
+	$widget_area['before_title'] = '<h2 class="widget-title">';
+	$widget_area['after_title'] = '</h2>';
+
+	//ns_print($widgets);
 
 	foreach( $widgets as $widget )
 	{

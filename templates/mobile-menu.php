@@ -28,7 +28,7 @@
 
 		<?php foreach($widget_areas as $widget): ?>
 				
-		<div id="<?php echo $widget['id']; ?>">
+		<div id="<?php echo $widget['id']; ?>" class="expanded-menu">
 			<?php ns_use_widget( 'mobile-menu', $widget['index'] ); ?>
 		</div>
 		
