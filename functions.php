@@ -47,6 +47,8 @@ add_action( 'after_setup_theme', 'ns_add_featured_image_support' );
 add_action( 'wp_enqueue_scripts', 'ns_enqueue_scripts' );
 add_action( 'admin_notices', 'ns_validate_categories_and_tags' );
 
+add_filter( 'pre_get_posts', 'ns_alter_news_section_query' );
+add_filter( 'the_posts', 'ns_alter_news_posts', 9999, 2 );
 
 //----------------------------------------------------------------------------------------
 // 
@@ -477,4 +479,77 @@ function ns_get_image_info( $image_info )
 
 
 
+/**
+ * Alters the default query made when querying the News section.
+ */
+function ns_alter_news_section_query( $wp_query )
+{
+	if( (!isset($wp_query->query['category_name'])) || 
+	    ($wp_query->query['category_name'] !== 'news') ||
+	    (!isset($wp_query->query['category'])) )
+	{
+		return;
+	}
+	
+	$news_id = get_cat_ID( 'news' );
+	if( ($wp_query->query['category'] !== $news_id) ||
+	    (!is_array($wp_query->query['category'])) || 
+	    (!in_array($news_id, $wp_query->query['category'])) )
+	{
+		return;
+	}
+
+	if( is_feed() )
+	{
+		$wp_query->query_vars['posts_per_page'] = 5;
+	}
+}
+
+
+
+/**
+ * 
+ */
+function ns_alter_news_posts( $posts, $wp_query )
+{
+	global $exchange_config;
+	$category = get_category( get_cat_ID( single_cat_title('', false ) ) );
+	if( !$category ) return $posts;
+	
+	if( $category->slug !== 'news' ) return $posts;
+
+	$section = $exchange_config->get_section( 'news' );
+	$news_stories_options = new Exchange_NewsStoriesOptions;
+
+	$options = null;
+	$stories_count = 0;
+	if( is_feed() )
+	{
+		$options = $news_stories_options->get_options( 'rss' );
+		$stories_count = $section->rss_feed_num_stories;
+	}
+	else if( is_archive() )
+	{
+		$options = $news_stories_options->get_options( 'listing' );
+		$stories_count = $section->listing_num_stories;
+	}
+	else
+	{
+		$options = $news_stories_options->get_options();
+		$stories_count = $section->featured_num_stories;
+	}
+
+	$posts = $news_stories_options->get_stories_from_posts( $posts, $section, $options, $stories_count );
+
+	if( is_feed() )
+	{
+		for( $i = 0; $i < count($posts); $i++ )
+		{
+			$publication_date = date( 'Y-m-d H:i:s', time() - ($i * 86400) );
+			$posts[$i]->post_date = $posts[$i]->post_date_gmt = $posts[$i]->post_modified = $posts[$i]->post_modified_gmt = $publication_date;
+		}
+	}
+	
+	return $posts;
+}
 
