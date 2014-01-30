@@ -15,7 +15,6 @@
 	<title><?php echo bloginfo('name').' | '.$ns_template_vars['page-title']; ?></title>
 	
 	<link rel="profile" href="http://gmpg.org/xfn/11" />
-	<link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo('stylesheet_url'); ?>" />
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 	<link rel="shortcut icon" href="<?php echo ns_get_theme_file_url('images/favicon.ico'); ?>" />
 
