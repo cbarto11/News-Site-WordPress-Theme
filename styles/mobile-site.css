@@ -17,10 +17,19 @@
 	input {
 		outline:none;
 	}
+
+	#header, #banner, #subheader, #main, #footer {
+		width:auto;
+	}
 	
 /****************************************************************************************
- * UNCC Header
+ * Header
  ****************************************************************************************/
+
+	#header .title-box {
+		text-align:center;
+		vertical-align:middle;
+	}
 
 	#headerblock {
 		width:100%;
@@ -159,13 +168,18 @@
 		background-image:url('../images/tab.png');
 	}
 	
-	#mobile-menu > .menu > div {
+	#mobile-menu > .menu > .expanded-menu {
 		margin:0px 5px 5px 5px;
 		border:solid 1px #ccc;
 		padding:20px;
+		display:none;
+	}
+	
+	#mobile-menu > .menu .section-box {
+		margin-bottom:0px;
 	}
 
-	#sections-menu > .menu > ul {
+	#mobile-menu > .menu .section-box ul {
 		display:block;
 		padding:0px;
 		margin:0px;
@@ -173,13 +187,36 @@
 		text-align:center;
 	}
 	
-	#sections-menu > .menu > ul > li > a {
+	#mobile-menu > .menu .section-box ul > li > a {
 		display:block;
 		padding:0px 15px;
 		border:solid 1px #ccc;
 		line-height:2em;
 		margin-bottom:2px;
 	}
+	
+	/*
+	<div id="search-2" class="widget section-box widget_search"><form role="search" method="get" id="searchform" class="searchform" action="http://localhost/wordpress-ms/news-site/">
+				<div>
+					<label class="screen-reader-text" for="s">Search for:</label>
+					<input type="text" value="" name="s" id="s">
+					<input type="submit" id="searchsubmit" value="Search">
+				</div>
+			</form></div>
+	*/
+	
+	#mobile-menu > .menu .widget_search > form > div {
+		text-align:center;
+	}
+	
+	#mobile-menu > .menu .widget_search .searchform label.screen-reader-text {
+		display:none;
+	}
+
+	#mobile-menu > .menu .widget_search .searchform input#s {
+		border:solid 1px #ccc;
+	}
+	
 
 /****************************************************************************************
  * Main
