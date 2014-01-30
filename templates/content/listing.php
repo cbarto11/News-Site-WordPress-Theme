@@ -17,9 +17,11 @@ if( !have_posts() ):
 
 else:
 
-	$num_columns = $ns_config->get_num_columns($ns_section->thumbnail_image);
-	if( $ns_mobile_support->use_mobile_site ) $num_columns = 1;
-
+	if( $ns_mobile_support->use_mobile_site )
+		$num_columns = 1;
+	else
+		$num_columns = $ns_template_vars['num-cols'];
+	
 	$post_list = array();
 	for( $i = 0; $i < $num_columns; $i++ )
 		$post_list[] = array();
@@ -31,7 +33,7 @@ else:
 		$post_list[$i % $num_columns][] = get_post();
 		$i++;
 	}
-
+	
 	$column_label = 'odd';
 
 	foreach( $post_list as $column_posts ):
@@ -50,9 +52,10 @@ else:
 				$type = get_post_type( $post->ID );
 				$categories = get_the_category( $post->ID );
 				$tags = get_the_tags( $post->ID );
-				$story_section = $ns_config->get_section( $type, $category->slug, $tags );
+				$story_section = $ns_config->get_section( $type, $categories, $tags );
 				$story = $story_section->get_listing_story( $post );
-
+				$ns_template_vars['section'] = $story_section;
+				
 			else:
 
 				$story = $ns_section->get_listing_story( $post );
