@@ -6,7 +6,7 @@
  * @subpackage clas-exchange
  */
 
-ns_print('index-page');
+//ns_print('index.php');
 global $ns_config, $ns_template_vars;
 
 $ns_template_vars = array();
