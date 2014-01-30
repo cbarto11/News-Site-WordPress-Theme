@@ -25,16 +25,18 @@ require_once( get_template_directory().'/classes/mobile-support.php' );
 $ns_mobile_support = new Mobile_Support;
 
 // 
-// Include the custom post types. 
-//----------------------------------------------------------------------------------------
-require_once( dirname(__FILE__).'/plugins/custom-post-types/event.php' );
-
-// 
 // Setup the config information.
 //----------------------------------------------------------------------------------------
 require_once( get_template_directory().'/classes/config.php' );
 $ns_config = new NS_Config;
 $ns_config->load_config();
+
+//
+// Include the admin backend. 
+//----------------------------------------------------------------------------------------
+require_once( dirname(__FILE__).'/plugins/admin/main.php' );
+
+require_once( dirname(__FILE__).'/plugins/sections-widget.php' );
 
 
 //========================================================================================
@@ -49,6 +51,27 @@ add_action( 'admin_notices', 'ns_validate_categories_and_tags' );
 
 add_filter( 'pre_get_posts', 'ns_alter_news_section_query' );
 add_filter( 'the_posts', 'ns_alter_news_posts', 9999, 2 );
+
+
+//----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+function ns_include_custom_post_types()
+{
+	global $ns_config;
+	
+	$custom_post_types = $ns_config->get_value('custom-post-type');
+	
+	foreach( $custom_post_types as $name => $use_custom_type )
+	{
+		if( $use_custom_type )
+		{
+			$filepath = ns_get_theme_file_path( '/plugins/custom-post-types/'.$name.'.php' );
+			if( $filepath ) include_once( $filepath );
+		}
+	}
+}
+
 
 //----------------------------------------------------------------------------------------
 // 
