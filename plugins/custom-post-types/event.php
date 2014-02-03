@@ -225,7 +225,7 @@ class NS_CustomEventPostType
 				$wp_query->query_vars['posts_per_page'] = 5;
 			}
 		
-			if( is_post_type_archive('event') )
+			if( is_post_type_archive('event') && !isset($wp_query->query_vars['section']) )
 			{
 				$wp_query->query_vars['posts_per_page'] = -1;
 			}
