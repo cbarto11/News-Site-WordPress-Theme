@@ -3,7 +3,7 @@
 // 
 //
 // @package WordPress
-// @subpackage clas-exchange
+// @subpackage news-site
 //========================================================================================
  
 
@@ -551,34 +551,31 @@ function ns_alter_news_section_query( $wp_query )
  */
 function ns_alter_news_posts( $posts, $wp_query )
 {
-	global $exchange_config;
-	$category = get_category( get_cat_ID( single_cat_title('', false ) ) );
-	if( !$category ) return $posts;
+	global $ns_config;
+
+	if( (!isset($wp_query->query['category_name'])) || 
+	    ($wp_query->query['category_name'] !== 'news') ||
+	    (!isset($wp_query->query['category'])) )
+	{
+		return $posts;
+	}
 	
-	if( $category->slug !== 'news' ) return $posts;
+	$news_id = get_cat_ID( 'news' );
+	if( ($wp_query->query['category'] !== $news_id) ||
+	    (!is_array($wp_query->query['category'])) || 
+	    (!in_array($news_id, $wp_query->query['category'])) )
+	{
+		return $posts;
+	}
 
-	$section = $exchange_config->get_section( 'news' );
-	$news_stories_options = new Exchange_NewsStoriesOptions;
+	$section = $ns_config->get_section_by_key( 'news' );
 
-	$options = null;
-	$stories_count = 0;
 	if( is_feed() )
-	{
-		$options = $news_stories_options->get_options( 'rss' );
-		$stories_count = $section->rss_feed_num_stories;
-	}
-	else if( is_archive() )
-	{
-		$options = $news_stories_options->get_options( 'listing' );
-		$stories_count = $section->listing_num_stories;
-	}
+		$posts = $section->get_stories('rss-feed', $posts);
+	else if( is_front_page() )
+		$posts = $section->get_stories('front-page', $posts);
 	else
-	{
-		$options = $news_stories_options->get_options();
-		$stories_count = $section->featured_num_stories;
-	}
-
-	$posts = $news_stories_options->get_stories_from_posts( $posts, $section, $options, $stories_count );
+		$posts = $section->get_stories('listing', $posts);
 
 	if( is_feed() )
 	{

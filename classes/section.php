@@ -36,7 +36,7 @@ class NS_Section
 		
 		$this->num_stories = array();
 		$this->num_stories['front-page'] = ( isset($section['front-page-num-stories']) ? intval($section['front-page-num-stories']) : 0 );
-		$this->num_stories['archive-page'] = ( isset($section['archive-page-num-stories']) ? intval($section['archive-page-num-stories']) : 0 );
+		$this->num_stories['listing'] = ( isset($section['listing-num-stories']) ? intval($section['listing-num-stories']) : 0 );
 		$this->num_stories['rss-feed'] = ( isset($section['rss-feed-num-stories']) ? intval($section['rss-feed-num-stories']) : 0 );
 	}
 
@@ -84,14 +84,14 @@ class NS_Section
 		{
 			$category = get_category_by_slug( $this->category );
 	
-			if( ($category === null) || ($category == false) ) 
-				return array();
-				
-			$category = $category->term_id;
+			if( !$category ) 
+				$category = '';
+			else
+				$category = $category->term_id;
 		}
-
+		
 		$query = array(
-			'numberposts' => $limit,
+			'posts_per_page' => $limit,
 			'post_type' => $this->type,
 			'category' => $category,
 			'tag' => $this->tag,
@@ -109,13 +109,16 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_stories( $type = 'front-page' )
+	public function get_stories( $type = 'front-page', $recent_posts = null )
 	{
 		global $ns_config;
 		
 		$stories_ids = $ns_config->get_value( $type.'-stories', $this->key );		
 		if( $type == 'sidebar' ) $type = 'front-page';
-		$recent_posts = $this->get_post_list( 0, $this->num_stories[$type] );
+		
+		if( $recent_posts == null )
+			$recent_posts = $this->get_post_list( 0, $this->num_stories[$type] );
+	
 		$story_posts = array();
 		
 		if( $stories_ids == null )
@@ -155,7 +158,7 @@ class NS_Section
 
 			$story_posts = array_slice( array_merge($story_posts, $recent_posts), 0, $this->num_stories[$type] );
 		}
-		
+
 		$stories = array();
 		switch( $type )
 		{
