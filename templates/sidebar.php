@@ -24,7 +24,13 @@ $options = $ns_config->get_admin_options( 'sidebar' );
 				?>
 				<div class="section-box <?php $section_key; ?>-section <?php echo $section->thumbnail_image; ?>-image">
 
-					<h2><?php echo $section->title; ?></h2>
+					<h2>
+					<?php echo ns_get_anchor( 
+							$section->get_section_link(), 
+							$section->name.' Archives', 
+							null,
+							$section->title ); ?>
+					</h2>
 			
 					<?php
 					global $ns_story;

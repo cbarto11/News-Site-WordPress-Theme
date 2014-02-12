@@ -20,8 +20,14 @@ $options = $ns_config->get_admin_options( 'front-page' );
 			?>
 			<div class="section-box <?php $section_key; ?>-section <?php echo $section->thumbnail_image; ?>-image">
 
-				<h2><?php echo $section->title; ?></h2>
-		
+				<h2>
+				<?php echo ns_get_anchor( 
+						$section->get_section_link(), 
+						$section->name.' Archives', 
+						null,
+						$section->title ); ?>
+				</h2>
+				
 				<?php
 				foreach( $stories as $story ):
 		
