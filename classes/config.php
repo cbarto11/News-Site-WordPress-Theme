@@ -77,17 +77,13 @@ class NS_Config
 				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
 		}
 		
+		//uncomment when admin page is created.
 		$this->options = array_replace_recursive( $this->options, get_option('ns-theme-options', array()) );
 
 		$this->config = array_replace_recursive($this->options, $this->config);
 
-		//ns_print($this->options);
-		//ns_print($this->config);
-
 		$this->verify_settings();
 		$this->populate_widget_areas();
-
-		//ns_print($this->config);
 	}
 	
 
@@ -298,8 +294,11 @@ class NS_Config
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_number_of_columns( $name )
+	public function get_number_of_columns( $name, $section = null )
 	{
+		if( ($section !== null) && (array_key_exists($name, $section->num_columns)) )
+			return $section->num_columns[$name];
+		
 		if( isset($this->config['content']['num-columns'][$name]) )
 			return $this->config['content']['num-columns'][$name];
 			

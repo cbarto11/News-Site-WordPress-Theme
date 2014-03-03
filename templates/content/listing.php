@@ -20,7 +20,7 @@ else:
 	if( $ns_mobile_support->use_mobile_site )
 		$num_columns = 1;
 	else
-		$num_columns = $ns_template_vars['num-cols'];
+		$num_columns = $ns_section->get_number_of_columns('listing');
 	
 	$post_list = array();
 	for( $i = 0; $i < $num_columns; $i++ )

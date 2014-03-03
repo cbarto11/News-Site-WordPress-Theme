@@ -11,8 +11,8 @@
 	$thumbnail = $section->thumbnail_image;
 	$featured = $section->featured_image;
 	
-	if( $ns_template_vars['content-type'] == 'listing' )
-		$num_cols = $ns_config->get_number_of_columns( $section->thumbnail_image );
+	if( $section->key !== 'none' )
+		$num_cols = $ns_config->get_number_of_columns( $ns_template_vars['content-type'], $section );
 	else
 		$num_cols = $ns_config->get_number_of_columns( $ns_template_vars['content-type'] );
 	$ns_template_vars['num-cols'] = $num_cols;

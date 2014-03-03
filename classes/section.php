@@ -16,6 +16,7 @@ class NS_Section
 	public $featured_image;
 	public $thumbnail_image;
 	public $num_stories;
+	public $num_columns;
 
 
 	
@@ -25,6 +26,8 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	public function __construct( $key, $section )
 	{
+		global $ns_config;
+		
 		$this->key = $key;
 		$this->name = $section['name'];
 		$this->type = ( isset($section['type']) ? $section['type'] : 'post' );
@@ -35,9 +38,23 @@ class NS_Section
 		$this->thumbnail_image = ( isset($section['thumbnail-image']) ? $section['thumbnail-image'] : $this->featured_image );
 		
 		$this->num_stories = array();
-		$this->num_stories['front-page'] = ( isset($section['front-page-num-stories']) ? intval($section['front-page-num-stories']) : 0 );
-		$this->num_stories['listing'] = ( isset($section['listing-num-stories']) ? intval($section['listing-num-stories']) : 0 );
-		$this->num_stories['rss-feed'] = ( isset($section['rss-feed-num-stories']) ? intval($section['rss-feed-num-stories']) : 0 );
+		$this->num_stories['front-page'] = ( isset($section['front-page-num-stories']) ? $section['front-page-num-stories'] : 0 );
+		$this->num_stories['listing'] = ( isset($section['listing-num-stories']) ? $section['listing-num-stories'] : 0 );
+		$this->num_stories['rss-feed'] = ( isset($section['rss-feed-num-stories']) ? $section['rss-feed-num-stories'] : 0 );
+		
+		$this->num_columns = array();
+		if( isset($section['listing-num-columns']) )
+			$this->num_columns['listing'] = $section['listing-num-columns'];
+		else
+			$this->num_columns['listing'] = $ns_config->get_number_of_columns($this->thumbnail_image);
+	}
+	
+	
+	public function get_number_of_columns( $page )
+	{
+		if( array_key_exists($page, $this->num_columns) )
+			return $this->num_columns[$page];
+		return 1;
 	}
 
 
@@ -374,47 +391,7 @@ class NS_Section
 	}
 	
 	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function get_featured_image( $post_id, $image_type )
-	{
-		global $ns_mobile_support;
-		
-		switch( $image_type )
-		{
-			case 'featured':
-				if( $this->featured_image == 'none' ) return null;
-				if( $ns_mobile_support->use_mobile_site )
-					$image_type = 'thumbnail_'.$this->featured_image;
-				else
-					$image_type = 'featured_'.$this->featured_image;
-				break;
-				
-			case 'thumbnail':
-				if( $this->thumbnail_image == 'none' ) return null;
-				if( $ns_mobile_support->use_mobile_site )
-					$image_type = 'thumbnail';
-				else
-					$image_type = 'thumbnail_'.$this->featured_image;
-				break;
-				
-			default:
-				return null;
-				break;
-		}
-		
-		$imageinfo = wp_get_attachment_image_src(
-			get_post_thumbnail_id( $post_id ), $image_type
-		);
-		
-		if( $imageinfo ) 
-			return $imageinfo[0];
-		
-		return null;
-	}
-	
-	
+
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
@@ -474,6 +451,11 @@ class NS_Section
 	{
 		global $ns_mobile_support;
 		
+		if( $this->key == 'news' )
+		{
+			ns_write_to_log( $type.': '.$this->thumbnail_image );
+		}
+		
 		switch( $type )
 		{
 			case 'featured':
@@ -491,7 +473,14 @@ class NS_Section
 				else
 					$image_type = 'thumbnail_'.$this->featured_image;
 				break;
-				
+			
+			case 'featured_portrait':
+			case 'featured_landscape':
+			case 'thumbnail_portrait':
+			case 'thumbnail_landscape':
+				$image_type = $type;
+				break;
+					
 			default:
 				return null;
 				break;
