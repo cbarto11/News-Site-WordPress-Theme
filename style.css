@@ -522,10 +522,6 @@ Tags:
 		margin-bottom:10px;
 	}
 		
-	body.single #content .story.portrait-image .image {
-		margin-bottom:10px;
-	}
-
 	body.single #content .story.portrait-image .details {
 		margin-left:0px;
 	}
@@ -599,6 +595,23 @@ Tags:
 /****************************************************************************************
  * Archives Page
  ****************************************************************************************/
+
+	body.archive #content.num-columns-1 .story {
+	}
+	
+	body.archive #content.num-columns-1 .story .image,
+	body.search #content.num-columns-1 .story .image {
+		float:left;
+		width:200px;
+		min-width:200px;
+		margin-right:10px;
+	}
+	
+	body.archive #content.num-columns-1 .story .image img,
+	body.search #content.num-columns-1 .story .image img {
+		width:200px;
+		min-width:200px;
+	}
 
 	body.archive #content.none-image .story,
 	body.search #content.none-image .story {
