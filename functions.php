@@ -268,6 +268,7 @@ function ns_validate_categories_and_tags()
 //----------------------------------------------------------------------------------------
 function ns_clear_log()
 {
+	global $ns_logfile;
 	file_put_contents( $ns_logfile, '' );
 }
 
@@ -279,7 +280,8 @@ function ns_clear_log()
 //----------------------------------------------------------------------------------------
 function ns_write_to_log( $line )
 {
-	file_put_contents( $ns_logfile, $line."\n", FILE_APPEND );
+	global $ns_logfile;
+	file_put_contents( $ns_logfile, print_r($line, true)."\n", FILE_APPEND );
 }
 
 
