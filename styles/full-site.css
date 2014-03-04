@@ -184,6 +184,16 @@
 	.story.landscape-image .image img {
 		width:324px;
 	}
+
+	.story.embed-image .image {
+		width:324px;
+		margin-bottom:10px;
+	}
+
+	.story.embed-image .image iframe {
+		width:324px;
+		height:188px;
+	}
 	
 	.story > a:hover {
 		text-decoration:none;

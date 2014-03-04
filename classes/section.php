@@ -269,7 +269,12 @@ class NS_Section
 		$story['title'] = $this->get_title( $post );
 		$story['link'] = $this->get_link( $post );
 		$story['target'] = $this->get_link_target( $story['link'] );
-		$story['image'] = $this->get_image( $post->ID, 'thumbnail' );
+
+		if( $this->thumbnail_image == 'embed' )
+			$story['embed'] = $this->get_embed_code( $post->post_content );
+		else
+			$story['image'] = $this->get_image( $post->ID, 'thumbnail' );
+
 		$story['description'] = array();
 		$story['description']['excerpt'] = $this->get_excerpt( $post );
 		
@@ -290,14 +295,19 @@ class NS_Section
 		$story['title'] = $this->get_title( $post );
 		$story['link'] = $this->get_link( $post );
 		$story['target'] = $this->get_link_target( $story['link'] );
-		$story['image'] = $this->get_image( $post->ID, 'thumbnail' );
+		
+		if( $this->thumbnail_image == 'embed' )
+			$story['embed'] = $this->get_embed_code( $post->post_content );
+		else
+			$story['image'] = $this->get_image( $post->ID, 'thumbnail' );
+
 		$story['description'] = array();
 		$story['description']['excerpt'] = $this->get_excerpt( $post );
 
 		return $this->apply_filters( 'listing-story', $story, $post );		
 	}
 	
-	
+		
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
@@ -494,6 +504,26 @@ class NS_Section
 			return $image[0];
 		
 		return null;
+	}
+
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	function get_embed_code( $content )
+	{
+		$embed = '';
+		
+		$matches = null;
+		$num_matches = preg_match_all( "/(\[embed\].+?)+(\[\/embed\])/i", $content, $matches, PREG_SET_ORDER );
+		
+		if( ($num_matches !== FALSE) && ($num_matches > 0) )
+		{
+			global $wp_embed;
+			return $wp_embed->run_shortcode( $matches[0][0] );
+		}
+		
+		return $embed;
 	}
 
 }

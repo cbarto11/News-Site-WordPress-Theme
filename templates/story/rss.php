@@ -14,7 +14,11 @@ $story = $ns_template_vars['story'];
 			<?php if( $story['image'] ): ?>
 				<img src="<?php echo $story['image']; ?>" alt="Featured Image" />
 			<?php endif; ?>
-
+			
+			<?php if( $story['embed'] ): ?>
+				<?php echo $story['embed']; ?>
+			<?php endif; ?>
+			
 		</div><!-- .image -->
 	
 	<?php endif; ?>
