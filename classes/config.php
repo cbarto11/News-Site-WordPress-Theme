@@ -357,7 +357,7 @@ class NS_Config
 		
 		if( $tag === null ) $tag = array();
 		elseif( !is_array($tag) ) $tag = array( $tag );
-
+		
 		// 
 		// 
 		// 
@@ -415,12 +415,15 @@ class NS_Config
 		// 
 		// 
 		// 
-		foreach( $this->config['sections'] as $section )
+		if( $post_type !== 'post' && $post_type !== 'page' )
 		{
-			if( ($section->type == $post_type) && 
-				(!in_array($section->key, $exclude_sections)) )
+			foreach( $this->config['sections'] as $section )
 			{
-				return $section;
+				if( ($section->type == $post_type) && 
+					(!in_array($section->key, $exclude_sections)) )
+				{
+					return $section;
+				}
 			}
 		}
 		
