@@ -605,6 +605,7 @@ Tags:
 		width:200px;
 		min-width:200px;
 		margin-right:10px;
+		margin-bottom:0px;
 	}
 	
 	body.archive #content.num-columns-1 .story .image img,
