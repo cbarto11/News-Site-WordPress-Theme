@@ -12,8 +12,8 @@ global $ns_config, $ns_template_vars;
 $ns_template_vars = array();
 $ns_template_vars['content-type'] = 'listing';
 $post_type = get_post_type();
-$category = get_the_category();
-$tags = get_the_tags();
+$category = ns_get_categories();
+$tags = ns_get_tags();
 $section = $ns_config->get_section( $post_type, $category, $tags, false );
 
 if( $section->key == 'none' )

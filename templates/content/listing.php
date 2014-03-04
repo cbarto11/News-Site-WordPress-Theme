@@ -50,8 +50,8 @@ else:
 			if( $ns_section->key == 'none' ):
 
 				$type = get_post_type( $post->ID );
-				$categories = get_the_category( $post->ID );
-				$tags = get_the_tags( $post->ID );
+				$categories = ns_get_categories( get_the_category($post->ID) );
+				$tags = ns_get_tags( get_the_tags($post->ID) );
 				$story_section = $ns_config->get_section( $type, $categories, $tags );
 				$story = $story_section->get_listing_story( $post );
 				$ns_template_vars['section'] = $story_section;

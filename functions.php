@@ -591,3 +591,33 @@ function ns_alter_news_posts( $posts, $wp_query )
 	return $posts;
 }
 
+
+function ns_get_categories( $categories = null )
+{
+	if( $categories == null )
+		$categories = get_the_category();
+
+	$category = array();
+	if( $categories )
+	{
+		foreach( $categories as $c ) $category[] = $c->slug;
+	}
+	
+	return $category;
+}
+
+function ns_get_tags( $tags = null )
+{
+	if( $tags == null )
+		$tags = get_the_tags();
+	
+	$tag = array();	
+	if( $tags )
+	{
+		foreach( $tags as $t ) $tag[] = $t->slug;
+	}
+	
+	return $tag;
+}
+
+
