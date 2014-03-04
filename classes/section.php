@@ -395,7 +395,20 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	public function get_content( $post )
 	{
-		$content = apply_filters( 'the_content', $post->post_content );
+		$content = $post->post_content;
+
+		$matches = null;
+		$num_matches = preg_match_all( "/(\[embed\].+?)+(\[\/embed\])/i", $content, $matches, PREG_SET_ORDER );
+		
+		if( ($num_matches !== FALSE) && ($num_matches > 0) )
+		{
+			for( $i = 0; $i < $num_matches; $i++ )
+			{
+				$content = str_replace( $matches[$i][0], '<div class="embed">'.$matches[$i][0].'</div>', $content );
+			}
+		}
+		
+		$content = apply_filters( 'the_content', $content );
 		
 		return $this->apply_filters( 'story-content', $content, $post );
 	}
