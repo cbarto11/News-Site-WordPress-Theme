@@ -521,6 +521,10 @@ Tags:
 		margin-right:20px;
 		margin-bottom:10px;
 	}
+	
+	body.single #content .story .embed {
+		text-align:center;
+	}
 		
 	body.single #content .story.portrait-image .details {
 		margin-left:0px;
@@ -601,10 +605,11 @@ Tags:
 	
 	body.archive #content.num-columns-1 .story .image,
 	body.search #content.num-columns-1 .story .image {
-		float:left;
+		float:right;
 		width:200px;
 		min-width:200px;
-		margin-right:10px;
+		margin-left:10px;
+		margin-right:0px;
 		margin-bottom:0px;
 	}
 	
@@ -613,6 +618,18 @@ Tags:
 		width:200px;
 		min-width:200px;
 	}
+	
+	body.archive #content.num-columns-1 .story.portrait-image .image,
+	body.search #content.num-columns-1 .story.portrait-image .image {
+		width:120px;
+		min-width:120px;
+	}
+
+	body.archive #content.num-columns-1 .story.portrait-image .image img,
+	body.search #content.num-columns-1 .story.portrait-image .image img {
+		width:120px;
+		min-width:120px;
+	}
 
 	body.archive #content.num-columns-1 .story .image iframe,
 	body.search #content.num-columns-1 .story .image iframe {
@@ -620,17 +637,19 @@ Tags:
 		min-width:200px;
 		height:auto;
 	}
-
-	body.archive #content.none-image .story,
-	body.search #content.none-image .story {
+	
+	body.archive #content.num-columns-1 .story,
+	body.search #content.num-columns-1 .story {
 		border-bottom:solid 1px #ccc;
 		margin:0px;
 	}
 
-	body.archive .story.portrait-image .description {
+	body.archive #content.num-columns-1 .story.portrait-image .description,
+	body.search #content.num-columns-1 .story.portrait-image .description {
 		overflow:hidden;
+		margin-left:0px;
 	}
-
+	
 	#page-navigation {
 		display:block;
 		clear:both;
