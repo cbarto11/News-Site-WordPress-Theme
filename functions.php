@@ -5,7 +5,8 @@
 // @package WordPress
 // @subpackage news-site
 //========================================================================================
- 
+
+
 
 // 
 // Set the log's file path.
@@ -39,9 +40,8 @@ ns_include_custom_post_types();
 //
 // Include the admin backend. 
 //----------------------------------------------------------------------------------------
-require_once( dirname(__FILE__).'/plugins/admin/main.php' );
-
-require_once( dirname(__FILE__).'/plugins/sections-widget.php' );
+require_once( dirname(__FILE__).'/admin/main.php' );
+require_once( dirname(__FILE__).'/widgets/sections-widget.php' );
 
 
 //========================================================================================
@@ -71,7 +71,7 @@ function ns_include_custom_post_types()
 	{
 		if( $use_custom_type )
 		{
-			$filepath = ns_get_theme_file_path( '/plugins/custom-post-types/'.$name.'.php' );
+			$filepath = ns_get_theme_file_path( '/custom-post-types/'.$name.'.php' );
 			if( $filepath ) include_once( $filepath );
 		}
 	}
@@ -88,12 +88,12 @@ function ns_setup_theme_files()
 	// 
 	// Include the Admin plugin.
 	//
-	//require_once( get_template_directory().'/plugins/admin/main.php' );
+	//require_once( get_template_directory().'/admin/main.php' );
 
 	// 
 	// Include the custom post types. 
 	//
-	//require_once( get_template_directory().'/plugins/custom-post-types/main.php' );
+	//require_once( get_template_directory().'/custom-post-types/main.php' );
 }
 
 
