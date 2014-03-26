@@ -25,7 +25,7 @@ $story = $ns_template_vars['story'];
 	
 	<?php endif; ?>
 
-	<div class="description">
+	<div class="description clearfix">
 	
 		<h3><?php echo $story['title']; ?></h3>
 		

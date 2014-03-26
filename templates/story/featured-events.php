@@ -9,13 +9,13 @@ $story = $ns_template_vars['story'];
 <div class="story <?php echo $section->key; ?>-section <?php echo $section->thumbnail_image; ?>-image clearfix">
 <?php echo ns_get_anchor( $story['link'], $story['title'] ); ?>
 
-	<div class="details">
+	<div class="details clearfix">
 	
 		<h3><?php echo $story['title']; ?></h3>
 		
 		<?php if( count($story['description']) > 0 ): ?>
 
-			<div class="description">
+			<div class="description clearfix">
 
 			<?php 
 			foreach( $story['description'] as $key => $value ):
