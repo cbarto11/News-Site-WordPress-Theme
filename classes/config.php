@@ -69,15 +69,19 @@ class NS_Config
 				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
 			*/
 			
-			$subdomain = array_shift(explode(".",$_SERVER['HTTP_HOST']));
-			$subdomain = 'exchange';
-			if( file_exists(get_stylesheet_directory().'/config/options-'.$subdomain.'.ini') )
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/options-'.$subdomain.'.ini' );
+			$options_filename = ns_get_blog_path_name();
+			//ns_print( $options_filename, 'OPTIONS FILENAME' );
+
+			if( file_exists(get_stylesheet_directory().'/config/options-'.$options_filename.'.ini') )
+			{
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/options-'.$options_filename.'.ini' );
+			}
 			elseif( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
+			{
 				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
+			}
 		}
 		
-		//uncomment when admin page is created.
 		$this->options = array_replace_recursive( $this->options, get_option('ns-theme-options', array()) );
 
 		$this->config = array_replace_recursive($this->options, $this->config);
