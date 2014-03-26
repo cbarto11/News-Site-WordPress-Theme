@@ -63,18 +63,22 @@ else:
 				$story_section = $ns_config->get_section( $type, $categories, $tags, false, array( 'news' ) );
 				$story = $story_section->get_listing_story( $post );
 				$ns_template_vars['section'] = $story_section;
+				$key = $ns_template_vars['section']->key;
 				
 			else:
 
 				$story = $ns_section->get_listing_story( $post );
+				$key = $ns_section->key;
 
 			endif; // if( $ns_section->key == 'none' )
 
 			?>
 
 			<?php
+			
+			//ns_print( 'listing : story : '.$key );
 			$ns_template_vars['story'] = $story;
-			ns_get_template_part( 'listing', 'story', $ns_section->key );
+			ns_get_template_part( 'listing', 'story', $key );
 	
 		endforeach; // foreach( $column_posts as $post )
 
