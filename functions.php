@@ -389,6 +389,8 @@ function ns_get_tag_by_slug( $slug )
 //----------------------------------------------------------------------------------------
 function ns_get_anchor( $url, $title, $class = null, $contents = null )
 {
+	if( $url === null ) return $contents;
+	
 	$anchor = '<a href="'.$url.'" title="'.htmlentities($title).'"';
 	//if( strpos( $url, 'uncc.edu' ) === false ) $anchor .= ' target="_blank"';
 	if( $class ) $anchor .= ' class="'.$class.'"';
@@ -638,6 +640,7 @@ function ns_get_blog_path_name()
 	global $current_blog;
 	return trim( preg_replace("/[^A-Za-z0-9 ]/", '-', $current_blog->path), '-' );
 }
+
 
 
 
