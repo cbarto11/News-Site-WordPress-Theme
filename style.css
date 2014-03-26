@@ -204,23 +204,32 @@ Tags:
 		border-radius:0;
 	}
 	
-	body.search #main .searchform {
-		background-color:#f6f6f6;
-		margin-bottom:10px;
+	#content .searchform {
+		/*
+		margin: 10px 0px 20px 0px;
+		*/
 	}
 	
-	body.search #main .searchform input[type="text"] {
+	#content .searchform .screen-reader-text {
+		display:none;
+	}
+	
+	#content .searchform .textbox_wrapper {
+		display:inline-block;
+	}
+		
+	#content .searchform input[type="text"] {
 		margin:0px;
 		min-height:2em;
 		border-radius:0;
-		width:440px;
-		margin-left:5px;
-		border:solid 1px #ddd;
+		width:548px;
+		/* margin-left:5px; */
+		border:solid 1px #ccc;
 		padding-left:5px;
 		padding-right:5px;
 	}
 	
-	body.search #main .searchform input[type="submit"] {
+	#content .searchform input[type="submit"] {
 		width:120px;
 		border-radius:0;
 		font-size:1.3em;
@@ -340,6 +349,10 @@ Tags:
  * Exchange Online specific
  ****************************************************************************************/
 
+	.listing-name {
+		text-transform:uppercase;
+	}
+	
 	.section-box {
 		margin-bottom:30px;
 	}
