@@ -129,25 +129,30 @@ function ns_setup_widget_areas()
 function ns_enqueue_scripts()
 {
 	global $ns_mobile_support, $ns_config;
+	$name = ns_get_blog_path_name();
+	$folder = 'styles/'.$name;
 	
 	wp_enqueue_script( 'jquery' );
-	ns_enqueue_files( 'style', 'main-style', '/style.css' );
+	ns_enqueue_files( 'style', 'main-style', 'style.css' );
+	ns_enqueue_files( 'style', 'main-style-'.$name, $folder.'/style.css' );
 	
 	if( $ns_mobile_support->use_mobile_site )
 	{
-		ns_enqueue_file( 'script', 'mobile-menu', '/scripts/mobile-menu.js' );
-		ns_enqueue_files( 'style', 'mobile-site', '/styles/mobile-site.css');
+		ns_enqueue_file( 'script', 'mobile-menu', 'scripts/mobile-menu.js' );
+		ns_enqueue_files( 'style', 'mobile-site', 'styles/mobile-site.css');
+		ns_enqueue_files( 'style', 'mobile-site-'.$name, $folder.'/mobile-site.css');
 	}
 	else
 	{
-		ns_enqueue_files( 'style', 'full-site', '/styles/full-site.css');
+		ns_enqueue_files( 'style', 'full-site', 'styles/full-site.css');
+		ns_enqueue_files( 'style', 'full-site-'.$name, $folder.'/full-site.css');
 	}
 	
 	if( is_front_page() )
 	{
-		ns_enqueue_file( 'script', 'nivo-slider', '/scripts/nivo-slider/jquery.nivo.slider.js' );
-		ns_enqueue_file( 'style', 'nivo-slider', '/scripts/nivo-slider/nivo-slider.css' );
-		ns_enqueue_file( 'style', 'nivo-slider-default-theme', '/scripts/nivo-slider/themes/default/default.css' );
+		ns_enqueue_file( 'script', 'nivo-slider', 'scripts/nivo-slider/jquery.nivo.slider.js' );
+		ns_enqueue_file( 'style', 'nivo-slider', 'scripts/nivo-slider/nivo-slider.css' );
+		ns_enqueue_file( 'style', 'nivo-slider-default-theme', 'scripts/nivo-slider/themes/default/default.css' );
 	}
 }
 
