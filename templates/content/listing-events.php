@@ -5,6 +5,10 @@
 
 <h1><?php echo $ns_template_vars['page-title']; ?></h1>
 
+<?php if( isset($ns_template_vars['description']) ): ?>
+	<div class="description"><?php echo $ns_template_vars['description']; ?></siv>
+<?php endif; ?>
+
 <?php
 //------------------------------------------------------------------------------------
 // Print of the stories for this archive listing.

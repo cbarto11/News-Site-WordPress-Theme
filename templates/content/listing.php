@@ -1,9 +1,17 @@
 
-
+<?php //ns_print('listing.php'); ?>
 <?php global $ns_config, $ns_mobile_support, $ns_template_vars, $wp_query; ?>
 <?php $ns_section = $ns_template_vars['section']; ?>
 
+<?php if( isset($ns_template_vars['listing-name']) ): ?>
+	<div class="listing-name"><?php echo $ns_template_vars['listing-name']; ?></div>
+<?php endif; ?>
+
 <h1><?php echo $ns_template_vars['page-title']; ?></h1>
+
+<?php if( isset($ns_template_vars['description']) ): ?>
+	<div class="description"><?php echo $ns_template_vars['description']; ?></siv>
+<?php endif; ?>
 
 <?php
 //------------------------------------------------------------------------------------
