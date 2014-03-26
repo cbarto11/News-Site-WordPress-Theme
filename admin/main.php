@@ -168,13 +168,13 @@ class NS_AdminPlugin
 	{
 		wp_register_script( 
 			'admin-banner-js', 
-			get_template_directory_uri().'/plugins/admin/admin-banner.js', 
+			get_template_directory_uri().'/admin/admin-banner.js', 
 			array(),
 			'1.0' );
 
 		wp_register_script( 
 			'admin-stories-js', 
-			get_template_directory_uri().'/plugins/admin/admin-stories.js', 
+			get_template_directory_uri().'/admin/admin-stories.js', 
 			array(),
 			'1.0' );
 
