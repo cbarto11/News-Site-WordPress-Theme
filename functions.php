@@ -349,6 +349,8 @@ function ns_get_template_part( $name, $folder = '', $key = '' )
 {
 	$folder = 'templates/'.$folder.'/';
 	
+	//ns_print($folder.$name.'-'.$key.'.php', 'TEMPATE-PART-FILENAME');
+	
 	if( $key )
 	{
 		$filepath = ns_get_theme_file_path( $folder.$name.'-'.$key.'.php' );
@@ -359,8 +361,14 @@ function ns_get_template_part( $name, $folder = '', $key = '' )
 		$filepath = ns_get_theme_file_path( $folder.$name.'.php' );
 	}
 	
+	//ns_print( $filepath, 'FILEPATH' );
 	if( $filepath !== null )
+	{
 		include( $filepath );
+		return true;
+	}
+	
+	return false;
 }
 
 
