@@ -421,10 +421,16 @@ function ns_get_current_datetime()
 function ns_use_widget( $part, $placement )
 {
 	global $ns_config;
-	if( $ns_config->use_widget($part, $placement) )
+	
+	if( !function_exists('dynamic_sidebar') ) return;
+	
+	if( is_front_page() )
 	{
-		if( !function_exists('dynamic_sidebar') || !dynamic_sidebar($part.'-'.$placement) ): endif;
+		$p = 'front-page-'.$placement;
+		if( $ns_config->use_widget($part, $p) ) dynamic_sidebar( $part.'-'.$p );
 	}
+	
+	if( $ns_config->use_widget($part, $placement) ) dynamic_sidebar( $part.'-'.$placement );
 }
 
 
