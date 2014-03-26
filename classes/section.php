@@ -250,6 +250,8 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	private function apply_filters( $name, $story, $post )
 	{
+		//ns_print( 'ns-'.$post->post_type.'-'.$name, 'apply-filters' );
+		
 		$story = apply_filters( 'ns-'.$name, $story, $post );
 		$story = apply_filters( 'ns-'.$this->key.'-'.$name, $story, $post );
 		$story = apply_filters( 'ns-'.$post->post_type.'-'.$name, $story, $post );
