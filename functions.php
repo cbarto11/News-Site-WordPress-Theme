@@ -71,7 +71,7 @@ function ns_include_custom_post_types()
 	{
 		if( $use_custom_type )
 		{
-			$filepath = ns_get_theme_file_path( '/custom-post-types/'.$name.'.php' );
+			$filepath = ns_get_theme_file_path( '/custom-post-types/'.$name.'/'.$name.'.php' );
 			if( $filepath ) include_once( $filepath );
 		}
 	}
@@ -646,7 +646,10 @@ function ns_get_tags( $tags = null )
 function ns_get_blog_path_name()
 {
 	global $current_blog;
-	return trim( preg_replace("/[^A-Za-z0-9 ]/", '-', $current_blog->path), '-' );
+	$blog_details = get_blog_details();
+	$path = $blog_details->path;
+// 	ns_print( trim( preg_replace("/[^A-Za-z0-9 ]/", '-', $path), '-' ) );
+	return trim( preg_replace("/[^A-Za-z0-9 ]/", '-', $path), '-' );
 }
 
 

@@ -3,7 +3,7 @@
  * 
  */
  
-require_once( dirname(__FILE__).'/event-widget.php' );
+require_once( dirname(__FILE__).'/todays-events-widget.php' );
 
 add_action( 'init', array('NS_CustomEventPostType', 'create_custom_post') );
 add_filter( 'post_updated_messages', array('NS_CustomEventPostType', 'update_messages') );

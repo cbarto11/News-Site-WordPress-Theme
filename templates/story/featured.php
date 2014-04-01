@@ -25,13 +25,13 @@ $story = $ns_template_vars['story'];
 	
 	<?php endif; ?>
 
-	<div class="details clearfix">
+	<div class="details">
 	
 		<h3><?php echo $story['title']; ?></h3>
 		
 		<?php if( count($story['description']) > 0 ): ?>
 
-			<div class="description clearfix">
+			<div class="description">
 
 			<?php 
 			foreach( $story['description'] as $key => $value ):
