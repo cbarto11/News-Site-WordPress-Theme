@@ -347,25 +347,25 @@ function ns_get_theme_file_url( $filepath )
 //----------------------------------------------------------------------------------------
 function ns_get_template_part( $name, $folder = '', $key = '' )
 {
-	$folder = 'templates/'.$folder.'/';
+	$site_name = ns_get_blog_path_name();
+	$folders = array(
+		'templates/'.$site_name.'/'.$folder.'/',
+		'templates/default/'.$folder.'/'
+	);
 	
-	//ns_print($folder.$name.'-'.$key.'.php', 'TEMPATE-PART-FILENAME');
-	
-	if( $key )
+	foreach( $folders as $folder )
 	{
-		$filepath = ns_get_theme_file_path( $folder.$name.'-'.$key.'.php' );
-	}
+		if( $key )
+			$filepath = ns_get_theme_file_path( $folder.$name.'-'.$key.'.php' );
 	
-	if( $filepath === null )
-	{
-		$filepath = ns_get_theme_file_path( $folder.$name.'.php' );
-	}
+		if( $filepath === null )
+			$filepath = ns_get_theme_file_path( $folder.$name.'.php' );
 	
-	//ns_print( $filepath, 'FILEPATH' );
-	if( $filepath !== null )
-	{
-		include( $filepath );
-		return true;
+		if( $filepath !== null )
+		{
+			include( $filepath );
+			return true;
+		}
 	}
 	
 	return false;
