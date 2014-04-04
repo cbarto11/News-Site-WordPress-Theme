@@ -30,12 +30,6 @@ $ns_mobile_support = new Mobile_Support;
 //----------------------------------------------------------------------------------------
 require_once( get_template_directory().'/classes/config.php' );
 $ns_config = new NS_Config;
-$ns_config->load_config();
-
-// 
-// Include the custom post types. 
-//----------------------------------------------------------------------------------------
-ns_include_custom_post_types();
 
 //
 // Include the admin backend. 
@@ -61,12 +55,13 @@ add_filter( 'the_posts', 'ns_alter_news_posts', 9999, 2 );
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-function ns_include_custom_post_types()
+if( !function_exists('ns_setup_theme_files') ):
+function ns_setup_theme_files()
 {
-	global $ns_config;
-	
+	global $ns_config;	
+	$ns_config->load_config();
+
 	$custom_post_types = $ns_config->get_value('custom-post-type');
-	
 	foreach( $custom_post_types as $name => $use_custom_type )
 	{
 		if( $use_custom_type )
@@ -76,30 +71,14 @@ function ns_include_custom_post_types()
 		}
 	}
 }
+endif;
 
-
-//----------------------------------------------------------------------------------------
-// 
-//----------------------------------------------------------------------------------------
-function ns_setup_theme_files()
-{
-	global $ns_config;
-	
-	// 
-	// Include the Admin plugin.
-	//
-	//require_once( get_template_directory().'/admin/main.php' );
-
-	// 
-	// Include the custom post types. 
-	//
-	//require_once( get_template_directory().'/custom-post-types/main.php' );
-}
 
 
 //----------------------------------------------------------------------------------------
 // Sets up the widget areas.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_setup_widget_areas') ):
 function ns_setup_widget_areas()
 {
 	global $ns_config;
@@ -121,11 +100,14 @@ function ns_setup_widget_areas()
 		register_sidebar( $widget_area );
 	}
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
 // Enqueue any needed css or javascript files.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_enqueue_scripts') ):
 function ns_enqueue_scripts()
 {
 	global $ns_mobile_support, $ns_config;
@@ -155,6 +137,8 @@ function ns_enqueue_scripts()
 		ns_enqueue_file( 'style', 'nivo-slider-default-theme', 'scripts/nivo-slider/themes/default/default.css' );
 	}
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -164,6 +148,7 @@ function ns_enqueue_scripts()
 // @param	$name		string		The name to give te file.
 // @param	$filepath	string		The relative path to filename.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_enqueue_files') ):
 function ns_enqueue_files( $type, $name, $filepath )
 {
 	if( $type !== 'script' && $type !== 'style' ) return;
@@ -185,6 +170,8 @@ function ns_enqueue_files( $type, $name, $filepath )
 		}
 	}
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -194,6 +181,7 @@ function ns_enqueue_files( $type, $name, $filepath )
 // @param	$name		string		The name to give te file.
 // @param	$filepath	string		The relative path to filename.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_enqueue_file') ):
 function ns_enqueue_file( $type, $name, $filepath )
 {
 	if( $type !== 'script' && $type !== 'style' ) return;
@@ -206,20 +194,26 @@ function ns_enqueue_file( $type, $name, $filepath )
 		call_user_func( 'wp_enqueue_'.$type, $name );
 	}
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
 // Adds support for featured images.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_add_featured_image_support') ):
 function ns_add_featured_image_support()
 {
 	add_theme_support( 'post-thumbnails' );
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
 // Validates that the correct categories and tags are present in the WordPress site.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_validate_categories_and_tags') ):
 function ns_validate_categories_and_tags()
 {
 	global $ns_config;
@@ -266,16 +260,21 @@ function ns_validate_categories_and_tags()
 		}
 	}
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
 // Clears the log file.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_clear_log') ):
 function ns_clear_log()
 {
 	global $ns_logfile;
 	file_put_contents( $ns_logfile, '' );
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -283,11 +282,14 @@ function ns_clear_log()
 // 
 // @param	$line		string		A line of text to write into a file.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_write_to_log') ):
 function ns_write_to_log( $line )
 {
 	global $ns_logfile;
 	file_put_contents( $ns_logfile, print_r($line, true)."\n", FILE_APPEND );
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -295,6 +297,7 @@ function ns_write_to_log( $line )
 // 
 // @param	$var		mixed		An object to var_dump.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_print') ):
 function ns_print( $var, $label = '' )
 {
 	echo '<pre style="display:block; clear:both;">';
@@ -302,6 +305,8 @@ function ns_print( $var, $label = '' )
 	var_dump($var);
 	echo '</pre>';
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -310,6 +315,7 @@ function ns_print( $var, $label = '' )
 // @param	$filepath	string		The relative path within the theme to the file.
 // @return				string|null	The absolute path to the file in the theme.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_get_theme_file_path') ):
 function ns_get_theme_file_path( $filepath )
 {
 	if( file_exists(get_stylesheet_directory().'/'.$filepath) )
@@ -320,6 +326,8 @@ function ns_get_theme_file_path( $filepath )
 	
 	return null;
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -328,6 +336,7 @@ function ns_get_theme_file_path( $filepath )
 // @param	$filepath	string		The relative path within the theme to the file.
 // @return				string|null	The absolute path to the file in the theme.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_get_theme_file_url') ):
 function ns_get_theme_file_url( $filepath )
 {
 	if( file_exists(get_stylesheet_directory().'/'.$filepath) )
@@ -338,6 +347,8 @@ function ns_get_theme_file_url( $filepath )
 	
 	return null;
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -345,6 +356,7 @@ function ns_get_theme_file_url( $filepath )
 // 
 // @param	$name		string		The name of the template part.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_get_template_part') ):
 function ns_get_template_part( $name, $folder = '', $key = '' )
 {
 	$site_name = ns_get_blog_path_name();
@@ -370,6 +382,8 @@ function ns_get_template_part( $name, $folder = '', $key = '' )
 	
 	return false;
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -378,10 +392,12 @@ function ns_get_template_part( $name, $folder = '', $key = '' )
 // @param	$slug		string		The slug/name of the tag.
 // @return				mixed		Term Row (array) or false if not found.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_get_tag_by_slug') ):
 function ns_get_tag_by_slug( $slug )
 {
 	return get_term_by( 'slug', $slug, 'post_tag' );
 }
+endif;
 
 
 
@@ -395,12 +411,12 @@ function ns_get_tag_by_slug( $slug )
 // @param	$contents	string|null	The contents wrapped by the anchor.
 // @return				string		The created anchor tag.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_get_anchor') ):
 function ns_get_anchor( $url, $title, $class = null, $contents = null )
 {
 	if( $url === null ) return $contents;
 	
 	$anchor = '<a href="'.$url.'" title="'.htmlentities($title).'"';
-	//if( strpos( $url, 'uncc.edu' ) === false ) $anchor .= ' target="_blank"';
 	if( $class ) $anchor .= ' class="'.$class.'"';
 	$anchor .= '>';
 
@@ -409,6 +425,8 @@ function ns_get_anchor( $url, $title, $class = null, $contents = null )
 
 	return $anchor;
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -416,6 +434,7 @@ function ns_get_anchor( $url, $title, $class = null, $contents = null )
 //
 // @return				DateTime	The current datetime.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_get_current_datetime') ):
 function ns_get_current_datetime()
 {
 	global $ns_config;
@@ -423,11 +442,14 @@ function ns_get_current_datetime()
 	date_default_timezone_set($timezone);
 	return ( new Datetime() );
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_use_widget') ):
 function ns_use_widget( $part, $placement )
 {
 	global $ns_config;
@@ -442,11 +464,14 @@ function ns_use_widget( $part, $placement )
 	
 	if( $ns_config->use_widget($part, $placement) ) dynamic_sidebar( $part.'-'.$placement );
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_image') ):
 function ns_image( $image_info, $echo = true )
 {
 	if( empty($image_info) ) return;
@@ -463,6 +488,8 @@ function ns_image( $image_info, $echo = true )
 	if( $echo ) echo $html;
 	else return $html;
 }
+endif;
+
 
 
 //----------------------------------------------------------------------------------------
@@ -471,6 +498,7 @@ function ns_image( $image_info, $echo = true )
 // @param	$path		string		The absolute or relative path to the image.
 // @return				string|null	The absolute url to the image.
 //----------------------------------------------------------------------------------------
+if( !function_exists('ns_get_image_url') ):
 function ns_get_image_url( $path )
 {
 	if( is_array($path) ) $path = $path['url'];
@@ -485,8 +513,11 @@ function ns_get_image_url( $path )
 	if( $url ) return $url;
 	return ns_get_theme_file_url($path);
 }
+endif;
 
 
+
+if( !function_exists('ns_get_image_info') ):
 function ns_get_image_info( $image_info )
 {
 	if( !$image_info ) return $image_info;
@@ -528,22 +559,32 @@ function ns_get_image_info( $image_info )
 	
 	return $image_info;
 }
+endif;
 
 
+
+if( !function_exists('ns_str_starts_with') ):
 function ns_str_starts_with($haystack, $needle)
 {
     return $needle === "" || strpos($haystack, $needle) === 0;
 }
+endif;
 
+
+
+if( !function_exists('ns_str_ends_with') ):
 function ns_str_ends_with($haystack, $needle)
 {
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }
+endif;
+
 
 
 /**
  * Alters the default query made when querying the News section.
  */
+if( !function_exists('ns_alter_news_section_query') ):
 function ns_alter_news_section_query( $wp_query )
 {
 	if( (!isset($wp_query->query['category_name'])) || 
@@ -566,12 +607,14 @@ function ns_alter_news_section_query( $wp_query )
 		$wp_query->query_vars['posts_per_page'] = 5;
 	}
 }
+endif;
 
 
 
 /**
  * 
  */
+if( !function_exists('ns_alter_news_posts') ):
 function ns_alter_news_posts( $posts, $wp_query )
 {
 	global $ns_config;
@@ -611,8 +654,11 @@ function ns_alter_news_posts( $posts, $wp_query )
 	
 	return $posts;
 }
+endif;
 
 
+
+if( !function_exists('ns_get_categories') ):
 function ns_get_categories( $categories = null )
 {
 	if( $categories == null )
@@ -626,7 +672,11 @@ function ns_get_categories( $categories = null )
 	
 	return $category;
 }
+endif;
 
+
+
+if( !function_exists('ns_get_tags') ):
 function ns_get_tags( $tags = null )
 {
 	if( $tags == null )
@@ -640,17 +690,19 @@ function ns_get_tags( $tags = null )
 	
 	return $tag;
 }
+endif;
 
 
 
+if( !function_exists('ns_get_blog_path_name') ):
 function ns_get_blog_path_name()
 {
 	global $current_blog;
 	$blog_details = get_blog_details();
 	$path = $blog_details->path;
-// 	ns_print( trim( preg_replace("/[^A-Za-z0-9 ]/", '-', $path), '-' ) );
 	return trim( preg_replace("/[^A-Za-z0-9 ]/", '-', $path), '-' );
 }
+endif;
 
 
 
