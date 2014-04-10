@@ -23,6 +23,8 @@ class NS_AdminPlugin
 	 */	
 	public static function setup_admin_pages()
 	{
+		global $ns_config;
+		
 	    add_action( 'admin_enqueue_scripts', array('NS_AdminPlugin', 'add_scripts') );
 
 		add_menu_page(
@@ -33,14 +35,17 @@ class NS_AdminPlugin
 			array( 'NS_AdminPlugin', 'show_admin_page' )	// function to call when rendering the menu page.
 	    );
 	    
-	    add_submenu_page(
-	    	'front-page-editor',							// slug of parent menu
-	    	'Banner',										// text to be displayed in the menu.
-	    	'Banner',										// text to be displayed for this actual menu item.
-	    	'administrator',								// type of user that can access menu page.
-	    	'ns-banner',									// unique ID / slug for menu item.
-	    	array( 'NS_AdminPlugin', 'show_banner_page' )	// function to call when rendering the menu page.
-	    );
+	    if( $ns_config->show_template_part('banner') )
+	    {
+			add_submenu_page(
+				'front-page-editor',							// slug of parent menu
+				'Banner',										// text to be displayed in the menu.
+				'Banner',										// text to be displayed for this actual menu item.
+				'administrator',								// type of user that can access menu page.
+				'ns-banner',									// unique ID / slug for menu item.
+				array( 'NS_AdminPlugin', 'show_banner_page' )	// function to call when rendering the menu page.
+			);
+	    }
 
 	    add_submenu_page(
 	    	'front-page-editor',
