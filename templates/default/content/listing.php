@@ -100,11 +100,11 @@ else:
 
 		?>
 		<div id="page-navigation" class="clearfix" role="navigation">
-			<div class="nav-older">
-				<?php next_posts_link( '&laquo; Older posts' ); ?>
+			<div class="nav-next">
+				<?php next_posts_link( $ns_section->get_listing_label('next') ); ?>
 			</div>
-			<div class="nav-newer">
-				<?php previous_posts_link( 'Newer posts &raquo;' ); ?>
+			<div class="nav-prev">
+				<?php previous_posts_link( $ns_section->get_listing_label('prev') ); ?>
 			</div>
 		</div>
 		<?php

@@ -671,11 +671,11 @@ Tags:
 		margin-top:15px;
 	}
 	
-	#page-navigation .nav-older {
+	#page-navigation .nav-next {
 		float:left;
 	}
 	
-	#page-navigation .nav-newer {
+	#page-navigation .nav-prev {
 		float:right;
 	}
 	
