@@ -159,12 +159,12 @@ Tags:
 		display:block;
 	}
 	
-	#header .title-box .name {
-		font-size:2em;
+	#header .title-box .title {
+		font-size:1.3em;
 	}
 	
 	#header .title-box .description {
-		font-size:1.5em;
+		font-size:1.0em;
 	}
 	
 	#header .click-box {
