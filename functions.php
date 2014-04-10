@@ -57,7 +57,7 @@ if( !function_exists('ns_enqueue_scripts') ):
 function ns_enqueue_scripts()
 {
 	global $ns_mobile_support, $ns_config;
-	$name = ns_get_blog_path_name();
+	$name = NS_BLOG_NAME;
 	$folder = 'styles/'.$name;
 	
 	wp_enqueue_script( 'jquery' );
@@ -305,7 +305,7 @@ endif;
 if( !function_exists('ns_get_template_part') ):
 function ns_get_template_part( $name, $folder = '', $key = '' )
 {
-	$site_name = ns_get_blog_path_name();
+	$site_name = NS_BLOG_NAME;
 	$folders = array(
 		'templates/'.$site_name.'/'.$folder.'/',
 		'templates/default/'.$folder.'/'
@@ -640,18 +640,6 @@ endif;
 
 
 
-if( !function_exists('ns_get_blog_path_name') ):
-function ns_get_blog_path_name()
-{
-	global $current_blog;
-	$blog_details = get_blog_details();
-	$path = $blog_details->path;
-	return trim( preg_replace("/[^A-Za-z0-9 ]/", '-', $path), '-' );
-}
-endif;
-
-
-
 //========================================================================================
 //======================================================================= Main Setup =====
 
@@ -688,7 +676,7 @@ require_once( dirname(__FILE__).'/widgets/sections-widget.php' );
 // 
 // Set blog name.
 //----------------------------------------------------------------------------------------
-define( 'BLOG_NAME', trim( preg_replace("/[^A-Za-z0-9 ]/", '-', get_blog_details()->path), '-' ) );
+define( 'NS_BLOG_NAME', trim( preg_replace("/[^A-Za-z0-9 ]/", '-', get_blog_details()->path), '-' ) );
 
 // 
 // Include custom post types.

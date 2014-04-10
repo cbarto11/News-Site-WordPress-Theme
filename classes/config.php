@@ -69,7 +69,7 @@ class NS_Config
 				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
 			*/
 			
-			$options_filename = ns_get_blog_path_name();
+			$options_filename = NS_BLOG_NAME;
 			//ns_print( $options_filename, 'OPTIONS FILENAME' );
 
 			if( file_exists(get_stylesheet_directory().'/config/options-'.$options_filename.'.ini') )
