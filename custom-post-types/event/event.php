@@ -57,7 +57,9 @@ class NS_CustomEventPostType
 			'has_archive'   => true,
 		);
 		
-		register_post_type( 'event', $args );	
+		register_post_type( 'event', $args );
+		
+		flush_rewrite_rules();
 	}
 	
 	
