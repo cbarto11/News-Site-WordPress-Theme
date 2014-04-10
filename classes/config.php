@@ -70,7 +70,7 @@ class NS_Config
 			*/
 			
 			$options_filename = NS_BLOG_NAME;
-			//ns_print( $options_filename, 'OPTIONS FILENAME' );
+// 			ns_print( $options_filename, 'OPTIONS FILENAME' );
 
 			if( file_exists(get_stylesheet_directory().'/config/options-'.$options_filename.'.ini') )
 			{
@@ -146,7 +146,8 @@ class NS_Config
 	{
 		foreach( $this->config['sections'] as $key => &$section_data )
 		{
-			$section_data = new NS_Section( $key, $section_data );
+			if( is_array($section_data) ) 
+				$section_data = new NS_Section( $key, $section_data );
 		}
 	}
 	
@@ -662,6 +663,15 @@ class NS_Config
 			date_default_timezone_set('America/New_York');
 		$todays_datetime = new DateTime;
 		return $todays_datetime;
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function reset_options()
+	{
+		delete_option( 'ns-theme-options' );
 	}
 
 }

@@ -74,6 +74,15 @@ class NS_AdminPlugin
 	    	array( 'NS_AdminPlugin', 'show_news_page' )
 	    );
 
+	    add_submenu_page(
+	    	'front-page-editor',
+	    	'Reset',
+	    	'Reset',
+	    	'administrator',
+	    	'ns-reset-options',
+	    	array( 'NS_AdminPlugin', 'show_reset_options_page' )
+	    );
+
 	    remove_submenu_page( 'front-page-editor', 'font-page-editor' );
 	    unset($GLOBALS['submenu']['front-page-editor'][0]);
 	}
@@ -161,6 +170,17 @@ class NS_AdminPlugin
 	{
 		require_once( dirname(__FILE__).'/news-admin-page.php' );
 		$admin_page = new NS_NewsAdminPage;
+		$admin_page->show_page();
+	}
+
+
+	/**
+	 *
+	 */	
+	public static function show_reset_options_page()
+	{
+		require_once( dirname(__FILE__).'/reset-options-page.php' );
+		$admin_page = new NS_ResetOptionsAdminPage;
 		$admin_page->show_page();
 	}
 
