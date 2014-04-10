@@ -649,6 +649,11 @@ endif;
 $ns_logfile = dirname(__FILE__).'/newssite.log';
 
 // 
+// Set blog name.
+//----------------------------------------------------------------------------------------
+define( 'NS_BLOG_NAME', trim( preg_replace("/[^A-Za-z0-9 ]/", '-', get_blog_details()->path), '-' ) );
+
+// 
 // Add the image sizes for thumbnails.
 //----------------------------------------------------------------------------------------
 add_image_size( 'thumbnail_portrait', 120 );
@@ -672,11 +677,6 @@ $ns_config->load_config();
 //----------------------------------------------------------------------------------------
 require_once( dirname(__FILE__).'/admin/main.php' );
 require_once( dirname(__FILE__).'/widgets/sections-widget.php' );
-
-// 
-// Set blog name.
-//----------------------------------------------------------------------------------------
-define( 'NS_BLOG_NAME', trim( preg_replace("/[^A-Za-z0-9 ]/", '-', get_blog_details()->path), '-' ) );
 
 // 
 // Include custom post types.
