@@ -7,7 +7,7 @@ require_once( dirname(__FILE__).'/section.php' );
 // 
 // 
 //========================================================================================
-class NS_Config
+class NH_Config
 {
 
 	//====================================================================================
@@ -16,8 +16,8 @@ class NS_Config
 
 	const CONFIG_DEFAULT_INI_FILENAME = 'config/config-default.ini';
 	const CONFIG_INI_FILENAME = 'config/config.ini';
-	const OPTIONS_DEFAULT_INI_FILENAME = 'config/options-default.ini';
-	const OPTIONS_INI_FILENAME = 'config/options.ini';
+	const OPTIONH_DEFAULT_INI_FILENAME = 'config/optionh-default.ini';
+	const OPTIONH_INI_FILENAME = 'config/options.ini';
 	private $config;
 	private $options;
 	
@@ -55,34 +55,34 @@ class NS_Config
 
 		$this->options = array();
 
-		if( file_exists(get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME) )
-			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME );
-		elseif( file_exists(get_template_directory().'/'.self::OPTIONS_INI_FILENAME) )
-			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_INI_FILENAME );
+		if( file_exists(get_template_directory().'/'.self::OPTIONH_DEFAULT_INI_FILENAME) )
+			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONH_DEFAULT_INI_FILENAME );
+		elseif( file_exists(get_template_directory().'/'.self::OPTIONH_INI_FILENAME) )
+			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONH_INI_FILENAME );
 		else
-			exit( 'Unable to locate theme '.self::OPTIONS_DEFAULT_INI_FILENAME.' file.' );
+			exit( 'Unable to locate theme '.self::OPTIONH_DEFAULT_INI_FILENAME.' file.' );
 		
 		if( is_child_theme() )
 		{
 			/* RESTORE THIS CODE FOR PRODUCTION:
-			if( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
+			if( file_exists(get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME) )
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME );
 			*/
 			
-			$options_filename = NS_BLOG_NAME;
-// 			ns_print( $options_filename, 'OPTIONS FILENAME' );
+			$optionh_filename = NH_BLOG_NAME;
+// 			nh_print( $optionh_filename, 'OPTIONS FILENAME' );
 
-			if( file_exists(get_stylesheet_directory().'/config/options-'.$options_filename.'.ini') )
+			if( file_exists(get_stylesheet_directory().'/config/optionh-'.$optionh_filename.'.ini') )
 			{
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/options-'.$options_filename.'.ini' );
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/optionh-'.$optionh_filename.'.ini' );
 			}
-			elseif( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
+			elseif( file_exists(get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME) )
 			{
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME );
 			}
 		}
 		
-		$this->options = array_replace_recursive( $this->options, get_option('ns-theme-options', array()) );
+		$this->options = array_replace_recursive( $this->options, get_option('nh-theme-options', array()) );
 
 		$this->config = array_replace_recursive($this->options, $this->config);
 
@@ -147,7 +147,7 @@ class NS_Config
 		foreach( $this->config['sections'] as $key => &$section_data )
 		{
 			if( is_array($section_data) ) 
-				$section_data = new NS_Section( $key, $section_data );
+				$section_data = new NH_Section( $key, $section_data );
 		}
 	}
 	
@@ -343,7 +343,7 @@ class NS_Config
 	//------------------------------------------------------------------------------------
 	public function get_default_section()
 	{
-		return new NS_Section( 'none', array( 'name' => 'None' ) );
+		return new NH_Section( 'none', array( 'name' => 'None' ) );
 	}
 	
 	
@@ -470,13 +470,13 @@ class NS_Config
 	//------------------------------------------------------------------------------------
 	public function get_banner_images()
 	{
-		global $ns_mobile_support;
+		global $nh_mobile_support;
 		
 		$options = $this->get_value( 'banner', 'images' );
 		if( $options == null ) $options = array();
 		
 		$image_type = 'full';
-		if( $ns_mobile_support->use_mobile_site )
+		if( $nh_mobile_support->use_mobile_site )
 			$image_type = 'thumbnail_landscape';
 
 		$images = array();
@@ -551,7 +551,7 @@ class NS_Config
 				break;
 		}
 		
-		$options = apply_filters( 'ns-get-admin-options', $options, $page );
+		$options = apply_filters( 'nh-get-admin-options', $options, $page );
 		return $options;
 	}
 	
@@ -637,10 +637,10 @@ class NS_Config
 	//------------------------------------------------------------------------------------
 	public function save_options()
 	{
-		update_option( 'ns-theme-options', $this->options );
+		update_option( 'nh-theme-options', $this->options );
 		$this->config = array_replace_recursive($this->config, $this->options);
 		$this->verify_settings();
-		//ns_print($this->config);
+		//nh_print($this->config);
 	}
 	
 	
@@ -683,7 +683,7 @@ class NS_Config
 	//------------------------------------------------------------------------------------
 	public function reset_options()
 	{
-		delete_option( 'ns-theme-options' );
+		delete_option( 'nh-theme-options' );
 	}
 	
 	

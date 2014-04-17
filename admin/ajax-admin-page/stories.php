@@ -3,7 +3,7 @@
 /**
  *
  */
-class NS_AdminAjaxPage_Stories
+class NH_AdminAjaxPage_Stories
 {
 	private static $_status;
 	private static $_message;
@@ -43,7 +43,7 @@ class NS_AdminAjaxPage_Stories
 	public static function process_post()
 	{
 		if( !isset($_POST['nonce']) || 
-			!wp_verify_nonce($_POST['nonce'], "ns-stories-options-nonce") )
+			!wp_verify_nonce($_POST['nonce'], "nh-stories-optionh-nonce") )
 		{
 			self::$_status = false;
 			self::$_message = 'Invalid nonce code ('.$_POST['nonce'].').';
@@ -83,7 +83,7 @@ class NS_AdminAjaxPage_Stories
 	 */
 	private static function get_search_results()
 	{
-		global $ns_config;
+		global $nh_config;
 		
 		if( !isset($_POST['section']) )
 		{
@@ -99,7 +99,7 @@ class NS_AdminAjaxPage_Stories
 			return;
 		}
 		
-		$section = $ns_config->get_section_by_key( $_POST['section'] );
+		$section = $nh_config->get_section_by_key( $_POST['section'] );
 		
 		if( $section === null )
 		{

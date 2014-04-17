@@ -12,24 +12,24 @@
 //========================================================================================
 //====================================================== Default filters and actions =====
 
-add_action( 'init', 'ns_setup_widget_areas' );
-add_action( 'after_setup_theme', 'ns_add_featured_image_support' );
-add_action( 'wp_enqueue_scripts', 'ns_enqueue_scripts' );
-add_action( 'admin_notices', 'ns_validate_categories_and_tags' );
+add_action( 'init', 'nh_setup_widget_areas' );
+add_action( 'after_setup_theme', 'nh_add_featured_image_support' );
+add_action( 'wp_enqueue_scripts', 'nh_enqueue_scripts' );
+add_action( 'admin_notices', 'nh_validate_categories_and_tags' );
 
-add_filter( 'pre_get_posts', 'ns_alter_news_section_query' );
-add_filter( 'the_posts', 'ns_alter_news_posts', 9999, 2 );
+add_filter( 'pre_get_posts', 'nh_alter_news_section_query' );
+add_filter( 'the_posts', 'nh_alter_news_posts', 9999, 2 );
 
 
 //----------------------------------------------------------------------------------------
 // Sets up the widget areas.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_setup_widget_areas') ):
-function ns_setup_widget_areas()
+if( !function_exists('nh_setup_widget_areas') ):
+function nh_setup_widget_areas()
 {
-	global $ns_config;
+	global $nh_config;
 	
-	$widgets = $ns_config->get_widget_areas();
+	$widgets = $nh_config->get_widget_areas();
 	
 	$widget_area = array();
 	$widget_area['before_widget'] = '<div id="%1$s" class="widget section-box %2$s">';
@@ -37,7 +37,7 @@ function ns_setup_widget_areas()
 	$widget_area['before_title'] = '<h2 class="widget-title">';
 	$widget_area['after_title'] = '</h2>';
 
-	//ns_print($widgets);
+	//nh_print($widgets);
 
 	foreach( $widgets as $widget )
 	{
@@ -53,34 +53,34 @@ endif;
 //----------------------------------------------------------------------------------------
 // Enqueue any needed css or javascript files.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_enqueue_scripts') ):
-function ns_enqueue_scripts()
+if( !function_exists('nh_enqueue_scripts') ):
+function nh_enqueue_scripts()
 {
-	global $ns_mobile_support, $ns_config;
-	$name = NS_BLOG_NAME;
+	global $nh_mobile_support, $nh_config;
+	$name = NH_BLOG_NAME;
 	$folder = 'styles/'.$name;
 	
 	wp_enqueue_script( 'jquery' );
-	ns_enqueue_files( 'style', 'main-style', 'style.css' );
-	ns_enqueue_files( 'style', 'main-style-'.$name, $folder.'/style.css' );
+	nh_enqueue_files( 'style', 'main-style', 'style.css' );
+	nh_enqueue_files( 'style', 'main-style-'.$name, $folder.'/style.css' );
 	
-	if( $ns_mobile_support->use_mobile_site )
+	if( $nh_mobile_support->use_mobile_site )
 	{
-		ns_enqueue_file( 'script', 'mobile-menu', 'scripts/mobile-menu.js' );
-		ns_enqueue_files( 'style', 'mobile-site', 'styles/mobile-site.css');
-		ns_enqueue_files( 'style', 'mobile-site-'.$name, $folder.'/mobile-site.css');
+		nh_enqueue_file( 'script', 'mobile-menu', 'scripts/mobile-menu.js' );
+		nh_enqueue_files( 'style', 'mobile-site', 'styles/mobile-site.css');
+		nh_enqueue_files( 'style', 'mobile-site-'.$name, $folder.'/mobile-site.css');
 	}
 	else
 	{
-		ns_enqueue_files( 'style', 'full-site', 'styles/full-site.css');
-		ns_enqueue_files( 'style', 'full-site-'.$name, $folder.'/full-site.css');
+		nh_enqueue_files( 'style', 'full-site', 'styles/full-site.css');
+		nh_enqueue_files( 'style', 'full-site-'.$name, $folder.'/full-site.css');
 	}
 	
 	if( is_front_page() )
 	{
-		ns_enqueue_file( 'script', 'nivo-slider', 'scripts/nivo-slider/jquery.nivo.slider.js' );
-		ns_enqueue_file( 'style', 'nivo-slider', 'scripts/nivo-slider/nivo-slider.css' );
-		ns_enqueue_file( 'style', 'nivo-slider-default-theme', 'scripts/nivo-slider/themes/default/default.css' );
+		nh_enqueue_file( 'script', 'nivo-slider', 'scripts/nivo-slider/jquery.nivo.slider.js' );
+		nh_enqueue_file( 'style', 'nivo-slider', 'scripts/nivo-slider/nivo-slider.css' );
+		nh_enqueue_file( 'style', 'nivo-slider-default-theme', 'scripts/nivo-slider/themes/default/default.css' );
 	}
 }
 endif;
@@ -94,8 +94,8 @@ endif;
 // @param	$name		string		The name to give te file.
 // @param	$filepath	string		The relative path to filename.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_enqueue_files') ):
-function ns_enqueue_files( $type, $name, $filepath )
+if( !function_exists('nh_enqueue_files') ):
+function nh_enqueue_files( $type, $name, $filepath )
 {
 	if( $type !== 'script' && $type !== 'style' ) return;
 
@@ -127,12 +127,12 @@ endif;
 // @param	$name		string		The name to give te file.
 // @param	$filepath	string		The relative path to filename.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_enqueue_file') ):
-function ns_enqueue_file( $type, $name, $filepath )
+if( !function_exists('nh_enqueue_file') ):
+function nh_enqueue_file( $type, $name, $filepath )
 {
 	if( $type !== 'script' && $type !== 'style' ) return;
 	
-	$theme_filepath = ns_get_theme_file_url($filepath);
+	$theme_filepath = nh_get_theme_file_url($filepath);
 	
 	if( $theme_filepath !== null )
 	{
@@ -147,8 +147,8 @@ endif;
 //----------------------------------------------------------------------------------------
 // Adds support for featured images.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_add_featured_image_support') ):
-function ns_add_featured_image_support()
+if( !function_exists('nh_add_featured_image_support') ):
+function nh_add_featured_image_support()
 {
 	add_theme_support( 'post-thumbnails' );
 }
@@ -159,12 +159,12 @@ endif;
 //----------------------------------------------------------------------------------------
 // Validates that the correct categories and tags are present in the WordPress site.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_validate_categories_and_tags') ):
-function ns_validate_categories_and_tags()
+if( !function_exists('nh_validate_categories_and_tags') ):
+function nh_validate_categories_and_tags()
 {
-	global $ns_config;
+	global $nh_config;
 	
-	$terms = $ns_config->get_categories();
+	$terms = $nh_config->get_categories();
 	foreach( $terms as $slug => $name )
 	{
 		$term = get_category_by_slug( $slug );
@@ -185,10 +185,10 @@ function ns_validate_categories_and_tags()
 		}
 	}
 
-	$terms = $ns_config->get_tags();
+	$terms = $nh_config->get_tags();
 	foreach( $terms as $slug => $name )
 	{
-		$term = ns_get_tag_by_slug( $slug );
+		$term = nh_get_tag_by_slug( $slug );
 		if( $term == null || $term == false )
 		{
 			?>
@@ -213,11 +213,11 @@ endif;
 //----------------------------------------------------------------------------------------
 // Clears the log file.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_clear_log') ):
-function ns_clear_log()
+if( !function_exists('nh_clear_log') ):
+function nh_clear_log()
 {
-	global $ns_logfile;
-	file_put_contents( $ns_logfile, '' );
+	global $nh_logfile;
+	file_put_contents( $nh_logfile, '' );
 }
 endif;
 
@@ -228,11 +228,11 @@ endif;
 // 
 // @param	$line		string		A line of text to write into a file.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_write_to_log') ):
-function ns_write_to_log( $line )
+if( !function_exists('nh_write_to_log') ):
+function nh_write_to_log( $line )
 {
-	global $ns_logfile;
-	file_put_contents( $ns_logfile, print_r($line, true)."\n", FILE_APPEND );
+	global $nh_logfile;
+	file_put_contents( $nh_logfile, print_r($line, true)."\n", FILE_APPEND );
 }
 endif;
 
@@ -243,8 +243,8 @@ endif;
 // 
 // @param	$var		mixed		An object to var_dump.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_print') ):
-function ns_print( $var, $label = '' )
+if( !function_exists('nh_print') ):
+function nh_print( $var, $label = '' )
 {
 	echo '<pre style="display:block; clear:both;">';
 	if( $label !== '' ) echo $label.": \n";
@@ -261,8 +261,8 @@ endif;
 // @param	$filepath	string		The relative path within the theme to the file.
 // @return				string|null	The absolute path to the file in the theme.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_theme_file_path') ):
-function ns_get_theme_file_path( $filepath )
+if( !function_exists('nh_get_theme_file_path') ):
+function nh_get_theme_file_path( $filepath )
 {
 	if( file_exists(get_stylesheet_directory().'/'.$filepath) )
 		return get_stylesheet_directory().'/'.$filepath;
@@ -282,8 +282,8 @@ endif;
 // @param	$filepath	string		The relative path within the theme to the file.
 // @return				string|null	The absolute path to the file in the theme.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_theme_file_url') ):
-function ns_get_theme_file_url( $filepath )
+if( !function_exists('nh_get_theme_file_url') ):
+function nh_get_theme_file_url( $filepath )
 {
 	if( file_exists(get_stylesheet_directory().'/'.$filepath) )
 		return get_stylesheet_directory_uri().'/'.$filepath;
@@ -302,10 +302,10 @@ endif;
 // 
 // @param	$name		string		The name of the template part.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_template_part') ):
-function ns_get_template_part( $name, $folder = '', $key = '' )
+if( !function_exists('nh_get_template_part') ):
+function nh_get_template_part( $name, $folder = '', $key = '' )
 {
-	$site_name = NS_BLOG_NAME;
+	$site_name = NH_BLOG_NAME;
 	$folders = array(
 		'templates/'.$site_name.'/'.$folder.'/',
 		'templates/default/'.$folder.'/'
@@ -314,10 +314,10 @@ function ns_get_template_part( $name, $folder = '', $key = '' )
 	foreach( $folders as $folder )
 	{
 		if( $key )
-			$filepath = ns_get_theme_file_path( $folder.$name.'-'.$key.'.php' );
+			$filepath = nh_get_theme_file_path( $folder.$name.'-'.$key.'.php' );
 	
 		if( $filepath === null )
-			$filepath = ns_get_theme_file_path( $folder.$name.'.php' );
+			$filepath = nh_get_theme_file_path( $folder.$name.'.php' );
 	
 		if( $filepath !== null )
 		{
@@ -338,8 +338,8 @@ endif;
 // @param	$slug		string		The slug/name of the tag.
 // @return				mixed		Term Row (array) or false if not found.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_tag_by_slug') ):
-function ns_get_tag_by_slug( $slug )
+if( !function_exists('nh_get_tag_by_slug') ):
+function nh_get_tag_by_slug( $slug )
 {
 	return get_term_by( 'slug', $slug, 'post_tag' );
 }
@@ -357,8 +357,8 @@ endif;
 // @param	$contents	string|null	The contents wrapped by the anchor.
 // @return				string		The created anchor tag.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_anchor') ):
-function ns_get_anchor( $url, $title, $class = null, $contents = null )
+if( !function_exists('nh_get_anchor') ):
+function nh_get_anchor( $url, $title, $class = null, $contents = null )
 {
 	if( $url === null ) return $contents;
 	
@@ -380,11 +380,11 @@ endif;
 //
 // @return				DateTime	The current datetime.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_current_datetime') ):
-function ns_get_current_datetime()
+if( !function_exists('nh_get_current_datetime') ):
+function nh_get_current_datetime()
 {
-	global $ns_config;
-	$timezone = $ns_config->get_timezone();
+	global $nh_config;
+	$timezone = $nh_config->get_timezone();
 	date_default_timezone_set($timezone);
 	return ( new Datetime() );
 }
@@ -395,20 +395,20 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_use_widget') ):
-function ns_use_widget( $part, $placement )
+if( !function_exists('nh_use_widget') ):
+function nh_use_widget( $part, $placement )
 {
-	global $ns_config;
+	global $nh_config;
 	
 	if( !function_exists('dynamic_sidebar') ) return;
 	
 	if( is_front_page() )
 	{
 		$p = 'front-page-'.$placement;
-		if( $ns_config->use_widget($part, $p) ) dynamic_sidebar( $part.'-'.$p );
+		if( $nh_config->use_widget($part, $p) ) dynamic_sidebar( $part.'-'.$p );
 	}
 	
-	if( $ns_config->use_widget($part, $placement) ) dynamic_sidebar( $part.'-'.$placement );
+	if( $nh_config->use_widget($part, $placement) ) dynamic_sidebar( $part.'-'.$placement );
 }
 endif;
 
@@ -417,19 +417,19 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_image') ):
-function ns_image( $image_info, $echo = true )
+if( !function_exists('nh_image') ):
+function nh_image( $image_info, $echo = true )
 {
 	if( empty($image_info) ) return;
 	
-	global $ns_mobile_support;
+	global $nh_mobile_support;
 
-	$image_info = ns_get_image_info( $image_info );
+	$image_info = nh_get_image_info( $image_info );
 	
 	$html = '<img src="'.$image_info['url'].'" alt="'.$image_info['title'].'" class="'.$image_info['key'].'" />';
 
 	if( !empty($image_info['link']) )
-		$html = ns_get_anchor( $image_info['link'], $image_info['title'], $image_info['key'], $html );
+		$html = nh_get_anchor( $image_info['link'], $image_info['title'], $image_info['key'], $html );
 
 	if( $echo ) echo $html;
 	else return $html;
@@ -444,20 +444,20 @@ endif;
 // @param	$path		string		The absolute or relative path to the image.
 // @return				string|null	The absolute url to the image.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_image_url') ):
-function ns_get_image_url( $path )
+if( !function_exists('nh_get_image_url') ):
+function nh_get_image_url( $path )
 {
 	if( is_array($path) ) $path = $path['url'];
 	
 	$url = '';
-	if( $ns_mobile_support->use_mobile_site )
+	if( $nh_mobile_support->use_mobile_site )
 	{
 		$pathinfo = pathinfo( $path );
-		$url = ns_get_theme_file_url( $pathinfo['dirname'].'/'.$pathinfo['filename'].'-mobile.'.$pathinfo['extension'] );
+		$url = nh_get_theme_file_url( $pathinfo['dirname'].'/'.$pathinfo['filename'].'-mobile.'.$pathinfo['extension'] );
 	}
 	
 	if( $url ) return $url;
-	return ns_get_theme_file_url($path);
+	return nh_get_theme_file_url($path);
 }
 endif;
 
@@ -466,8 +466,8 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_image_info') ):
-function ns_get_image_info( $image_info )
+if( !function_exists('nh_get_image_info') ):
+function nh_get_image_info( $image_info )
 {
 	if( !$image_info ) return $image_info;
 	
@@ -479,22 +479,22 @@ function ns_get_image_info( $image_info )
 	if( !$pathinfo ) return $image_info;	
 	
 	$full_path = ''; $path = ''; $url = '';
-	if( $ns_mobile_support->use_mobile_site )
+	if( $nh_mobile_support->use_mobile_site )
 	{
 		$path = $pathinfo['dirname'].'/'.$pathinfo['filename'].'-mobile.'.$pathinfo['extension'];
-		$full_path = ns_get_theme_file_path( $path );
+		$full_path = nh_get_theme_file_path( $path );
 		
 		if( $path !== null ) 
-			$url = ns_get_theme_file_url( $path );
+			$url = nh_get_theme_file_url( $path );
 	}
 
 	if( !$url )
 	{
 		$path = $pathinfo['dirname'].'/'.$pathinfo['filename'].'.'.$pathinfo['extension'];
-		$full_path = ns_get_theme_file_path( $path );
+		$full_path = nh_get_theme_file_path( $path );
 
 		if( $path !== null ) 
-			$url = ns_get_theme_file_url( $path );
+			$url = nh_get_theme_file_url( $path );
 	}
 	
 	if( !$url ) return $image_info;
@@ -515,8 +515,8 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_str_starts_with') ):
-function ns_str_starts_with($haystack, $needle)
+if( !function_exists('nh_str_starts_with') ):
+function nh_str_starts_with($haystack, $needle)
 {
     return $needle === "" || strpos($haystack, $needle) === 0;
 }
@@ -527,8 +527,8 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_str_ends_with') ):
-function ns_str_ends_with($haystack, $needle)
+if( !function_exists('nh_str_ends_with') ):
+function nh_str_ends_with($haystack, $needle)
 {
     return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 }
@@ -539,8 +539,8 @@ endif;
 //----------------------------------------------------------------------------------------
 // Alters the default query made when querying the News section.
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_alter_news_section_query') ):
-function ns_alter_news_section_query( $wp_query )
+if( !function_exists('nh_alter_news_section_query') ):
+function nh_alter_news_section_query( $wp_query )
 {
 	if( (!isset($wp_query->query['category_name'])) || 
 	    ($wp_query->query['category_name'] !== 'news') ||
@@ -569,10 +569,10 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_alter_news_posts') ):
-function ns_alter_news_posts( $posts, $wp_query )
+if( !function_exists('nh_alter_news_posts') ):
+function nh_alter_news_posts( $posts, $wp_query )
 {
-	global $ns_config;
+	global $nh_config;
 
 	if( (!isset($wp_query->query['category_name'])) || 
 	    ($wp_query->query['category_name'] !== 'news') ||
@@ -589,7 +589,7 @@ function ns_alter_news_posts( $posts, $wp_query )
 		return $posts;
 	}
 
-	$section = $ns_config->get_section_by_key( 'news' );
+	$section = $nh_config->get_section_by_key( 'news' );
 
 	if( is_feed() )
 		$posts = $section->get_stories('rss-feed', $posts);
@@ -616,8 +616,8 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_categories') ):
-function ns_get_categories( $categories = null )
+if( !function_exists('nh_get_categories') ):
+function nh_get_categories( $categories = null )
 {
 	if( $categories == null )
 		$categories = get_the_category();
@@ -637,8 +637,8 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('ns_get_tags') ):
-function ns_get_tags( $tags = null )
+if( !function_exists('nh_get_tags') ):
+function nh_get_tags( $tags = null )
 {
 	if( $tags == null )
 		$tags = get_the_tags();
@@ -661,12 +661,12 @@ endif;
 // 
 // Set the log's file path.
 //----------------------------------------------------------------------------------------
-$ns_logfile = dirname(__FILE__).'/newssite.log';
+$nh_logfile = dirname(__FILE__).'/newssite.log';
 
 // 
 // Set blog name.
 //----------------------------------------------------------------------------------------
-define( 'NS_BLOG_NAME', trim( preg_replace("/[^A-Za-z0-9 ]/", '-', get_blog_details()->path), '-' ) );
+define( 'NH_BLOG_NAME', trim( preg_replace("/[^A-Za-z0-9 ]/", '-', get_blog_details()->path), '-' ) );
 
 // 
 // Add the image sizes for thumbnails.
@@ -678,30 +678,30 @@ add_image_size( 'thumbnail_landscape', 324 );
 // Setup mobile support.
 //----------------------------------------------------------------------------------------
 require_once( get_template_directory().'/classes/mobile-support.php' );
-$ns_mobile_support = new Mobile_Support;
+$nh_mobile_support = new Mobile_Support;
 
 // 
 // Setup the config information.
 //----------------------------------------------------------------------------------------
 require_once( get_template_directory().'/classes/config.php' );
-$ns_config = new NS_Config;
-$ns_config->load_config();
+$nh_config = new NH_Config;
+$nh_config->load_config();
 
 //
 // Include the admin backend. 
 //----------------------------------------------------------------------------------------
 require_once( dirname(__FILE__).'/admin/main.php' );
-require_once( dirname(__FILE__).'/widgets/sections-widget.php' );
+require_once( dirname(__FILE__).'/widgets/sectionh-widget.php' );
 
 // 
 // Include custom post types.
 //----------------------------------------------------------------------------------------
-$custom_post_types = $ns_config->get_value('custom-post-type');
+$custom_post_types = $nh_config->get_value('custom-post-type');
 foreach( $custom_post_types as $name => $use_custom_type )
 {
 	if( $use_custom_type )
 	{
-		$filepath = ns_get_theme_file_path( 'custom-post-types/'.$name.'/'.$name.'.php' );
+		$filepath = nh_get_theme_file_path( 'custom-post-types/'.$name.'/'.$name.'.php' );
 		if( $filepath ) include_once( $filepath );
 	}
 }

@@ -1,18 +1,18 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $wp_query; ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars, $wp_query; ?>
 
 
 <?php 
 
 if( have_posts() ):
 
-	ns_get_template_part( 'listing', 'content', 'none' );
+	nh_get_template_part( 'listing', 'content', 'none' );
 	
 else:
 
 	?>
-	<h1><?php echo $ns_template_vars['page-title']; ?></h1>
+	<h1><?php echo $nh_template_vars['page-title']; ?></h1>
 
 	<p>Sorry, but nothing matched your search criteria. Please try again with some different keywords.</p>
 	<form role="search" method="get" id="searchform" action="<?php echo home_url( '/' ); ?>" >

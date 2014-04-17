@@ -5,18 +5,18 @@
  
 require_once( dirname(__FILE__).'/todays-events-widget.php' );
 
-add_action( 'init', array('NS_CustomEventPostType', 'create_custom_post') );
-add_filter( 'post_updated_messages', array('NS_CustomEventPostType', 'update_messages') );
-add_action( 'add_meta_boxes', array('NS_CustomEventPostType', 'info_box') );
-add_action( 'save_post', array('NS_CustomEventPostType', 'info_box_save') );
+add_action( 'init', array('NH_CustomEventPostType', 'create_custom_post') );
+add_filter( 'post_updated_messages', array('NH_CustomEventPostType', 'update_messages') );
+add_action( 'add_meta_boxes', array('NH_CustomEventPostType', 'info_box') );
+add_action( 'save_post', array('NH_CustomEventPostType', 'info_box_save') );
 
-add_filter( 'ns-event-featured-story', array('NS_CustomEventPostType', 'get_featured_story'), 99, 2 );
-add_filter( 'ns-event-listing-story', array('NS_CustomEventPostType', 'get_listing_story'), 99, 2 );
+add_filter( 'nh-event-featured-story', array('NH_CustomEventPostType', 'get_featured_story'), 99, 2 );
+add_filter( 'nh-event-listing-story', array('NH_CustomEventPostType', 'get_listing_story'), 99, 2 );
 
-add_filter( 'pre_get_posts', array('NS_CustomEventPostType', 'alter_event_query') );
-add_filter( 'get_post_time', array('NS_CustomEventPostType', 'update_event_publication_date'), 9999, 3 );
+add_filter( 'pre_get_posts', array('NH_CustomEventPostType', 'alter_event_query') );
+add_filter( 'get_post_time', array('NH_CustomEventPostType', 'update_event_publication_date'), 9999, 3 );
 
-class NS_CustomEventPostType
+class NH_CustomEventPostType
 {
 	/**
 	 * Constructor.
@@ -94,7 +94,7 @@ class NS_CustomEventPostType
 		add_meta_box( 
 			'event_info_box',
 			'Event Info',
-			array( 'NS_CustomEventPostType', 'info_box_content' ),
+			array( 'NH_CustomEventPostType', 'info_box_content' ),
 			'event',
 			'side',
 			'high'
@@ -108,7 +108,7 @@ class NS_CustomEventPostType
 	 */
 	public static function info_box_content( $post )
 	{
-		wp_nonce_field( plugin_basename( __FILE__ ), 'ns-custom-event-post' );
+		wp_nonce_field( plugin_basename( __FILE__ ), 'nh-custom-event-post' );
 
 		$datetime = get_post_meta( $post->ID, 'datetime', true );
 		if( !empty($datetime) )
@@ -121,12 +121,12 @@ class NS_CustomEventPostType
 		$location = get_post_meta( $post->ID, 'location', true );
 
 		?>
-		<label for="clas-event-date">Date</label><br/>
-		<input type="text" id="ns-event-date" name="ns-event-date" value="<?php echo esc_attr($date); ?>" size="32" /><br/>
-		<label for="clas-event-time">Time</label><br/>
-		<input type="text" id="ns-event-time" name="ns-event-time" value="<?php echo esc_attr($time); ?>" size="32" /><br/>
-		<label for="clas-event-location">Location</label><br/>
-		<input type="text" id="ns-event-location" name="ns-event-location" value="<?php echo esc_attr($location); ?>" size="32" /><br/>
+		<label for="nh-event-date">Date</label><br/>
+		<input type="text" id="nh-event-date" name="nh-event-date" value="<?php echo esc_attr($date); ?>" size="32" /><br/>
+		<label for="nh-event-time">Time</label><br/>
+		<input type="text" id="nh-event-time" name="nh-event-time" value="<?php echo esc_attr($time); ?>" size="32" /><br/>
+		<label for="nh-event-location">Location</label><br/>
+		<input type="text" id="nh-event-location" name="nh-event-location" value="<?php echo esc_attr($location); ?>" size="32" /><br/>
 		<?php
 	}
 	
@@ -140,16 +140,16 @@ class NS_CustomEventPostType
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
 		return;
 		
-		if ( !wp_verify_nonce( $_POST['ns-custom-event-post'], plugin_basename( __FILE__ ) ) )
+		if ( !wp_verify_nonce( $_POST['nh-custom-event-post'], plugin_basename( __FILE__ ) ) )
 		return;
 		
 		if ( !current_user_can( 'edit_page', $post_id ) )
 		return;
 
-		$datetime = DateTime::createFromFormat( 'Y-m-d h:i A', $_POST['ns-event-date'].' '.$_POST['ns-event-time'] );
+		$datetime = DateTime::createFromFormat( 'Y-m-d h:i A', $_POST['nh-event-date'].' '.$_POST['nh-event-time'] );
 		update_post_meta( $post_id, 'datetime', $datetime->format('Y-m-d H:i:s') );
 
-		$location = $_POST['ns-event-location'];
+		$location = $_POST['nh-event-location'];
 		update_post_meta( $post_id, 'location', $location );
 	}
 	
@@ -180,7 +180,7 @@ class NS_CustomEventPostType
 	
 	public static function get_datetime( $post_id )
 	{
-		$datetime = ns_event_get_datetime( $post_id );
+		$datetime = nh_event_get_datetime( $post_id );
 		if( $datetime === null )
 		{
 			$date = 'No date provided.';
@@ -211,8 +211,8 @@ class NS_CustomEventPostType
 			//var_dump($wp_query);
 			//echo '</pre>';
 		
-			global $ns_config;
-			$todays_date = $ns_config->get_todays_datetime()->format('Y-m-d');
+			global $nh_config;
+			$todays_date = $nh_config->get_todays_datetime()->format('Y-m-d');
 		
 			$wp_query->query_vars['meta_key'] = 'datetime';
 			$wp_query->query_vars['meta_compare'] = '>=';
@@ -255,7 +255,7 @@ class NS_CustomEventPostType
 }
 
 
-function ns_event_get_datetime( $post_id, $format = false )
+function nh_event_get_datetime( $post_id, $format = false )
 {
 	$datetime = '';
 	$datetime = get_post_meta( $post_id, 'datetime', true );

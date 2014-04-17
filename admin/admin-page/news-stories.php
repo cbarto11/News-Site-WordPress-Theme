@@ -3,7 +3,7 @@
 /**
  *
  */
-class NS_AdminPage_NewsStories
+class NH_AdminPage_NewsStories
 {
 	private static $COLUMNS = array( 'news' );
 	public static $error_messages;
@@ -165,16 +165,16 @@ class NS_AdminPage_NewsStories
 	 */
 	public static function show_page()
 	{
-		global $ns_config;
+		global $nh_config;
 		self::init();
 		self::process_post();
 		
-		$options = $ns_config->get_admin_options( 'news' );
-		$nonce = wp_create_nonce("ns-stories-options-nonce");
+		$options = $nh_config->get_admin_options( 'news' );
+		$nonce = wp_create_nonce("nh-stories-optionh-nonce");
 		
 		$num_stories_options = array( 1, 2, 5, 10, 15, 20, 25, 30 );
 		
-		//ns_print($options, 'SHOW PAGE OPTIONS');
+		//nh_print($options, 'SHOW PAGE OPTIONS');
 		
 		?>
 		<div id="news-stories-editor" class="admin-container">
@@ -184,9 +184,9 @@ class NS_AdminPage_NewsStories
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
-		<input type="hidden" name="ns-stories-options-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-stories-optionh-nonce" value="<?php echo $nonce; ?>" />
 		<?php
-		$section = $ns_config->get_section_by_key( 'news' );
+		$section = $nh_config->get_section_by_key( 'news' );
 		?>
 
 		<div class="section-header">
@@ -245,16 +245,16 @@ class NS_AdminPage_NewsStories
 	 */	
 	private static function process_post()
 	{
-		global $ns_config;
+		global $nh_config;
 		
 		if( !isset($_POST['set_news_stories']) ) { return; }
 		if( !isset($_POST['stories']) ) { return; }
 
-		//ns_print( $_POST['stories'], 'STORIES' );
+		//nh_print( $_POST['stories'], 'STORIES' );
 
-		$ns_config->set_stories( 'news', $_POST['stories']['news'] );
-		$ns_config->set_num_stories( 'news', $_POST['num-stories'] );
-		$ns_config->save_options();
+		$nh_config->set_stories( 'news', $_POST['stories']['news'] );
+		$nh_config->set_num_stories( 'news', $_POST['num-stories'] );
+		$nh_config->save_options();
 	}
 
 }

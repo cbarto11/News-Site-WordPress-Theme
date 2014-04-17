@@ -1,6 +1,6 @@
 /*
-Theme Name: News Site
-Theme URI: http://clas-pages.uncc.edu/exchange
+Theme Name: News Hub
+Theme URI: http://exchange.uncc.edu
 Description: A custom WordPress theme for the College of Liberal Arts & Science's online magazine.
 Version: 2.0.0
 Author: Crystal Barton
@@ -610,11 +610,11 @@ Tags:
  * Archives Page
  ****************************************************************************************/
 
-	body.archive #content.num-columns-1 .story {
+	body.archive #content.num-columnh-1 .story {
 	}
 	
-	body.archive #content.num-columns-1 .story .image,
-	body.search #content.num-columns-1 .story .image {
+	body.archive #content.num-columnh-1 .story .image,
+	body.search #content.num-columnh-1 .story .image {
 		float:right;
 		width:200px;
 		min-width:200px;
@@ -623,39 +623,39 @@ Tags:
 		margin-bottom:0px;
 	}
 	
-	body.archive #content.num-columns-1 .story .image img,
-	body.search #content.num-columns-1 .story .image img {
+	body.archive #content.num-columnh-1 .story .image img,
+	body.search #content.num-columnh-1 .story .image img {
 		width:200px;
 		min-width:200px;
 	}
 	
-	body.archive #content.num-columns-1 .story.portrait-image .image,
-	body.search #content.num-columns-1 .story.portrait-image .image {
+	body.archive #content.num-columnh-1 .story.portrait-image .image,
+	body.search #content.num-columnh-1 .story.portrait-image .image {
 		width:120px;
 		min-width:120px;
 	}
 
-	body.archive #content.num-columns-1 .story.portrait-image .image img,
-	body.search #content.num-columns-1 .story.portrait-image .image img {
+	body.archive #content.num-columnh-1 .story.portrait-image .image img,
+	body.search #content.num-columnh-1 .story.portrait-image .image img {
 		width:120px;
 		min-width:120px;
 	}
 
-	body.archive #content.num-columns-1 .story .image iframe,
-	body.search #content.num-columns-1 .story .image iframe {
+	body.archive #content.num-columnh-1 .story .image iframe,
+	body.search #content.num-columnh-1 .story .image iframe {
 		width:200px;
 		min-width:200px;
 		height:auto;
 	}
 	
-	body.archive #content.num-columns-1 .story,
-	body.search #content.num-columns-1 .story {
+	body.archive #content.num-columnh-1 .story,
+	body.search #content.num-columnh-1 .story {
 		border-bottom:solid 1px #ccc;
 		margin:0px;
 	}
 
-	body.archive #content.num-columns-1 .story.portrait-image .description,
-	body.search #content.num-columns-1 .story.portrait-image .description {
+	body.archive #content.num-columnh-1 .story.portrait-image .description,
+	body.search #content.num-columnh-1 .story.portrait-image .description {
 		overflow:hidden;
 		margin-left:0px;
 	}

@@ -1,7 +1,7 @@
 <?php
 
 
-class NS_AdminAjaxPage
+class NH_AdminAjaxPage
 {
 	private static $_output;
 	private static $_page;
@@ -41,7 +41,7 @@ class NS_AdminAjaxPage
 		if( self::$_page == null ) return;
 		
 		self::$_class = str_replace( '-', '', ucfirst(self::$_page) );
-		self::$_class = 'NS_AdminAjaxPage_'.self::$_class;
+		self::$_class = 'NH_AdminAjaxPage_'.self::$_class;
 
 		self::$_filename = ADMIN_PATH.'/ajax-admin-page/'.self::$_page.'.php';
 		if( file_exists(self::$_filename) ) { require_once(self::$_filename); }

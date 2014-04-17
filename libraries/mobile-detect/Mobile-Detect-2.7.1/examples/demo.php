@@ -45,7 +45,7 @@ $scriptVersion = $detect->getScriptVersion();
     <title>Mobile Detect Local Demo</title>
     <style type="text/css">
         html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-        body { margin: 0; padding: 0 1em; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 1em; color: #333333; background-color: #ffffff; max-width:320px; }
+        body { margin: 0; padding: 0 1em; font-family: "Helvetica Neue", Helvetica, Arial, sanh-serif; font-size: 1em; color: #333333; background-color: #ffffff; max-width:320px; }
         body, td { font-size: 1em; }
         table th { text-align:left; }
         a { color: #0088cc; text-decoration: underline; }

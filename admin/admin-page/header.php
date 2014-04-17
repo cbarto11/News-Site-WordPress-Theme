@@ -3,7 +3,7 @@
 /**
  *
  */
-class NS_AdminPage_Header
+class NH_AdminPage_Header
 {
 
 	public static $error_messages;
@@ -92,18 +92,18 @@ class NS_AdminPage_Header
 	 */
 	public static function show_page()
 	{
-		global $ns_config;
+		global $nh_config;
 		self::init();
 		self::process_post();
 
-		$options = $ns_config->get_admin_options( 'front-page' );
-		$nonce = wp_create_nonce("ns-stories-options-nonce");
+		$options = $nh_config->get_admin_options( 'front-page' );
+		$nonce = wp_create_nonce("nh-stories-optionh-nonce");
 
 		$num_stories_options = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
 		
-		$header = $ns_config->get_value( 'header' );
+		$header = $nh_config->get_value( 'header' );
 				
-// 		ns_print($options, 'SHOW PAGE OPTIONS');
+// 		nh_print($options, 'SHOW PAGE OPTIONS');
 		
 		?>
 		<div id="header-editor" class="admin-container">
@@ -113,7 +113,7 @@ class NS_AdminPage_Header
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
-		<input type="hidden" name="ns-stories-options-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-stories-optionh-nonce" value="<?php echo $nonce; ?>" />
 		
 		<h5>Title</h5>
 		<label>Text: </label>
@@ -143,15 +143,15 @@ class NS_AdminPage_Header
 	 */	
 	private static function process_post()
 	{
-		global $ns_config;
+		global $nh_config;
 		
 		if( !isset($_POST['title']) ) { return; }
 		if( !isset($_POST['description']) ) { return; }
 
-		//ns_print( $_POST['stories'], 'STORIES' );
+		//nh_print( $_POST['stories'], 'STORIES' );
 
-		$ns_config->set_header( $_POST['title'], $_POST['description'] );
-		$ns_config->save_options();
+		$nh_config->set_header( $_POST['title'], $_POST['description'] );
+		$nh_config->save_options();
 	}
 
 }

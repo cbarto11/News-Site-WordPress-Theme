@@ -1,10 +1,10 @@
 <?php
 
 add_action('widgets_init',
-     create_function('', 'return register_widget("NS_SectionsWidget");')
+     create_function('', 'return register_widget("NH_SectionsWidget");')
 );
 
-class NS_SectionsWidget extends WP_Widget
+class NH_SectionsWidget extends WP_Widget
 {
 
 	/**
@@ -14,10 +14,10 @@ class NS_SectionsWidget extends WP_Widget
 	{
 		// widget actual processes
 		
-		//ns_print('construct');
+		//nh_print('construct');
 		
 		parent::__construct(
-			'ns_sections_widget', // Base ID
+			'nh_sectionh_widget', // Base ID
 			__("Section List", 'text_domain'), // Name
 			array( 
 				'description' => __( 'Displays a list of news sections.', 'text_domain' ), 
@@ -33,7 +33,7 @@ class NS_SectionsWidget extends WP_Widget
 	 */
 	public function widget( $args, $instance )
 	{
-		global $ns_config;
+		global $nh_config;
 		
 		echo $args['before_widget'];
 
@@ -46,13 +46,13 @@ class NS_SectionsWidget extends WP_Widget
 			$exclude_list = array_map( 'trim', explode( ',', $instance['exclude-list'] ) );
 		endif;
 
-		$sections = $ns_config->get_value('sections');
+		$sections = $nh_config->get_value('sections');
 		usort($sections, function($a, $b)
 		{
 			return strcmp($a->name, $b->name);
 		});
 		
-		//ns_print($sections);
+		//nh_print($sections);
 		
 		?><ul><?php
 		foreach( $sections as $s ):
@@ -78,7 +78,7 @@ class NS_SectionsWidget extends WP_Widget
 	{
 		// outputs the options form on admin
 
-		//ns_print('options of the widget');
+		//nh_print('options of the widget');
 		
 		if( isset($instance['title']) )
 			$title = $instance['title'];
@@ -110,8 +110,8 @@ class NS_SectionsWidget extends WP_Widget
 	{
 		// processes widget options to be saved
 		
-		//ns_print($new_instance);
-		//ns_print($old_instance);
+		//nh_print($new_instance);
+		//nh_print($old_instance);
 		
 		$instance = array();
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';

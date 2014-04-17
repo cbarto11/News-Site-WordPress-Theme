@@ -3,7 +3,7 @@
 /**
  *
  */
-class NS_AdminPage_FrontPageStories
+class NH_AdminPage_FrontPageStories
 {
 
 	private static $COLUMNS = array( '1', '2' );
@@ -166,16 +166,16 @@ class NS_AdminPage_FrontPageStories
 	 */
 	public static function show_page()
 	{
-		global $ns_config;
+		global $nh_config;
 		self::init();
 		self::process_post();
 
-		$options = $ns_config->get_admin_options( 'front-page' );
-		$nonce = wp_create_nonce("ns-stories-options-nonce");
+		$options = $nh_config->get_admin_options( 'front-page' );
+		$nonce = wp_create_nonce("nh-stories-optionh-nonce");
 
 		$num_stories_options = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
 				
-// 		ns_print($options, 'SHOW PAGE OPTIONS');
+// 		nh_print($options, 'SHOW PAGE OPTIONS');
 		
 		?>
 		<div id="featured-stories-editor" class="admin-container">
@@ -185,18 +185,18 @@ class NS_AdminPage_FrontPageStories
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
-		<input type="hidden" name="ns-stories-options-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-stories-optionh-nonce" value="<?php echo $nonce; ?>" />
 		<?php
 		
 		foreach( $options['sections'] as $column => $sections ):
 			
 			foreach( $sections as $section_key ):
-				$section = $ns_config->get_section_by_key( $section_key );
-				//ns_print($section);
+				$section = $nh_config->get_section_by_key( $section_key );
+				//nh_print($section);
 				?>
 
-				<?php // ns_print( $section ); ?>
-				<?php // ns_print( $section->num_stories['front-page']); ?>
+				<?php // nh_print( $section ); ?>
+				<?php // nh_print( $section->num_stories['front-page']); ?>
 
 				<div class="section-header">
 
@@ -257,16 +257,16 @@ class NS_AdminPage_FrontPageStories
 	 */	
 	private static function process_post()
 	{
-		global $ns_config;
+		global $nh_config;
 		
 		if( !isset($_POST['set_front_page_stories']) ) { return; }
 		if( !isset($_POST['stories']) ) { return; }
 
-		//ns_print( $_POST['stories'], 'STORIES' );
+		//nh_print( $_POST['stories'], 'STORIES' );
 
-		$ns_config->set_stories( 'front-page', $_POST['stories'] );
-		$ns_config->set_num_stories( 'front-page', $_POST['num-stories'] );
-		$ns_config->save_options();
+		$nh_config->set_stories( 'front-page', $_POST['stories'] );
+		$nh_config->set_num_stories( 'front-page', $_POST['num-stories'] );
+		$nh_config->save_options();
 	}
 
 }

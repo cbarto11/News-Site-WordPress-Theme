@@ -1,16 +1,16 @@
 
-<?php //ns_print('listing.php'); ?>
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $wp_query; ?>
-<?php $ns_section = $ns_template_vars['section']; ?>
+<?php //nh_print('listing.php'); ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars, $wp_query; ?>
+<?php $nh_section = $nh_template_vars['section']; ?>
 
-<?php if( isset($ns_template_vars['listing-name']) ): ?>
-	<div class="listing-name"><?php echo $ns_template_vars['listing-name']; ?></div>
+<?php if( isset($nh_template_vars['listing-name']) ): ?>
+	<div class="listing-name"><?php echo $nh_template_vars['listing-name']; ?></div>
 <?php endif; ?>
 
-<h1><?php echo $ns_template_vars['page-title']; ?></h1>
+<h1><?php echo $nh_template_vars['page-title']; ?></h1>
 
-<?php if( isset($ns_template_vars['description']) ): ?>
-	<div class="description"><?php echo $ns_template_vars['description']; ?></siv>
+<?php if( isset($nh_template_vars['description']) ): ?>
+	<div class="description"><?php echo $nh_template_vars['description']; ?></siv>
 <?php endif; ?>
 
 <?php
@@ -25,10 +25,10 @@ if( !have_posts() ):
 
 else:
 
-	if( $ns_mobile_support->use_mobile_site )
+	if( $nh_mobile_support->use_mobile_site )
 		$num_columns = 1;
 	else
-		$num_columns = $ns_section->get_number_of_columns('listing');
+		$num_columns = $nh_section->get_number_of_columns('listing');
 	
 	$post_list = array();
 	for( $i = 0; $i < $num_columns; $i++ )
@@ -55,30 +55,30 @@ else:
 			//----------------------------------------------------------------------------
 			// Get the story to be displayed, based on the section of the page.
 			//----------------------------------------------------------------------------
-			if( ($ns_section->key == 'none') || ($ns_section->thumbnail_image == 'multi') ):
+			if( ($nh_section->key == 'none') || ($nh_section->thumbnail_image == 'multi') ):
 
 				$type = get_post_type( $post->ID );
-				$categories = ns_get_categories( get_the_category($post->ID) );
-				$tags = ns_get_tags( get_the_tags($post->ID) );
-				$story_section = $ns_config->get_section( $type, $categories, $tags, false, array( 'news' ) );
+				$categories = nh_get_categories( get_the_category($post->ID) );
+				$tags = nh_get_tags( get_the_tags($post->ID) );
+				$story_section = $nh_config->get_section( $type, $categories, $tags, false, array( 'news' ) );
 				$story = $story_section->get_listing_story( $post );
-				$ns_template_vars['section'] = $story_section;
-				$key = $ns_template_vars['section']->key;
+				$nh_template_vars['section'] = $story_section;
+				$key = $nh_template_vars['section']->key;
 				
 			else:
 
-				$story = $ns_section->get_listing_story( $post );
-				$key = $ns_section->key;
+				$story = $nh_section->get_listing_story( $post );
+				$key = $nh_section->key;
 
-			endif; // if( $ns_section->key == 'none' )
+			endif; // if( $nh_section->key == 'none' )
 
 			?>
 
 			<?php
 			
-			//ns_print( 'listing : story : '.$key );
-			$ns_template_vars['story'] = $story;
-			ns_get_template_part( 'listing', 'story', $key );
+			//nh_print( 'listing : story : '.$key );
+			$nh_template_vars['story'] = $story;
+			nh_get_template_part( 'listing', 'story', $key );
 	
 		endforeach; // foreach( $column_posts as $post )
 
@@ -101,10 +101,10 @@ else:
 		?>
 		<div id="page-navigation" class="clearfix" role="navigation">
 			<div class="nav-next">
-				<?php next_posts_link( $ns_section->get_listing_label('next') ); ?>
+				<?php next_posts_link( $nh_section->get_listing_label('next') ); ?>
 			</div>
 			<div class="nav-prev">
-				<?php previous_posts_link( $ns_section->get_listing_label('prev') ); ?>
+				<?php previous_posts_link( $nh_section->get_listing_label('prev') ); ?>
 			</div>
 		</div>
 		<?php

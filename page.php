@@ -3,19 +3,19 @@
  * The template for displaying all pages.
  *
  * @package WordPress
- * @subpackage clas-exchange
+ * @subpackage news-hub-uncc
  */
 
-//ns_print('page:page.php');
-global $ns_config, $ns_template_vars;
+//nh_print('page:page.php');
+global $nh_config, $nh_template_vars;
 
-$ns_template_vars = array();
-$ns_template_vars['content-type'] = 'single';
-$ns_template_vars['page-title'] = get_the_title();
+$nh_template_vars = array();
+$nh_template_vars['content-type'] = 'single';
+$nh_template_vars['page-title'] = get_the_title();
 $post_type = get_post_type();
-$category = ns_get_categories();
-$tags = ns_get_tags();
-$ns_template_vars['section'] = $ns_config->get_section( $post_type, $category, $tags, false, array('news') );
+$category = nh_get_categories();
+$tags = nh_get_tags();
+$nh_template_vars['section'] = $nh_config->get_section( $post_type, $category, $tags, false, array('news') );
 
-ns_get_template_part( 'standard-template' );
+nh_get_template_part( 'standard-template' );
 

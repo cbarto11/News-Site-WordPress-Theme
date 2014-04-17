@@ -3,7 +3,7 @@
 /**
  *
  */
-class NS_AdminPage_Banner
+class NH_AdminPage_Banner
 {
 
 	/* */
@@ -21,11 +21,11 @@ class NS_AdminPage_Banner
 	 */	
 	public static function init()
 	{
-		global $ns_config;
+		global $nh_config;
 		
 		self::$error_messages = array();
 		self::$notice_messages = array();
-		self::$config = $ns_config->get_value('banner');
+		self::$config = $nh_config->get_value('banner');
 	}
 
 
@@ -189,12 +189,12 @@ class NS_AdminPage_Banner
 	 */
 	public static function show_page()
 	{
-		global $ns_config;
+		global $nh_config;
 		self::init();
 		self::process_post();
 		
-		$options = $ns_config->get_banner_images();
-		$nonce = wp_create_nonce("ns-banner-options-nonce");
+		$options = $nh_config->get_banner_images();
+		$nonce = wp_create_nonce("nh-banner-optionh-nonce");
 
 		if( $options === null ) $options = array();		
 		?>
@@ -204,7 +204,7 @@ class NS_AdminPage_Banner
 		<h2>Banner Editor</h2>
 		<div class="instructions">Instruction go here...</div>
 		
-		<input type="hidden" name="ns-banner-options-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-banner-optionh-nonce" value="<?php echo $nonce; ?>" />
 		
 		<form id="upload-form" class="wp-upload-form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 			<label for="upload"><?php _e( 'Choose an image from your computer:' ); ?></label><br />
@@ -243,7 +243,7 @@ class NS_AdminPage_Banner
 				?>
 				<div>
 					<img src="<?php echo $thumbnail_url; ?>" banner_id="<?php echo get_the_ID(); ?>" class="banner" />
-					<img src="<?php echo ns_get_theme_file_url('/images/delete-icon.png'); ?>" banner_id="<?php echo get_the_ID(); ?>" class="delete-button" />
+					<img src="<?php echo nh_get_theme_file_url('/images/delete-icon.png'); ?>" banner_id="<?php echo get_the_ID(); ?>" class="delete-button" />
 				</div>
 				<?php
 			}
@@ -330,7 +330,7 @@ class NS_AdminPage_Banner
 	 */
 	private static function save_file()
 	{
-		global $ns_config;
+		global $nh_config;
 		$overrides = array('test_form' => false);
 
 		$uploaded_file = $_FILES['import'];
@@ -397,7 +397,7 @@ class NS_AdminPage_Banner
 	 */
 	private static function save_options()
 	{
-		global $ns_config;
+		global $nh_config;
 		$slider_banners = array();
 		
 		$count = 0;
@@ -422,8 +422,8 @@ class NS_AdminPage_Banner
 			$count++;
 		}
 		
-		$banner_options = $ns_config->set_option_value( 'banner', 'images', $slider_banners );
-		$ns_config->save_options();
+		$banner_options = $nh_config->set_option_value( 'banner', 'images', $slider_banners );
+		$nh_config->save_options();
 	}
 
 }

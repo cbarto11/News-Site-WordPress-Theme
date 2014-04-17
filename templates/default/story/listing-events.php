@@ -1,13 +1,13 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars; ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars; ?>
 <?php
-$section = $ns_template_vars['section'];
-$story = $ns_template_vars['story'];
+$section = $nh_template_vars['section'];
+$story = $nh_template_vars['story'];
 ?>
 
 <div class="story <?php echo $section->key; ?>-section <?php echo $section->thumbnail_image; ?>-image clearfix">
-<?php echo ns_get_anchor( $story['link'], $story['title'] ); ?>
+<?php echo nh_get_anchor( $story['link'], $story['title'] ); ?>
 
 	<?php if( $section->thumbnail_image !== 'none' ): ?>
 	

@@ -3,16 +3,16 @@
  * Displays the front page.
  *
  * @package WordPress
- * @subpackage clas-exchange
+ * @subpackage news-hub-uncc
  */
 
-//ns_print('page:front-page.php');
-global $ns_config, $ns_template_vars;
+//nh_print('page:front-page.php');
+global $nh_config, $nh_template_vars;
 
-$ns_template_vars = array();
-$ns_template_vars['content-type'] = 'front-page';
-$ns_template_vars['page-title'] = 'Home';
-$ns_template_vars['section'] = $ns_config->get_default_section();
+$nh_template_vars = array();
+$nh_template_vars['content-type'] = 'front-page';
+$nh_template_vars['page-title'] = 'Home';
+$nh_template_vars['section'] = $nh_config->get_default_section();
 
-ns_get_template_part( 'standard-template' );
+nh_get_template_part( 'standard-template' );
 

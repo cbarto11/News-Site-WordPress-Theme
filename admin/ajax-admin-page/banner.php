@@ -3,7 +3,7 @@
 /**
  *
  */
-class NS_AdminAjaxPage_Banner
+class NH_AdminAjaxPage_Banner
 {
 	private static $_status;
 	private static $_message;
@@ -42,7 +42,7 @@ class NS_AdminAjaxPage_Banner
 	public static function process_post()
 	{
 		if( !isset($_POST['nonce']) || 
-			!wp_verify_nonce($_POST['nonce'], "ns-banner-options-nonce") )
+			!wp_verify_nonce($_POST['nonce'], "nh-banner-optionh-nonce") )
 		{
 			self::$_status = false;
 			self::$_message = 'Invalid nonce code ('.$_POST['nonce'].').';

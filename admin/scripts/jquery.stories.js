@@ -38,7 +38,7 @@ jQuery(document).ready(function()
 		//--------------------------------------------------------------------------------
 		function get_nonce()
 		{
-			var nonce = $('input[name="ns-stories-options-nonce"]').val();
+			var nonce = $('input[name="nh-stories-optionh-nonce"]').val();
 			return nonce;
 		}
 
@@ -56,7 +56,7 @@ jQuery(document).ready(function()
    			$(search_results_div).html('<div class="searching">Searching...</div>');
    			
    			var data = {};
-			data['action'] = 'ns-stories-options';
+			data['action'] = 'nh-stories-options';
 			data['nonce'] = get_nonce();
 			data['ajax-action'] = 'get-search-results';
 			data['search_text'] = search_text;

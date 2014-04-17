@@ -5,7 +5,7 @@
 // 
 // 
 //========================================================================================
-class NS_Section
+class NH_Section
 {
 	public $key;
 	public $name;
@@ -27,7 +27,7 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	public function __construct( $key, $section )
 	{
-		global $ns_config;
+		global $nh_config;
 		
 		$this->key = $key;
 		$this->name = $section['name'];
@@ -47,7 +47,7 @@ class NS_Section
 		if( isset($section['listing-num-columns']) )
 			$this->num_columns['listing'] = $section['listing-num-columns'];
 		else
-			$this->num_columns['listing'] = $ns_config->get_number_of_columns($this->thumbnail_image);
+			$this->num_columns['listing'] = $nh_config->get_number_of_columns($this->thumbnail_image);
 			
 		$this->listing_labels = array(
 			'prev' => ( isset($section['listing-prev']) ? $section['listing-prev'] : null ),
@@ -134,9 +134,9 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	public function get_stories( $type = 'front-page', $recent_posts = null )
 	{
-		global $ns_config;
+		global $nh_config;
 		
-		$stories_ids = $ns_config->get_value( $type.'-stories', $this->key );		
+		$stories_ids = $nh_config->get_value( $type.'-stories', $this->key );		
 		if( $type == 'sidebar' ) $type = 'front-page';
 		
 		if( $recent_posts == null )
@@ -256,11 +256,11 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	private function apply_filters( $name, $story, $post )
 	{
-		//ns_print( 'ns-'.$post->post_type.'-'.$name, 'apply-filters' );
+		//nh_print( 'nh-'.$post->post_type.'-'.$name, 'apply-filters' );
 		
-		$story = apply_filters( 'ns-'.$name, $story, $post );
-		$story = apply_filters( 'ns-'.$this->key.'-'.$name, $story, $post );
-		$story = apply_filters( 'ns-'.$post->post_type.'-'.$name, $story, $post );
+		$story = apply_filters( 'nh-'.$name, $story, $post );
+		$story = apply_filters( 'nh-'.$this->key.'-'.$name, $story, $post );
+		$story = apply_filters( 'nh-'.$post->post_type.'-'.$name, $story, $post );
 		
 		return $story;
 	}
@@ -286,7 +286,7 @@ class NS_Section
 		$story['description'] = array();
 		$story['description']['excerpt'] = $this->get_excerpt( $post );
 		
-		//ns_print($story);
+		//nh_print($story);
 		
 		return $this->apply_filters( 'featured-story', $story, $post );		
 	}
@@ -480,18 +480,18 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	public function get_image( $post_id, $type )
 	{
-		global $ns_mobile_support;
+		global $nh_mobile_support;
 		
 		if( $this->key == 'news' )
 		{
-			ns_write_to_log( $type.': '.$this->thumbnail_image );
+			nh_write_to_log( $type.': '.$this->thumbnail_image );
 		}
 		
 		switch( $type )
 		{
 			case 'featured':
 				if( $this->featured_image == 'none' ) return null;
-				if( $ns_mobile_support->use_mobile_site )
+				if( $nh_mobile_support->use_mobile_site )
 					$image_type = 'thumbnail_'.$this->featured_image;
 				else
 					$image_type = 'featured_'.$this->featured_image;
@@ -499,7 +499,7 @@ class NS_Section
 				
 			case 'thumbnail':
 				if( $this->thumbnail_image == 'none' ) return null;
-				if( $ns_mobile_support->use_mobile_site )
+				if( $nh_mobile_support->use_mobile_site )
 					$image_type = 'thumbnail';
 				else
 					$image_type = 'thumbnail_'.$this->featured_image;
@@ -553,10 +553,10 @@ class NS_Section
 	//------------------------------------------------------------------------------------
 	function get_listing_label( $key )
 	{
-		global $ns_config;
+		global $nh_config;
 		if( (array_key_exists($key, $this->listing_labels)) && ($this->listing_labels[$key] !== null) )
 			return $this->listing_labels[$key];
-		return $ns_config->get_value( 'content', 'listing-'.$key );
+		return $nh_config->get_value( 'content', 'listing-'.$key );
 	}
 
 }

@@ -4,7 +4,7 @@
 /**
  * Processes, generates, and displays the plugin's admin page.
  */
-class NS_AdminPage
+class NH_AdminPage
 {
 
 	private static $_page;
@@ -29,12 +29,12 @@ class NS_AdminPage
 		{		
 			switch( $_GET['page'] )
 			{
-				case 'ns-banner':
-				case 'ns-header':
-				case 'ns-front-page-stories':
-				case 'ns-sidebar-stories':
-				case 'ns-news-stories':
-				case 'ns-reset-options':
+				case 'nh-banner':
+				case 'nh-header':
+				case 'nh-front-page-stories':
+				case 'nh-sidebar-stories':
+				case 'nh-news-stories':
+				case 'nh-reset-options':
 					self::$_page = substr($_GET['page'], 3); break;
 
 				default:
@@ -47,7 +47,7 @@ class NS_AdminPage
 		}
 		
 		self::$_class = str_replace( '-', '', ucfirst(self::$_page) );
-		self::$_class = 'NS_AdminPage_'.self::$_class;
+		self::$_class = 'NH_AdminPage_'.self::$_class;
 
 		self::$_filename = ADMIN_PATH.'/admin-page/'.self::$_page.'.php';
 		if( file_exists(self::$_filename) ) require_once(self::$_filename);

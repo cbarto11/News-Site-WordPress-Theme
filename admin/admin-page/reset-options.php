@@ -3,7 +3,7 @@
 /**
  *
  */
-class NS_AdminPage_ResetOptions
+class NH_AdminPage_ResetOptions
 {
 
 	public static $error_messages;
@@ -85,25 +85,25 @@ class NS_AdminPage_ResetOptions
 	 */
 	public static function show_page()
 	{
-		global $ns_config;
+		global $nh_config;
 		self::init();
 		self::process_post();
 		
-		$nonce = wp_create_nonce("ns-stories-options-nonce");
+		$nonce = wp_create_nonce("nh-stories-optionh-nonce");
 		?>
-		<div id="reset-options-editor" class="admin-container">
+		<div id="reset-optionh-editor" class="admin-container">
 		
 		<h2>Reset Options</h2>
 		<div class="instructions">Instruction go here...</div>
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
-		<input type="hidden" name="ns-reset-options-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-reset-optionh-nonce" value="<?php echo $nonce; ?>" />
 		<input type="submit" name="reset_options" value="Reset Options" />
 		
 		</form>
 		
-		</div><!-- #reset-options-editor -->
+		</div><!-- #reset-optionh-editor -->
 
 		<?php
 	}
@@ -116,8 +116,8 @@ class NS_AdminPage_ResetOptions
 	private static function process_post()
 	{
 		if( !isset($_POST['reset_options']) ) { return; }
-		global $ns_config;
-		$ns_config->reset_options();
+		global $nh_config;
+		$nh_config->reset_options();
 	}
 }
 

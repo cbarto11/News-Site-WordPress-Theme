@@ -22,7 +22,7 @@ jQuery(document).ready(function()
 
 		function get_nonce()
 		{
-			var nonce = $('input[name="ns-banner-options-nonce"]').val();
+			var nonce = $('input[name="nh-banner-optionh-nonce"]').val();
 			return nonce;
 		}
 
@@ -64,7 +64,7 @@ jQuery(document).ready(function()
 			if( confirm("Are you sure you want to delete this banner?\nThis action cannot be reversed.") != true ) return;
 
 			var data = {};
-			data['action'] = 'ns-banner-options';
+			data['action'] = 'nh-banner-options';
 			data['nonce'] = get_nonce();
 			data['ajax-action'] = 'delete-banner';
 			data['banner_id'] = banner_id;

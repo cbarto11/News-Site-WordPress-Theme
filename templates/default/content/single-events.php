@@ -1,15 +1,15 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $post, $wp_query; ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars, $post, $wp_query; ?>
 <?php 
-$section = $ns_template_vars['section'];
+$section = $nh_template_vars['section'];
 $story = $section->get_single_story( $post ); 
 ?>
 
 
 <?php if( $section->key !== 'none' && $section->key !== 'multi' ): ?>
 <div class="section-archive-link">
-	<?php echo ns_get_anchor( 
+	<?php echo nh_get_anchor( 
 		$section->get_section_link(), 
 		$section->name.' Archives',
 		null,

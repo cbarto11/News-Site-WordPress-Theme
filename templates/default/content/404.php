@@ -1,6 +1,6 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $wp_query; ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars, $wp_query; ?>
 
 
 <h1>Entry not found.</h1>

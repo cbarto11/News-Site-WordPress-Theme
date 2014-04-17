@@ -1,14 +1,14 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars; ?>
-<?php if( $ns_config->show_template_part('mobile-menu') && $ns_mobile_support->use_mobile_site ): ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars; ?>
+<?php if( $nh_config->show_template_part('mobile-menu') && $nh_mobile_support->use_mobile_site ): ?>
 
-<?php $widget_areas = $ns_config->get_mobile_widget_areas(); ?>
+<?php $widget_areas = $nh_config->get_mobile_widget_areas(); ?>
 
 <div id="mobile-menu-wrapper" class="clearfix">
 
 	<div id="mobile-menu" class="clearfix">
-	<?php ns_use_widget( 'mobile-menu', 'top' ); ?>
+	<?php nh_use_widget( 'mobile-menu', 'top' ); ?>
 	
 	<script type="text/javascript">
 	jQuery(document).ready(function()
@@ -29,14 +29,14 @@
 		<?php foreach($widget_areas as $widget): ?>
 				
 		<div id="<?php echo $widget['id']; ?>" class="expanded-menu">
-			<?php ns_use_widget( 'mobile-menu', $widget['index'] ); ?>
+			<?php nh_use_widget( 'mobile-menu', $widget['index'] ); ?>
 		</div>
 		
 		<?php endforeach; ?>
 		
 	</div><!-- .menu -->
 	
-	<?php ns_use_widget( 'mobile-menu', 'bottom' ); ?>
+	<?php nh_use_widget( 'mobile-menu', 'bottom' ); ?>
 	</div><!-- #mobile-menu -->
 
 </div><!-- #mobile-menu-wrapper -->

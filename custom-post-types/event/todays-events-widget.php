@@ -1,10 +1,10 @@
 <?php
 
 add_action('widgets_init',
-     create_function('', 'return register_widget("NS_TodaysEventsWidget");')
+     create_function('', 'return register_widget("NH_TodaysEventsWidget");')
 );
 
-class NS_TodaysEventsWidget extends WP_Widget
+class NH_TodaysEventsWidget extends WP_Widget
 {
 
 	/**
@@ -14,10 +14,10 @@ class NS_TodaysEventsWidget extends WP_Widget
 	{
 		// widget actual processes
 		
-		//ns_print('construct');
+		//nh_print('construct');
 		
 		parent::__construct(
-			'ns_todays_events_widget', // Base ID
+			'nh_todays_events_widget', // Base ID
 			__("Today's Events", 'text_domain'), // Name
 			array( 
 				'description' => __( 'Displays events occuring today.', 'text_domain' ), 
@@ -33,7 +33,7 @@ class NS_TodaysEventsWidget extends WP_Widget
 	 */
 	public function widget( $args, $instance )
 	{
-		global $ns_config;
+		global $nh_config;
 
 		echo $args['before_widget'];
 
@@ -41,10 +41,10 @@ class NS_TodaysEventsWidget extends WP_Widget
 			echo $args['before_title'].$instance['title'].$args['after_title'];
 		endif;
 
-		$events = ns_event_get_todays_events();
-		$event_section = $ns_config->get_section_by_key('events');
+		$events = nh_event_get_todays_events();
+		$event_section = $nh_config->get_section_by_key('events');
 		
-		//ns_print($events);
+		//nh_print($events);
 					
 		if( count($events) == 0 ):
 		
@@ -57,7 +57,7 @@ class NS_TodaysEventsWidget extends WP_Widget
 
 				?>					
 				<div class="story event-section none-image clearfix">
-					<?php echo ns_get_anchor( $event['link'], $event['title'] ); ?>
+					<?php echo nh_get_anchor( $event['link'], $event['title'] ); ?>
 
 					<div class="details clearfix">
 						<h3><?php echo $event['title']; ?></h3>
@@ -76,7 +76,7 @@ class NS_TodaysEventsWidget extends WP_Widget
 
 		?>		
 		<div class="more">
-			<?php echo ns_get_anchor( $event_section->get_section_link(), 'More Events', null, 'More <em>Events</em> &raquo;' ); ?>
+			<?php echo nh_get_anchor( $event_section->get_section_link(), 'More Events', null, 'More <em>Events</em> &raquo;' ); ?>
 		</div>
 		
 		<?php
@@ -92,7 +92,7 @@ class NS_TodaysEventsWidget extends WP_Widget
 	{
 		// outputs the options form on admin
 
-		//ns_print('options of the widget');
+		//nh_print('options of the widget');
 		
 		if ( isset($instance[ 'title' ]) )
 			$title = $instance[ 'title' ];
@@ -118,8 +118,8 @@ class NS_TodaysEventsWidget extends WP_Widget
 	{
 		// processes widget options to be saved
 		
-		//ns_print($new_instance);
-		//ns_print($old_instance);
+		//nh_print($new_instance);
+		//nh_print($old_instance);
 		
 		$instance = array();
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
@@ -132,12 +132,12 @@ class NS_TodaysEventsWidget extends WP_Widget
 
 
 
-function ns_event_get_todays_events()
+function nh_event_get_todays_events()
 {
-	global $ns_config, $wpdb;
+	global $nh_config, $wpdb;
 	
 	$events = array();
-	$todays_date = $ns_config->get_todays_datetime()->format('Y-m-d');
+	$todays_date = $nh_config->get_todays_datetime()->format('Y-m-d');
 	
 	$args = array(
 		'posts_per_page' => -1,
@@ -164,7 +164,7 @@ function ns_event_get_todays_events()
 	
 	if( $event_query->have_posts() )
 	{
-		$event_section = $ns_config->get_section_by_key( 'events' );
+		$event_section = $nh_config->get_section_by_key( 'events' );
 		
 		while( $event_query->have_posts() )
 		{

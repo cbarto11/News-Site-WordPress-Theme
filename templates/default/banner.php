@@ -1,13 +1,13 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars; ?>
-<?php if( (is_front_page()) && ($ns_config->show_template_part('banner')) ): ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars; ?>
+<?php if( (is_front_page()) && ($nh_config->show_template_part('banner')) ): ?>
 
 
 <div id="banner-wrapper" class="clearfix">
 
 	<div id="banner" class="clearfix">
-	<?php ns_use_widget( 'banner', 'top' ); ?>
+	<?php nh_use_widget( 'banner', 'top' ); ?>
 	
 	<script type="text/javascript">
 	jQuery(document).ready(function()
@@ -23,13 +23,13 @@
 	});
 	</script>
 
-	<?php $banner_images = $ns_config->get_banner_images(); ?>
+	<?php $banner_images = $nh_config->get_banner_images(); ?>
 	
 	<div id="featured-slider-wrapper">
 			
 		<div id="featured-slider">
 			<?php foreach( $banner_images as $slide ): ?>
-				<?php echo ns_get_anchor( 
+				<?php echo nh_get_anchor( 
 					$slide['url'], 
 					htmlentities($slide['alt']), 
 					null, 
@@ -38,7 +38,7 @@
 		</div>
 	</div>
 	
-	<?php ns_use_widget( 'banner', 'bottom' ); ?>
+	<?php nh_use_widget( 'banner', 'bottom' ); ?>
 	</div><!-- #banner -->
 
 </div><!-- #banner-wrapper -->

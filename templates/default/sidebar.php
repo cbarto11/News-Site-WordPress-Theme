@@ -1,13 +1,13 @@
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars; ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars; ?>
 <?php
-$options = $ns_config->get_admin_options( 'sidebar' );
+$options = $nh_config->get_admin_options( 'sidebar' );
 ?>
 
 
 <div id="sidebar-wrapper" class="clearfix">
 
 	<div id="sidebar" class="clearfix">
-	<?php ns_use_widget( 'sidebar', 'top' ); ?>
+	<?php nh_use_widget( 'sidebar', 'top' ); ?>
 
 	<?php foreach( $options['sections'] as $column_name => $sections ): ?>
 
@@ -17,7 +17,7 @@ $options = $ns_config->get_admin_options( 'sidebar' );
 		
 			foreach( $sections as $section_key ):
 		
-				$section = $ns_config->get_section_by_key( $section_key, true );
+				$section = $nh_config->get_section_by_key( $section_key, true );
 				if( $section == null ) continue;
 			
 				$stories = $section->get_stories( 'sidebar' );
@@ -25,7 +25,7 @@ $options = $ns_config->get_admin_options( 'sidebar' );
 				<div class="section-box <?php $section_key; ?>-section <?php echo $section->thumbnail_image; ?>-image">
 
 					<h2>
-					<?php echo ns_get_anchor( 
+					<?php echo nh_get_anchor( 
 							$section->get_section_link(), 
 							$section->name.' Archives', 
 							null,
@@ -33,18 +33,18 @@ $options = $ns_config->get_admin_options( 'sidebar' );
 					</h2>
 			
 					<?php
-					global $ns_story;
+					global $nh_story;
 					foreach( $stories as $story ):
 			
-						$ns_template_vars['story'] = $story;
-						$ns_template_vars['section'] = $section;
-						ns_get_template_part( 'featured', 'story', $section->key );
+						$nh_template_vars['story'] = $story;
+						$nh_template_vars['section'] = $section;
+						nh_get_template_part( 'featured', 'story', $section->key );
 			
 					endforeach;
 					?>
 			
 					<div class="more">
-						<?php echo ns_get_anchor( 
+						<?php echo nh_get_anchor( 
 							$section->get_section_link(), 
 							$section->name.' Archives', 
 							null,
@@ -57,7 +57,7 @@ $options = $ns_config->get_admin_options( 'sidebar' );
 			endforeach; // foreach( $current_column as $section_key )
 		?>
 	
-		<?php ns_use_widget( 'sidebar', 'bottom' ); ?>
+		<?php nh_use_widget( 'sidebar', 'bottom' ); ?>
 		</div><!-- .column -->
 
 	<?php endforeach; // foreach( $options['sections'] as $column_name => $sections ) ?>

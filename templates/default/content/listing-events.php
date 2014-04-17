@@ -1,12 +1,12 @@
 
 
-<?php global $ns_config, $ns_mobile_support, $ns_template_vars, $wp_query; ?>
-<?php $ns_section = $ns_template_vars['section']; ?>
+<?php global $nh_config, $nh_mobile_support, $nh_template_vars, $wp_query; ?>
+<?php $nh_section = $nh_template_vars['section']; ?>
 
-<h1><?php echo $ns_template_vars['page-title']; ?></h1>
+<h1><?php echo $nh_template_vars['page-title']; ?></h1>
 
-<?php if( isset($ns_template_vars['description']) ): ?>
-	<div class="description"><?php echo $ns_template_vars['description']; ?></siv>
+<?php if( isset($nh_template_vars['description']) ): ?>
+	<div class="description"><?php echo $nh_template_vars['description']; ?></siv>
 <?php endif; ?>
 
 <?php
@@ -28,7 +28,7 @@ else:
 	while( have_posts() ):
 	
 		the_post();
-		$story = $ns_section->get_listing_story( get_post() );
+		$story = $nh_section->get_listing_story( get_post() );
 		
 		$same_day = true;
 		if( $story['datetime']->format('y-d-M') != $current_date->format('y-d-M') )
@@ -58,9 +58,9 @@ else:
 			$close_previous_day = true;
 		}
 
-		$ns_template_vars['section'] = $ns_section;
-		$ns_template_vars['story'] = $story;
-		ns_get_template_part( 'listing', 'story', $ns_section->key );
+		$nh_template_vars['section'] = $nh_section;
+		$nh_template_vars['story'] = $story;
+		nh_get_template_part( 'listing', 'story', $nh_section->key );
 
 	endwhile;
 
@@ -72,10 +72,10 @@ else:
 		?>
 		<div id="page-navigation" class="clearfix" role="navigation">
 			<div class="nav-next">
-				<?php next_posts_link( $ns_section->get_listing_label('next') ); ?>
+				<?php next_posts_link( $nh_section->get_listing_label('next') ); ?>
 			</div>
 			<div class="nav-prev">
-				<?php previous_posts_link( $ns_section->get_listing_label('prev') ); ?>
+				<?php previous_posts_link( $nh_section->get_listing_label('prev') ); ?>
 			</div>
 		</div>
 		<?php
