@@ -14,8 +14,8 @@
 
 add_action( 'init', 'nh_setup_widget_areas' );
 add_action( 'after_setup_theme', 'nh_add_featured_image_support' );
-add_action( 'wp_enqueue_scripts', 'nh_enqueue_scripts' );
-add_action( 'admin_notices', 'nh_validate_categories_and_tags' );
+add_action( 'wp_enqueue_scripts', 'nh_enqueue_scripts', 0 );
+add_action( 'admin_notices', 'nh_validate_categories_and_tags', 0 );
 
 add_filter( 'pre_get_posts', 'nh_alter_news_section_query' );
 add_filter( 'the_posts', 'nh_alter_news_posts', 9999, 2 );
@@ -691,7 +691,7 @@ $nh_config->load_config();
 // Include the admin backend. 
 //----------------------------------------------------------------------------------------
 require_once( dirname(__FILE__).'/admin/main.php' );
-require_once( dirname(__FILE__).'/widgets/sectionh-widget.php' );
+require_once( dirname(__FILE__).'/widgets/sections-widget.php' );
 
 // 
 // Include custom post types.

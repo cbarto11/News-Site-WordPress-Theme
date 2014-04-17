@@ -38,7 +38,7 @@ jQuery(document).ready(function()
 		//--------------------------------------------------------------------------------
 		function get_nonce()
 		{
-			var nonce = $('input[name="nh-stories-optionh-nonce"]').val();
+			var nonce = $('input[name="nh-stories-options-nonce"]').val();
 			return nonce;
 		}
 

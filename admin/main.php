@@ -9,14 +9,14 @@ if( is_admin() ):
 //----------------------------------------------------------------------------------------
 // Setup the plugin's admin pages.
 //----------------------------------------------------------------------------------------
-add_action('admin_menu', array('NH_AdminMain', 'setup_admin_pages'));  
-add_action('admin_init', array('NH_AdminMain', 'setup_actions'));
+add_action( 'admin_menu', array('NH_AdminMain', 'setup_admin_pages') );  
+add_action( 'admin_init', array('NH_AdminMain', 'setup_actions') );
 
 //----------------------------------------------------------------------------------------
 // Setup the admin page to accept AJAX requests.
 //----------------------------------------------------------------------------------------
-add_action("wp_ajax_nh-banner-options", array('NH_AdminMain', 'show_banner_ajax_page'));
-add_action("wp_ajax_nh-stories-options", array('NH_AdminMain', 'show_stories_ajax_page'));
+add_action( 'wp_ajax_nh-banner-options', array('NH_AdminMain', 'show_banner_ajax_page') );
+add_action( 'wp_ajax_nh-stories-options', array('NH_AdminMain', 'show_stories_ajax_page') );
 
 endif;
 

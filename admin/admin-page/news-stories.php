@@ -170,7 +170,7 @@ class NH_AdminPage_NewsStories
 		self::process_post();
 		
 		$options = $nh_config->get_admin_options( 'news' );
-		$nonce = wp_create_nonce("nh-stories-optionh-nonce");
+		$nonce = wp_create_nonce("nh-stories-options-nonce");
 		
 		$num_stories_options = array( 1, 2, 5, 10, 15, 20, 25, 30 );
 		
@@ -184,7 +184,7 @@ class NH_AdminPage_NewsStories
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
-		<input type="hidden" name="nh-stories-optionh-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-stories-options-nonce" value="<?php echo $nonce; ?>" />
 		<?php
 		$section = $nh_config->get_section_by_key( 'news' );
 		?>

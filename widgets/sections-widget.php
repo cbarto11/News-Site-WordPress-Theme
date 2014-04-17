@@ -17,7 +17,7 @@ class NH_SectionsWidget extends WP_Widget
 		//nh_print('construct');
 		
 		parent::__construct(
-			'nh_sectionh_widget', // Base ID
+			'nh_sections_widget', // Base ID
 			__("Section List", 'text_domain'), // Name
 			array( 
 				'description' => __( 'Displays a list of news sections.', 'text_domain' ), 

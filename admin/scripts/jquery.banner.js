@@ -22,7 +22,7 @@ jQuery(document).ready(function()
 
 		function get_nonce()
 		{
-			var nonce = $('input[name="nh-banner-optionh-nonce"]').val();
+			var nonce = $('input[name="nh-banner-options-nonce"]').val();
 			return nonce;
 		}
 

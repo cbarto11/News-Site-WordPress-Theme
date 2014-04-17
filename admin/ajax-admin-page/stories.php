@@ -43,7 +43,7 @@ class NH_AdminAjaxPage_Stories
 	public static function process_post()
 	{
 		if( !isset($_POST['nonce']) || 
-			!wp_verify_nonce($_POST['nonce'], "nh-stories-optionh-nonce") )
+			!wp_verify_nonce($_POST['nonce'], "nh-stories-options-nonce") )
 		{
 			self::$_status = false;
 			self::$_message = 'Invalid nonce code ('.$_POST['nonce'].').';

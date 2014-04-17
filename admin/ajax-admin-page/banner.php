@@ -42,7 +42,7 @@ class NH_AdminAjaxPage_Banner
 	public static function process_post()
 	{
 		if( !isset($_POST['nonce']) || 
-			!wp_verify_nonce($_POST['nonce'], "nh-banner-optionh-nonce") )
+			!wp_verify_nonce($_POST['nonce'], "nh-banner-options-nonce") )
 		{
 			self::$_status = false;
 			self::$_message = 'Invalid nonce code ('.$_POST['nonce'].').';

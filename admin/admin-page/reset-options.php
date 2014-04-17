@@ -89,21 +89,21 @@ class NH_AdminPage_ResetOptions
 		self::init();
 		self::process_post();
 		
-		$nonce = wp_create_nonce("nh-stories-optionh-nonce");
+		$nonce = wp_create_nonce("nh-stories-options-nonce");
 		?>
-		<div id="reset-optionh-editor" class="admin-container">
+		<div id="reset-options-editor" class="admin-container">
 		
 		<h2>Reset Options</h2>
 		<div class="instructions">Instruction go here...</div>
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
-		<input type="hidden" name="nh-reset-optionh-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-reset-options-nonce" value="<?php echo $nonce; ?>" />
 		<input type="submit" name="reset_options" value="Reset Options" />
 		
 		</form>
 		
-		</div><!-- #reset-optionh-editor -->
+		</div><!-- #reset-options-editor -->
 
 		<?php
 	}

@@ -194,7 +194,7 @@ class NH_AdminPage_Banner
 		self::process_post();
 		
 		$options = $nh_config->get_banner_images();
-		$nonce = wp_create_nonce("nh-banner-optionh-nonce");
+		$nonce = wp_create_nonce("nh-banner-options-nonce");
 
 		if( $options === null ) $options = array();		
 		?>
@@ -204,7 +204,7 @@ class NH_AdminPage_Banner
 		<h2>Banner Editor</h2>
 		<div class="instructions">Instruction go here...</div>
 		
-		<input type="hidden" name="nh-banner-optionh-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-banner-options-nonce" value="<?php echo $nonce; ?>" />
 		
 		<form id="upload-form" class="wp-upload-form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 			<label for="upload"><?php _e( 'Choose an image from your computer:' ); ?></label><br />

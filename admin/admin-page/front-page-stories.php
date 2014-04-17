@@ -171,7 +171,7 @@ class NH_AdminPage_FrontPageStories
 		self::process_post();
 
 		$options = $nh_config->get_admin_options( 'front-page' );
-		$nonce = wp_create_nonce("nh-stories-optionh-nonce");
+		$nonce = wp_create_nonce("nh-stories-options-nonce");
 
 		$num_stories_options = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
 				
@@ -185,7 +185,7 @@ class NH_AdminPage_FrontPageStories
 		
 		<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
-		<input type="hidden" name="nh-stories-optionh-nonce" value="<?php echo $nonce; ?>" />
+		<input type="hidden" name="nh-stories-options-nonce" value="<?php echo $nonce; ?>" />
 		<?php
 		
 		foreach( $options['sections'] as $column => $sections ):

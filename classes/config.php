@@ -16,8 +16,8 @@ class NH_Config
 
 	const CONFIG_DEFAULT_INI_FILENAME = 'config/config-default.ini';
 	const CONFIG_INI_FILENAME = 'config/config.ini';
-	const OPTIONH_DEFAULT_INI_FILENAME = 'config/optionh-default.ini';
-	const OPTIONH_INI_FILENAME = 'config/options.ini';
+	const OPTIONS_DEFAULT_INI_FILENAME = 'config/options-default.ini';
+	const OPTIONS_INI_FILENAME = 'config/options.ini';
 	private $config;
 	private $options;
 	
@@ -55,30 +55,30 @@ class NH_Config
 
 		$this->options = array();
 
-		if( file_exists(get_template_directory().'/'.self::OPTIONH_DEFAULT_INI_FILENAME) )
-			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONH_DEFAULT_INI_FILENAME );
-		elseif( file_exists(get_template_directory().'/'.self::OPTIONH_INI_FILENAME) )
-			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONH_INI_FILENAME );
+		if( file_exists(get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME) )
+			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME );
+		elseif( file_exists(get_template_directory().'/'.self::OPTIONS_INI_FILENAME) )
+			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_INI_FILENAME );
 		else
-			exit( 'Unable to locate theme '.self::OPTIONH_DEFAULT_INI_FILENAME.' file.' );
+			exit( 'Unable to locate theme '.self::OPTIONS_DEFAULT_INI_FILENAME.' file.' );
 		
 		if( is_child_theme() )
 		{
 			/* RESTORE THIS CODE FOR PRODUCTION:
-			if( file_exists(get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME) )
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME );
+			if( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
 			*/
 			
-			$optionh_filename = NH_BLOG_NAME;
-// 			nh_print( $optionh_filename, 'OPTIONS FILENAME' );
+			$options_filename = NH_BLOG_NAME;
+// 			nh_print( $options_filename, 'OPTIONS FILENAME' );
 
-			if( file_exists(get_stylesheet_directory().'/config/optionh-'.$optionh_filename.'.ini') )
+			if( file_exists(get_stylesheet_directory().'/config/options-'.$options_filename.'.ini') )
 			{
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/optionh-'.$optionh_filename.'.ini' );
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/options-'.$options_filename.'.ini' );
 			}
-			elseif( file_exists(get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME) )
+			elseif( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
 			{
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONH_INI_FILENAME );
+				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
 			}
 		}
 		
