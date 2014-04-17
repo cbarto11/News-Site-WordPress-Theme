@@ -38,12 +38,12 @@ class NH_AdminPage
 					self::$_page = substr($_GET['page'], 3); break;
 
 				default:
-					self::$_page = 'banner'; break;
+					self::$_class = ''; return; break;
 			}
 		}
 		else
 		{
-			self::$_page = 'banner';
+			self::$_class = ''; return; break;
 		}
 		
 		self::$_class = str_replace( '-', '', ucfirst(self::$_page) );
@@ -51,6 +51,9 @@ class NH_AdminPage
 
 		self::$_filename = ADMIN_PATH.'/admin-page/'.self::$_page.'.php';
 		if( file_exists(self::$_filename) ) require_once(self::$_filename);
+		
+		if( !class_exists(self::$_class) ) return;
+		call_user_func( array(self::$_class, 'init') );
 	}
 	
 
@@ -59,6 +62,7 @@ class NH_AdminPage
 	 */	
 	public static function show_page()
 	{
+		if( !class_exists(self::$_class) ) return;
 		call_user_func( array(self::$_class, 'show_page') );
 	}
 	
@@ -68,6 +72,7 @@ class NH_AdminPage
 	 */	
 	public static function setup_actions()
 	{
+		if( !class_exists(self::$_class) ) return;
 		add_action( 'admin_enqueue_scripts', array(self::$_class, 'enqueue_scripts') );
 		add_action( 'admin_head', array(self::$_class, 'add_head_script') );
 	}
