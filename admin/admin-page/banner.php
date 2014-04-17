@@ -3,32 +3,195 @@
 /**
  *
  */
-class NS_BannerAdminPage
+class NS_AdminPage_Banner
 {
-	private $messages;
-	private $config;
 
+	/* */
+	public static $error_messages;
+	public static $notice_messages;
+	private static $config;
+
+
+	/* Default private constructor. */
+	private function __construct() { }
+	
+	
+	/**
+	 *
+	 */	
+	public static function init()
+	{
+		global $ns_config;
+		
+		self::$error_messages = array();
+		self::$notice_messages = array();
+		self::$config = $ns_config->get_value('banner');
+	}
 
 
 	/**
 	 *
-	 */
-	public function __construct()
+	 */	
+	public static function display_messages()
 	{
-		global $ns_config;
-		$this->messages = array();
-		$this->config = $ns_config->get_value('banner');
+		foreach( self::$error_messages as $message )
+		{
+			?><div class="error"><?php echo $message; ?></div><?php
+		}
+		
+		foreach( self::$notice_messages as $message )
+		{
+			?><div class="updated"><?php echo $message; ?></div><?php
+		}
 	}
 	
+
+	/**
+	 * 
+	 */
+	public static function enqueue_scripts()
+	{
+		wp_deregister_script('jquery');
+		wp_enqueue_script('jquery', '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+
+		wp_enqueue_script( 'jquery-ui-core' );
+		wp_enqueue_script( 'jquery-ui-widget' );
+		wp_enqueue_script( 'jquery-ui-mouse' );
+		wp_enqueue_script( 'jquery-ui-sortable' );
+
+		wp_enqueue_script( 
+			'admin-banner-js', 
+			get_template_directory_uri().'/admin/scripts/jquery.banner.js', 
+			array(),
+			'1.0' );
+	}
 	
+
+	/**
+	 * 
+	 */
+	public static function add_head_script()
+	{
+		?>
+		<style>
+		
+		.admin-container {
+			width:840px;
+		}
+		.instructions {
+			font-style:italic;
+			margin-bottom:1em;
+		}
+		.wp-upload-form {
+			border:solid 1px #ccc;
+			padding:20px;
+			margin-bottom:20px;
+		}
+		.wp-upload-form .save-button {
+			float:right;
+		}
+		#slider-banner-list {
+			width:950px;
+			padding:20px;
+		}
+		.banner-list {
+			width:630px;
+			padding:5px;
+			float:left;
+		}
+		.banner-list > div {
+			position:relative;
+			display:inline-block;
+		}
+		.banner-list img.banner {
+			width:200px;
+			height:70px;
+		}
+		.banner-list img.delete-button {
+			width:16px;
+			height:16px;
+			position:absolute;
+			top:5px;
+			right:5px;
+			z-index:10;
+		}
+		.banner-list img.delete-button:hover {
+			cursor:pointer;
+		}
+		.slider-list {
+			float:left;
+			border:solid 1px gray;
+			width:220px;
+			padding:5px;
+			margin:0px;
+		}
+		.slider-list ol {
+			list-style-type:none;
+			margin:0px;
+			padding:0px;
+		}
+		.slider-list ol li.banner {
+			margin:5px;
+			padding:5px;
+			cursor:move;
+			background-color:silver;
+		}
+		.slider-list ol li.banner.out {
+			background-color:red;
+		}
+		.slider-list ol li.banner span {
+			position: absolute;
+			margin-left: -1.3em;
+		}
+		.slider-list .banner img {
+			width:200px;
+			height:70px;
+		}
+		.slider-list .banner input {
+			width:188px;
+			padding:3px 5px;
+			border:solid 1px #cccccc;
+			background-color:#f6f6f6;
+		}
+		.slider-list .banner label {
+			display:block;
+			font-size:0.8em;
+			font-weight:bold;
+		}
+		h4 {
+			margin:0; padding:0;
+			margin-bottom:10px;
+			text-align:center;
+		}		
+		.update-button {
+			padding: 0.5em;
+			float: right;
+			display: block;
+			background-color: #ccc;
+			margin-top: 0.5em;
+		}
+
+		</style>
+  		<script type="text/javascript">
+			jQuery(document).ready( function()
+			{
+				
+				
+				
+			});
+		</script>
+		<?php
+	}
 	
+
 	/**
 	 *
 	 */
-	public function show_page()
+	public static function show_page()
 	{
 		global $ns_config;
-		$this->process_post();
+		self::init();
+		self::process_post();
 		
 		$options = $ns_config->get_banner_images();
 		$nonce = wp_create_nonce("ns-banner-options-nonce");
@@ -36,7 +199,7 @@ class NS_BannerAdminPage
 		if( $options === null ) $options = array();		
 		?>
 		
-		<div class="banner-editor">
+		<div id="banner-editor" class="admin-container">
 		
 		<h2>Banner Editor</h2>
 		<div class="instructions">Instruction go here...</div>
@@ -48,7 +211,7 @@ class NS_BannerAdminPage
 			<input type="file" id="upload" name="import" />
 			<input type="hidden" name="action" value="upload-file" />
 			<?php //wp_nonce_field( 'custom-header-upload', '_wpnonce-custom-header-upload' ); ?>
-			<input type="submit" value="save slider" />
+			<input type="submit" value="save slider" class="save-button" />
 		</form>		
 		<?php
 		
@@ -130,22 +293,21 @@ class NS_BannerAdminPage
 				</ol>
 				
 				<input type="hidden" name="action" value="save-options" />
-				<input type="submit" value="Save Slides" />
+				<input type="submit" value="Save Slides" class="update-button" />
 			</form>
 		</div><!-- .slider-list -->
 		</div><!-- slider-banner-list -->
 		
-		</div><!-- .banner-editor -->
+		</div><!-- #banner-editor -->
 		
 		<?php
 	}
 
 
-
 	/**
 	 *
 	 */	
-	private function process_post()
+	private static function process_post()
 	{
 		if( !isset($_POST) || !isset($_POST['action']) )
 			return;
@@ -153,32 +315,31 @@ class NS_BannerAdminPage
 		switch( $_POST['action'] )
 		{
 			case 'upload-file':
-				$this->save_file();
+				self::save_file();
 				break;
 				
 			case 'save-options':
-				$this->save_options();
+				self::save_options();
 				break;
 		}		
 	}
 	
-
 	
 	/**
 	 *
 	 */
-	private function save_file()
+	private static function save_file()
 	{
 		global $ns_config;
 		$overrides = array('test_form' => false);
 
 		$uploaded_file = $_FILES['import'];
 		list($width, $height) = getimagesize( $uploaded_file['tmp_name'] );
-		if( $width != $this->config['width'] || $height != $this->config['height'] )
+		if( $width != self::$config['width'] || $height != self::$config['height'] )
 		{
 			?>
 			<div class="error"><p>
-			The banner must be <?php echo $this->config['width']; ?> x <?php echo $this->config['height']; ?>.
+			The banner must be <?php echo self::$config['width']; ?> x <?php echo self::$config['height']; ?>.
 			The uploaded banner is <?php echo $width; ?> x <?php echo $height; ?>.
 			The upload has been cancelled.
 			</p></div>
@@ -231,11 +392,10 @@ class NS_BannerAdminPage
 	}
 	
 	
-	
 	/**
 	 *
 	 */
-	private function save_options()
+	private static function save_options()
 	{
 		global $ns_config;
 		$slider_banners = array();
@@ -265,4 +425,6 @@ class NS_BannerAdminPage
 		$banner_options = $ns_config->set_option_value( 'banner', 'images', $slider_banners );
 		$ns_config->save_options();
 	}
+
 }
+

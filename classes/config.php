@@ -650,7 +650,19 @@ class NS_Config
 	public function set_stories( $page, $stories )
 	{
 		$this->options[$page.'-stories'] = $stories;
-		$this->save_options();
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function set_num_stories( $page, $num_stories )
+	{
+		foreach( $num_stories as $key => $num )
+		{
+			if( !empty($this->options['sections'][$key]) )
+				$this->options['sections'][$key][$page.'-num-stories'] = $num;
+		}
 	}
 	
 	
@@ -672,6 +684,16 @@ class NS_Config
 	public function reset_options()
 	{
 		delete_option( 'ns-theme-options' );
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function set_header( $title, $description )
+	{
+		$this->options['header']['title'] = $title;
+		$this->options['header']['description'] = $description;
 	}
 
 }

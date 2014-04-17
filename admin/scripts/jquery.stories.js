@@ -1,22 +1,20 @@
 
 
-
 /**
  *
  */
 jQuery(document).ready(function()
 {
-	jQuery('.story-selector').StorySelector();
+	jQuery('.story-selector').JqueryStorySelector();
 });
 	
-
 
 /**
  *
  */
 ( function( $ ) {
 			
-	$.fn.StorySelector = function() {
+	$.fn.JqueryStorySelector = function() {
 
 
 		//--------------------------------------------------------------------------------

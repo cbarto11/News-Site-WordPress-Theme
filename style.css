@@ -543,7 +543,8 @@ Tags:
 		padding:0px;
 	}
 	
-	body.single #content .story .description {
+	body.single #content .story .description,
+	body.page #content {
 		color:#000;
 		font-size:1.0em;
 		line-height:1.5em;

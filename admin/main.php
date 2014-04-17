@@ -1,22 +1,30 @@
 <?php
 
+
+define( 'ADMIN_PATH', dirname(__FILE__) );
+
+
+if( is_admin() ):
+
 //----------------------------------------------------------------------------------------
 // Setup the plugin's admin pages.
 //----------------------------------------------------------------------------------------
-add_action('admin_menu', array('NS_AdminPlugin', 'setup_admin_pages'));  
+add_action('admin_menu', array('NS_AdminMain', 'setup_admin_pages'));  
+add_action('admin_init', array('NS_AdminMain', 'setup_actions'));
 
 //----------------------------------------------------------------------------------------
 // Setup the admin page to accept AJAX requests.
 //----------------------------------------------------------------------------------------
-add_action("wp_ajax_ns-banner-options", array('NS_AdminPlugin', 'show_banner_ajax_page'));
-add_action("wp_ajax_ns-stories-options", array('NS_AdminPlugin', 'show_stories_ajax_page'));
+add_action("wp_ajax_ns-banner-options", array('NS_AdminMain', 'show_banner_ajax_page'));
+add_action("wp_ajax_ns-stories-options", array('NS_AdminMain', 'show_stories_ajax_page'));
 
+endif;
 
 
 /**
  *
  */
-class NS_AdminPlugin
+class NS_AdminMain
 {
 	/**
 	 *
@@ -25,66 +33,72 @@ class NS_AdminPlugin
 	{
 		global $ns_config;
 		
-	    add_action( 'admin_enqueue_scripts', array('NS_AdminPlugin', 'add_scripts') );
-
 		add_menu_page(
-			'Front Page Editor',							// text to be displayed in the menu.
-			'Front Page Editor',							// text to be displayed for this actual menu item.
-			'administrator',								// type of user that can access menu page.
-			'front-page-editor',							// unique ID / slug for menu item.
-			array( 'NS_AdminPlugin', 'show_admin_page' )	// function to call when rendering the menu page.
+			'Front Page',								// text to be displayed in the menu.
+			'Front Page',								// text to be displayed for this actual menu item.
+			'administrator',							// type of user that can access menu page.
+			'ns-front-page',							// unique ID / slug for menu item.
+			array( 'NS_AdminMain', 'show_admin_page' )	// function to call when rendering the menu page.
 	    );
 	    
-	    if( $ns_config->show_template_part('banner') )
-	    {
-			add_submenu_page(
-				'front-page-editor',							// slug of parent menu
-				'Banner',										// text to be displayed in the menu.
-				'Banner',										// text to be displayed for this actual menu item.
-				'administrator',								// type of user that can access menu page.
-				'ns-banner',									// unique ID / slug for menu item.
-				array( 'NS_AdminPlugin', 'show_banner_page' )	// function to call when rendering the menu page.
-			);
-	    }
+	    if( $ns_config->show_template_part('banner') ):
+		add_submenu_page(
+			'ns-front-page',							// slug of parent menu
+			'Banner',									// text to be displayed in the menu.
+			'Banner',									// text to be displayed for this actual menu item.
+			'administrator',							// type of user that can access menu page.
+			'ns-banner',								// unique ID / slug for menu item.
+			array( 'NS_AdminMain', 'show_admin_page' )	// function to call when rendering the menu page.
+		);
+	    endif;
 
 	    add_submenu_page(
-	    	'front-page-editor',
+	    	'ns-front-page',
+	    	'Header',
+	    	'Header',
+	    	'administrator',
+	    	'ns-header',
+	    	array( 'NS_AdminMain', 'show_admin_page' )
+	    );
+
+	    add_submenu_page(
+	    	'ns-front-page',
 	    	'Front Page',
 	    	'Front Page',
 	    	'administrator',
 	    	'ns-front-page-stories',
-	    	array( 'NS_AdminPlugin', 'show_front_page' )
+	    	array( 'NS_AdminMain', 'show_admin_page' )
 	    );
 
 	    add_submenu_page(
-	    	'front-page-editor',
+	    	'ns-front-page',
 	    	'Sidebar',
 	    	'Sidebar',
 	    	'administrator',
 	    	'ns-sidebar-stories',
-	    	array( 'NS_AdminPlugin', 'show_sidebar_page' )
+	    	array( 'NS_AdminMain', 'show_admin_page' )
 	    );
 
 	    add_submenu_page(
-	    	'front-page-editor',
+	    	'ns-front-page',
 	    	'News',
 	    	'News',
 	    	'administrator',
 	    	'ns-news-stories',
-	    	array( 'NS_AdminPlugin', 'show_news_page' )
+	    	array( 'NS_AdminMain', 'show_admin_page' )
 	    );
 
 	    add_submenu_page(
-	    	'front-page-editor',
+	    	'ns-front-page',
 	    	'Reset',
 	    	'Reset',
 	    	'administrator',
 	    	'ns-reset-options',
-	    	array( 'NS_AdminPlugin', 'show_reset_options_page' )
+	    	array( 'NS_AdminMain', 'show_admin_page' )
 	    );
 
-	    remove_submenu_page( 'front-page-editor', 'font-page-editor' );
-	    unset($GLOBALS['submenu']['front-page-editor'][0]);
+	    remove_submenu_page( 'ns-front-page', 'ns-front-page' );
+	    unset($GLOBALS['submenu']['ns-front-page'][0]);
 	}
 
 	
@@ -94,128 +108,46 @@ class NS_AdminPlugin
 	 */	
 	public static function show_admin_page()
 	{
+		require_once( ADMIN_PATH.'/admin-page.php' );
+		NS_AdminPage::init();
+		NS_AdminPage::show_page();
+	}
+
+	
+	
+	/**
+	 * Processes AJAX requests from the plugin.
+	 */
+	public static function show_admin_ajax_page( $page )
+	{
+		require_once( ADMIN_PATH.'/admin-ajax-page.php' );
+		NS_AdminAjaxPage::init( $page );
+		NS_AdminAjaxPage::process();
+		NS_AdminAjaxPage::output();
 		exit();
 	}
-
 	
 	
-	/**
-	 *
-	 */	
-	public static function show_banner_page()
-	{
-		require_once( dirname(__FILE__).'/banner-admin-page.php' );
-		$admin_page = new NS_BannerAdminPage;
-		$admin_page->show_page();
-	}
-
-
-
-	/**
-	 *
-	 */
 	public static function show_banner_ajax_page()
 	{
-		require_once( dirname(__FILE__).'/banner-admin-ajax-page.php' );
-		$admin_page = new NS_BannerAdminAjaxPage;
-		$admin_page->process_post();
-		$admin_page->display_output();
-		exit();
+		self::show_admin_ajax_page( 'banner' );
 	}
-
 	
-	
-	/**
-	 *
-	 */	
-	public static function show_front_page()
-	{
-		require_once( dirname(__FILE__).'/front-page-admin-page.php' );
-		$admin_page = new NS_FrontPageAdminPage;
-		$admin_page->show_page();
-	}
-
-	
-	
-	/**
-	 *
-	 */	
-	public static function show_sidebar_page()
-	{
-		require_once( dirname(__FILE__).'/sidebar-admin-page.php' );
-		$admin_page = new NS_SidebarAdminPage;
-		$admin_page->show_page();
-	}
-
-
-
-	/**
-	 *
-	 */
 	public static function show_stories_ajax_page()
 	{
-		require_once( dirname(__FILE__).'/stories-admin-ajax-page.php' );
-		$admin_page = new NS_StoriesAdminAjaxPage;
-		$admin_page->process_post();
-		$admin_page->display_output();
-		exit();
-	}	
-	
-
-
-	/**
-	 *
-	 */	
-	public static function show_news_page()
-	{
-		require_once( dirname(__FILE__).'/news-admin-page.php' );
-		$admin_page = new NS_NewsAdminPage;
-		$admin_page->show_page();
+		self::show_admin_ajax_page( 'stories' );
 	}
 
 
 	/**
-	 *
+	 * Adds the needed JavaScript and CSS files needed for the plugin.
 	 */	
-	public static function show_reset_options_page()
+	public static function setup_actions()
 	{
-		require_once( dirname(__FILE__).'/reset-options-page.php' );
-		$admin_page = new NS_ResetOptionsAdminPage;
-		$admin_page->show_page();
+		require_once( ADMIN_PATH.'/admin-page.php' );
+		NS_AdminPage::init();
+		NS_AdminPage::setup_actions();
 	}
 
-
-
-	/**
-	 *
-	 */	
-	public static function add_scripts()
-	{
-		wp_register_script( 
-			'admin-banner-js', 
-			get_template_directory_uri().'/admin/admin-banner.js', 
-			array(),
-			'1.0' );
-
-		wp_register_script( 
-			'admin-stories-js', 
-			get_template_directory_uri().'/admin/admin-stories.js', 
-			array(),
-			'1.0' );
-
-		wp_register_style( 
-			'ns-admin-css', 
-			get_template_directory_uri().'/styles/admin.css', 
-			array(), 
-			'1.0' );
-
-		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'jquery-ui-core' );
-		wp_enqueue_script( 'jquery-ui-widget' );
-		wp_enqueue_script( 'jquery-ui-mouse' );
-		wp_enqueue_script( 'jquery-ui-sortable' );
-		wp_enqueue_script( 'admin-banner-js' );
-		wp_enqueue_script( 'admin-stories-js' );
-		wp_enqueue_style( 'ns-admin-css' );
-	}
 }	
+

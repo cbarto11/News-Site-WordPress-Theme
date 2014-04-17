@@ -1,14 +1,12 @@
 
 
-
 /**
  *
  */
 jQuery(document).ready(function()
 {
-	jQuery('#slider-banner-list').SliderBannerList();
+	jQuery('#slider-banner-list').JqueryBannerList();
 });
-
 
 
 /**
@@ -16,7 +14,7 @@ jQuery(document).ready(function()
  */
 ( function( $ ) {
 			
-	$.fn.SliderBannerList = function() {
+	$.fn.JqueryBannerList = function() {
 
 		var banner_list = null;
 		var slider_list = null;
@@ -125,23 +123,4 @@ jQuery(document).ready(function()
 	}
 	
 })( jQuery );
-
-
-
-
-
-/*
-
-<img src="src.jpg" banner_id="34" />
-
-<div class="slider-list">
-	<div class="banner">
-		<img src="src.jpg" />
-		<input type="hidden" name="banner_id[]" value="34" />
-		<input type="text" name="banner_url[]" value="url" />
-	</div>
-</div>
-
-*/
-
 
