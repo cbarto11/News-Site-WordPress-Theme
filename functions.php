@@ -655,13 +655,40 @@ endif;
 
 
 
+//----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+if( !function_exists('nh_get_taxonomies') ):
+function nh_get_taxonomies( $post_id = -1 )
+{
+	global $post;
+	
+	if( $post_id == -1 )
+		$post_id = $post->ID;
+		
+	$all_taxonomies = get_taxonomies('', 'names');
+	
+	$taxonomies = array();
+	foreach( $all_taxonomies as $taxname )
+	{
+		$terms = wp_get_post_terms( $post_id, $taxname, array('fields' => 'names') );
+		if( count($terms) > 0 )
+			$taxonomies[$taxname] = $terms;
+	}
+	
+	return $taxonomies;
+}
+endif;
+
+
+
 //========================================================================================
 //======================================================================= Main Setup =====
 
 // 
 // Set the log's file path.
 //----------------------------------------------------------------------------------------
-$nh_logfile = dirname(__FILE__).'/newssite.log';
+$nh_logfile = dirname(__FILE__).'/newshub.log';
 
 // 
 // Set blog name.

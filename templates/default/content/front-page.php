@@ -18,7 +18,7 @@ $options = $nh_config->get_admin_options( 'front-page' );
 			$stories = $section->get_stories( 'front-page' );
 			
 			?>
-			<div class="section-box <?php $section_key; ?>-section <?php echo $section->thumbnail_image; ?>-image">
+			<div class="section-box <?php echo $section_key; ?>-section <?php echo $section->thumbnail_image; ?>-image">
 
 				<h2>
 				<?php echo nh_get_anchor( 

@@ -6,7 +6,7 @@
 <h1><?php echo $nh_template_vars['page-title']; ?></h1>
 
 <?php if( isset($nh_template_vars['description']) ): ?>
-	<div class="description"><?php echo $nh_template_vars['description']; ?></siv>
+	<div class="description"><?php echo $nh_template_vars['description']; ?></div>
 <?php endif; ?>
 
 <?php

@@ -14,12 +14,14 @@ class NH_Config
 	//============================================================= Class Properties =====
 
 
+	const DB_VERSION = '1.0';
 	const CONFIG_DEFAULT_INI_FILENAME = 'config/config-default.ini';
 	const CONFIG_INI_FILENAME = 'config/config.ini';
 	const OPTIONS_DEFAULT_INI_FILENAME = 'config/options-default.ini';
 	const OPTIONS_INI_FILENAME = 'config/options.ini';
 	private $config;
 	private $options;
+	private $sections;
 	
 
 	//====================================================================================
@@ -37,6 +39,7 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function load_config()
 	{
+		$this->check_db();
 		$this->config = array();
 		
 		if( file_exists(get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME) )
@@ -86,8 +89,12 @@ class NH_Config
 
 		$this->config = array_replace_recursive($this->options, $this->config);
 
-		$this->verify_settings();
+		$this->create_sections();
 		$this->populate_widget_areas();
+		
+// 		nh_print( $this->config, 'CONFIG' );
+		
+		update_option('nh-db-version', self::DB_VERSION);
 	}
 	
 
@@ -142,12 +149,13 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	private function verify_settings()
+	private function create_sections()
 	{
-		foreach( $this->config['sections'] as $key => &$section_data )
+		$this->sections = array();
+		foreach( $this->config['sections'] as $key => $section_data )
 		{
-			if( is_array($section_data) ) 
-				$section_data = new NH_Section( $key, $section_data );
+			if( is_array($section_data) )
+				$this->sections[$key] = new NH_Section( $key, $section_data );
 		}
 	}
 	
@@ -350,90 +358,84 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_section( $post_type, $category = array(), $tag = array(), $return_null = false, $exclude_sections = array() )
+	public function get_section( $post_types, $taxonomies = array(), $return_null = false, $exclude_sections = array() )
 	{
-		$section = null;
+		
+		$type_match = null;
+		$partial_match = null;
+		$exact_match = null;
+		$best_count = 0;
+		
 		
 		// 
 		// 
 		// 
-		if( $category === null ) $category = array();
-		elseif( !is_array($category) ) $category = array( $category );
-		
-		if( $tag === null ) $tag = array();
-		elseif( !is_array($tag) ) $tag = array( $tag );
-		
-		// 
-		// 
-		// 
-		foreach( $category as $c )
-		{
-			foreach( $tag as $t )
-			{
-				foreach( $this->config['sections'] as $section )
-				{
-					if( ($section->type == $post_type) && 
-						($section->category == $c) && 
-						($section->tag == $t) &&
-						(!in_array($section->key, $exclude_sections)) )
-					{
-						return $section;
-					}
-				}
-			}
-		}
-		
-		// 
-		// 
-		// 
-		$i = 1;
-		foreach( $category as $c )
-		{
-			foreach( $this->config['sections'] as $section )
-			{
-				if( ($section->type == $post_type) && 
-					($section->category == $c) &&
-					(!in_array($section->key, $exclude_sections)) )
-				{
-					return $section;
-				}
-			}
-			$i++;
-		}
+		if( empty($post_types) ) $post_types = array( 'post' );
+		if( !is_array($post_types) ) $post_types = array( $post_types );
+		if( empty($taxonomies) ) $taxonomies = array();
+
 
 		// 
 		// 
 		// 
-		foreach( $tag as $t )
+		// cycle through each section looking for exact taxonomy and post type match
+		foreach( $this->sections as $key => $section )
 		{
-			foreach( $this->config['sections'] as $section )
+			if( !$section->is_post_type($post_types) ) continue;
+			
+			if( !$section->has_taxonomies() )
 			{
-				if( ($section->type == $post_type) && 
-					($section->tag == $t) &&
-					(!in_array($section->key, $exclude_sections)) )
+				$type_match = $section;
+				continue;
+			}
+			
+			$section_count = $section->get_taxonomy_count();
+			$taxonomy_count = 0;
+			$match_count = 0;
+			foreach( $taxonomies as $taxname => $terms )
+			{
+				if( is_array($terms) )
 				{
-					return $section;
+					foreach( $terms as $term )
+					{
+						if( $section->has_term($taxname, $term) )
+						{
+							$match_count++;
+						}
+						$taxonomy_count++;
+					}
 				}
+				else
+				{
+					if( $section->has_term($taxname, $terms) )
+					{
+						$match_count++;
+					}
+					$taxonomy_count++;
+				}
+			}
+			
+			if( ($taxonomy_count == $match_count) && ($taxonomy_count == $section_count) )
+			{
+				$exact_match = $section;
+				break;
+			}
+			
+			if( $match_count > $best_count )
+			{
+				$partial_match = $section;
+				$best_count = $match_count;
 			}
 		}
 		
-		// 
-		// 
-		// 
-		if( $post_type !== 'post' && $post_type !== 'page' )
-		{
-			foreach( $this->config['sections'] as $section )
-			{
-				if( ($section->type == $post_type) && 
-					(!in_array($section->key, $exclude_sections)) )
-				{
-					return $section;
-				}
-			}
-		}
+		
+		if( $exact_match !== null ) return $exact_match;
+		if( $partial_match !== null ) return $partial_match;
+		if( $type_match !== null ) return $type_match;
+		
 		
 		// 
-		// 
+		// Done.
 		// 
 		if( $return_null ) return null;
 		return $this->get_default_section();
@@ -445,8 +447,8 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function get_section_by_key( $key, $return_null = false )
 	{
-		if( array_key_exists($key, $this->config['sections']) )
-			return $this->config['sections'][$key];
+		if( array_key_exists($key, $this->sections) )
+			return $this->sections[$key];
 			
 		if( $return_null ) return null;
 		return $this->get_default_section();
@@ -639,8 +641,7 @@ class NH_Config
 	{
 		update_option( 'nh-theme-options', $this->options );
 		$this->config = array_replace_recursive($this->config, $this->options);
-		$this->verify_settings();
-		//nh_print($this->config);
+		$this->create_sections();
 	}
 	
 	
@@ -694,6 +695,45 @@ class NH_Config
 	{
 		$this->options['header']['title'] = $title;
 		$this->options['header']['description'] = $description;
+	}
+	
+	
+	
+	
+	
+	private function check_db()
+	{
+// 		nh_print('check-db');
+		$db_version = get_option( 'nh-db-version', '1.0' );
+		if( $db_version == self::DB_VERSION ) return;
+		
+// 		nh_print('checked version');
+		$options = get_option('nh-theme-options', false );
+		if( !$options ) return;
+		
+// 		nh_print('check options');
+		
+		switch( $db_version )
+		{
+			case '1.0':
+				$this->convert_db_from_10_to_11();
+			case '1.1':
+				$this->convert_db_from_11_to_12();
+		}
+	}
+	
+	
+	private function convert_db_from_10_to_11()
+	{
+		$options = get_option('nh-theme-options', false );
+		
+		//nh_print( $options, 'DB-OPTIONS' );
+	}
+	
+	
+	private function convert_db_from_11_to_12()
+	{
+		// future use...
 	}
 
 }

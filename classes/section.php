@@ -9,9 +9,11 @@ class NH_Section
 {
 	public $key;
 	public $name;
-	public $type;
-	public $category;
-	public $tag;
+	public $post_types;
+	public $taxonomies;
+//	public $terms;
+// 	public $category;
+// 	public $tag;
 	public $title;
 	public $featured_image;
 	public $thumbnail_image;
@@ -31,12 +33,31 @@ class NH_Section
 		
 		$this->key = $key;
 		$this->name = $section['name'];
-		$this->type = ( isset($section['type']) ? $section['type'] : 'post' );
-		$this->category = ( isset($section['category']) ? $section['category'] : '' );
-		$this->tag = ( isset($section['tag']) ? $section['tag'] : '' );
 		$this->title = ( isset($section['title']) ? $section['title'] : strtoupper($this->name) );
 		$this->featured_image = ( isset($section['featured-image']) ? $section['featured-image'] : 'none' );
 		$this->thumbnail_image = ( isset($section['thumbnail-image']) ? $section['thumbnail-image'] : $this->featured_image );
+
+		$this->post_types = ( isset($section['type']) ? array_unique(array_filter(explode(',',$section['type']))) : array('post') );
+		if( count($this->post_types) == 0 ) $this->post_types = array( 'post' );
+		
+		$this->taxonomies = array();
+		if( isset($section['taxonomies']) )
+		{
+			foreach( array_filter(explode(',',$section['taxonomies'])) as $taxname )
+			{
+				$this->taxonomies[$taxname] = ( isset($section[$taxname]) ? array_unique(array_filter(explode(',',$section[$taxname]))) : array() );
+			}
+		}
+		else
+		{
+			if( isset($section['category']) )
+				$this->taxonomies['category'] = array_filter(explode(',',$section['category']));
+		}
+		
+		foreach( $this->taxonomies as $taxname => $terms )
+		{
+			if( count($terms) == 0 ) unset($this->taxonomies[$taxname]);
+		}
 		
 		$this->num_stories = array();
 		$this->num_stories['front-page'] = ( isset($section['front-page-num-stories']) ? $section['front-page-num-stories'] : 0 );
@@ -73,21 +94,8 @@ class NH_Section
 	//------------------------------------------------------------------------------------
 	public function get_post( $offset = 0, $omit_ids = array() )
 	{
-		$query = array(
-			'numberposts' => 1,
-			'post_type' => $this->type,
-			'category_name' => $this->category,
-			'tag' => $this->tag,
-			'offset' => $offset,
-			'post__not_in' => $omit_ids,
-			'section' => $this
-		);
-	
-		$posts = get_posts( $query );
-	
-		if( is_array($posts) && (count($posts) > 0) )
-			return $posts[0];
-
+		$posts = $this->get_post_list( $offset, $omit_ids );
+		if( count($posts) > 0 ) return $posts[0];
 		return null;
 	}
 	
@@ -102,30 +110,58 @@ class NH_Section
 	//------------------------------------------------------------------------------------
 	public function get_post_list( $offset = 0, $limit = 10, $omit_ids = array() )
 	{
-		$category = null;
-		if( $this->category !== '' )
-		{
-			$category = get_category_by_slug( $this->category );
-	
-			if( !$category ) 
-				$category = '';
-			else
-				$category = $category->term_id;
-		}
+		$posts = array();
 		
-		$query = array(
+		$args = array(
 			'posts_per_page' => $limit,
-			'post_type' => $this->type,
-			'category' => $category,
-			'tag' => $this->tag,
+			'post_type' => $this->post_types,
+			'post_status' => 'publish',
 			'offset' => $offset,
 			'post__not_in' => $omit_ids,
-			'post_status' => 'publish',
-			'section' => $this,
-			'suppress_filters' => false
+			'tax_query' => $this->create_tax_query(),
+			'section' => $this
 		);
 	
-		return get_posts( $query );
+		$query = new WP_Query( $args );
+		
+		if( $query->have_posts() )
+			$posts = $query->get_posts();
+		
+		wp_reset_postdata();
+		
+		return $posts;
+	}
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	private function create_tax_query()
+	{
+		$count = 0;
+		$tax_query = array();
+		foreach( $this->taxonomies as $taxname => $terms )
+		{
+			if( count($terms) > 0 )
+			{
+				$count++;
+				array_push(
+					$tax_query,
+					array(
+						'taxonomy' => $taxname,
+						'field' => 'slug',
+						'terms' => $terms,
+						'operator' => 'IN',
+					)
+				);
+			}
+		}
+		if( $count > 1 )
+		{
+			$tax_query['relation'] = 'OR';
+		}
+		
+		return $tax_query;
 	}
 	
 	
@@ -214,43 +250,40 @@ class NH_Section
 
 
 	//------------------------------------------------------------------------------------
-	// TODO: alter this...
+	// 
 	//------------------------------------------------------------------------------------
 	 public function get_section_link()
 	 {
-	 	$link = '';
+	 	$link = null;
 		
 		if( $this->key == 'none' || $this->key == 'multi' )
 			return null;
 		
-		if( $this->type === 'post' )
+		if( count($this->post_types) == 1 )
 		{
-			if( !empty($this->category) )
+			switch( count($this->taxonomies) )
 			{
-				$category = get_category_by_slug( $this->category );
-				$link = get_category_link( $category->term_id );
-			}
-			else
-			{
-				$link = '';
-			}
-		}
-		else
-		{
-			if( !empty($this->category) )
-			{
-				$link = '';
-			}
-			else
-			{
-				$link = get_site_url().'/'.$this->type;
+				case 0:
+					// post page
+					if( $this->post_types[0] == 'post' )
+						$link = get_site_url().'/?post_type='.$this->post_types[0];
+					else
+						$link = get_site_url().'/'.$this->post_types[0];
+					break;
+					
+				case 1:
+					// taxonomy page?
+					reset($this->taxonomies); $taxname = key($this->taxonomies);
+					if( count($this->taxonomies[$taxname]) == 1 )
+						$link = get_term_link( $this->taxonomies[$taxname][0], $taxname );
+					break;
 			}
 		}
 		
-		return $link;
+		return apply_filters( 'section-link', $link, $this );
 	}
 	
-	
+
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
@@ -428,48 +461,32 @@ class NH_Section
 	//------------------------------------------------------------------------------------
 	public function get_search_results( $search_text )
 	{
-		global $wpdb;
-
-		$category = null;
-		$category_sql = '';
-		if( $this->category !== '' )
-		{
-			$category = get_category_by_slug( $this->category );
-	
-			if( ($category === null) || ($category == false) ) 
-				return array();
-				
-			$category = $category->term_id;
-			
-			$category_sql = "
-				INNER JOIN $wpdb->term_relationships 
-				  ON (ptable.ID = $wpdb->term_relationships.object_id)
-				INNER JOIN $wpdb->term_taxonomy
-				  ON ($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id) 
-				    AND $wpdb->term_taxonomy.taxonomy = 'category'
-				    AND $wpdb->term_taxonomy.term_id = $category
-			";
-		}
-		
-		$sql = "
-			SELECT ID, post_title
-			FROM $wpdb->posts as ptable
-			$category_sql
-			WHERE ptable.post_status = 'publish'
-			  AND ptable.post_type = '$this->type'
-			  AND ptable.post_title LIKE '%$search_text%'
-			LIMIT 0, 10
-			";
-		$results = $wpdb->get_results( $sql, ARRAY_A );
-		
 		$stories = array();
-		foreach( $results as $row )
+		
+		$args = array(
+			's' => $search_text,
+			'posts_per_page' => 10,
+			'post_type' => $this->post_types,
+			'post_status' => 'publish',
+			'tax_query' => $this->create_tax_query(),
+			'section' => $this
+		);
+	
+		$query = new WP_Query( $args );
+		
+		while( $query->have_posts() )
 		{
-			$stories[] = array(
-				'id' => $row['ID'],
-				'title' => $row['post_title']
+			$query->the_post;
+			array_push(
+				$stories,
+				array(
+					'id' => get_the_ID(),
+					'title' => get_the_title(),
+				)
 			);
 		}
+		
+		wp_reset_postdata();
 		
 		return $stories;
 	}
@@ -557,6 +574,45 @@ class NH_Section
 		if( (array_key_exists($key, $this->listing_labels)) && ($this->listing_labels[$key] !== null) )
 			return $this->listing_labels[$key];
 		return $nh_config->get_value( 'content', 'listing-'.$key );
+	}
+	
+	
+	public function is_post_type( $post_type )
+	{
+		if( is_array($post_type) )
+		{
+			foreach( $post_type as $type )
+			{
+				if( in_array($type, $this->post_types) ) return true;
+			}
+			return false;
+		}
+		return ( in_array($post_type, $this->post_types) );
+	}
+	
+	public function has_taxonomies()
+	{
+		return( count($this->taxonomies) > 0 );
+	}
+	
+	public function has_term( $taxonomy, $term )
+	{
+		if( array_key_exists($taxonomy, $this->taxonomies) )
+			return in_array( $term, $this->taxonomies[$taxonomy] );
+		return false;
+	}
+	
+	
+	public function get_taxonomy_count()
+	{
+		$count = 0;
+		
+		foreach( $this->taxonomies as $taxname => $terms )
+		{
+			$count += count($this->taxonomies[$taxname]);
+		}
+		
+		return $count;
 	}
 
 }

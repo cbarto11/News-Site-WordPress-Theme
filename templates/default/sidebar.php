@@ -1,3 +1,4 @@
+<?php nh_print('SIDEBAR-PAGE'); ?>
 <?php global $nh_config, $nh_mobile_support, $nh_template_vars; ?>
 <?php
 $options = $nh_config->get_admin_options( 'sidebar' );

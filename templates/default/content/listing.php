@@ -10,7 +10,7 @@
 <h1><?php echo $nh_template_vars['page-title']; ?></h1>
 
 <?php if( isset($nh_template_vars['description']) ): ?>
-	<div class="description"><?php echo $nh_template_vars['description']; ?></siv>
+	<div class="description"><?php echo $nh_template_vars['description']; ?></div>
 <?php endif; ?>
 
 <?php
@@ -58,9 +58,10 @@ else:
 			if( ($nh_section->key == 'none') || ($nh_section->thumbnail_image == 'multi') ):
 
 				$type = get_post_type( $post->ID );
-				$categories = nh_get_categories( get_the_category($post->ID) );
-				$tags = nh_get_tags( get_the_tags($post->ID) );
-				$story_section = $nh_config->get_section( $type, $categories, $tags, false, array( 'news' ) );
+
+				$taxonomies = nh_get_taxonomies( $post->ID );
+				$story_section = $nh_config->get_section( $type, $taxonomies, false, array( 'news' ) );
+				
 				$story = $story_section->get_listing_story( $post );
 				$nh_template_vars['section'] = $story_section;
 				$key = $nh_template_vars['section']->key;
