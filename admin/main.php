@@ -9,8 +9,11 @@ if( is_admin() ):
 //----------------------------------------------------------------------------------------
 // Setup the plugin's admin pages.
 //----------------------------------------------------------------------------------------
-add_action( 'admin_menu', array('NH_AdminMain', 'setup_admin_pages') );  
-add_action( 'admin_init', array('NH_AdminMain', 'setup_actions') );
+add_action( 'admin_menu', array('NH_AdminMain', 'setup_config'), 9 );
+add_action( 'admin_menu', array('NH_AdminMain', 'setup_admin_pages'), 10 );
+add_action( 'admin_init', array('NH_AdminMain', 'setup_config'), 9 );
+add_action( 'admin_init', array('NH_AdminMain', 'setup_actions'), 9 );
+add_action( 'admin_init', array('NH_AdminMain', 'register_settings'), 10 );
 
 //----------------------------------------------------------------------------------------
 // Setup the admin page to accept AJAX requests.
@@ -21,109 +24,164 @@ add_action( 'wp_ajax_nh-stories-options', array('NH_AdminMain', 'show_stories_aj
 endif;
 
 
-/**
- *
- */
 class NH_AdminMain
 {
-	/**
-	 *
-	 */	
+	
+	private static $_page = null;
+	
+	
 	public static function setup_admin_pages()
+	{
+		global $nh_config, $nh_admin_pages;
+	    
+	    add_menu_page(
+			'News Hub Settings', 
+			'News Hub',
+			'administrator',
+			'nh-settings',
+			array( 'NH_AdminMain', 'show_admin_page' )
+	    );
+	    
+	    foreach( $nh_admin_pages as $page => $info )
+	    {
+			add_submenu_page(
+				'nh-settings',
+				$info['title'],
+				$info['menu'],
+				'administrator',
+				$page,
+				array( 'NH_AdminMain', 'show_admin_page' )
+			);
+	    }
+	    
+		remove_submenu_page( 'nh-settings', 'nh-settings' );
+		unset($GLOBALS['submenu']['nh-settings'][0]);
+		
+		require_once( dirname(__FILE__).'/functions.php' );		
+	}
+
+	
+	public static function init_page()
+	{
+		if( self::$_page !== null ) return true;
+		
+		global $nh_admin_pages, $pagenow;
+		switch( $pagenow )
+		{
+			case 'options.php':
+				$page = ( !empty($_POST['option_page']) ? $_POST['option_page'] : null );
+				break;
+			
+			case 'admin.php':
+				$page = ( !empty($_GET['page']) ? $_GET['page'] : null );
+				break;
+			
+			default: return false; break;
+		}
+		
+		if( array_key_exists($page, $nh_admin_pages) )
+		{
+			$info = $nh_admin_pages[$page];
+			$path = nh_get_theme_file_path( 'admin/admin-page/'.$info['file'] );
+			if( $path === null ) return false;
+			
+			require_once( dirname(__FILE__).'/admin-page.php' );
+			require_once( $path );
+		}
+		else
+		{
+			self::$_page = null;
+			return false;
+		}
+		
+		if( !class_exists($info['class']) )
+		{
+			self::$_page = null;
+			return false;
+		}
+		
+		self::$_page = call_user_func( array($info['class'], 'get_instance'), $page );
+		return true;
+	}
+	
+	
+	public static function setup_config()
+	{
+		global $nh_admin_pages;
+		require_once( get_template_directory().'/admin/config.php' );
+		$nh_admin_pages = apply_filters( 'nh-admin-pages', $nh_admin_pages );
+	}
+	
+	
+	public static function setup_actions()
+	{
+		global $pagenow;
+		switch( $pagenow )
+		{
+			case 'options.php':
+				if( !self::init_page() ) return;
+				break;
+			
+			case 'admin.php':
+				if( !self::init_page() ) return;
+				add_action( 'admin_enqueue_scripts', array(self::$_page, 'enqueue_scripts') );
+				add_action( 'admin_head', array(self::$_page, 'add_head_script') );
+				break;
+			
+			default: return; break;
+		}
+		
+		add_action( self::$_page->slug.'-register-settings', array(self::$_page, 'register_settings') );
+		add_action( self::$_page->slug.'-add-settings-sections', array(self::$_page, 'add_settings_sections') );
+		add_action( self::$_page->slug.'-add-settings-fields', array(self::$_page, 'add_settings_fields') );
+	}
+
+
+	public static function register_settings()
+	{
+		if( !self::init_page() ) return;
+		
+		do_action( self::$_page->slug.'-register-settings' );
+		do_action( self::$_page->slug.'-add-settings-sections' );
+		do_action( self::$_page->slug.'-add-settings-fields' );
+		
+		register_setting( self::$_page->slug, 'nh-options' );
+		add_filter( 'sanitize_option_nh-options', array(get_class(), 'process_input'), 10, 2 );
+
+		// only one filter at this point...
+	}
+	
+	
+	public static function process_input( $input, $option )
 	{
 		global $nh_config;
 		
-		add_menu_page(
-			'Front Page',								// text to be displayed in the menu.
-			'Front Page',								// text to be displayed for this actual menu item.
-			'administrator',							// type of user that can access menu page.
-			'nh-front-page',							// unique ID / slug for menu item.
-			array( 'NH_AdminMain', 'show_admin_page' )	// function to call when rendering the menu page.
-	    );
-	    
-	    if( $nh_config->show_template_part('banner') ):
-		add_submenu_page(
-			'nh-front-page',							// slug of parent menu
-			'Banner',									// text to be displayed in the menu.
-			'Banner',									// text to be displayed for this actual menu item.
-			'administrator',							// type of user that can access menu page.
-			'nh-banner',								// unique ID / slug for menu item.
-			array( 'NH_AdminMain', 'show_admin_page' )	// function to call when rendering the menu page.
-		);
-	    endif;
-
-	    add_submenu_page(
-	    	'nh-front-page',
-	    	'Header',
-	    	'Header',
-	    	'administrator',
-	    	'nh-header',
-	    	array( 'NH_AdminMain', 'show_admin_page' )
-	    );
-
-	    add_submenu_page(
-	    	'nh-front-page',
-	    	'Front Page',
-	    	'Front Page',
-	    	'administrator',
-	    	'nh-front-page-stories',
-	    	array( 'NH_AdminMain', 'show_admin_page' )
-	    );
-
-	    add_submenu_page(
-	    	'nh-front-page',
-	    	'Sidebar',
-	    	'Sidebar',
-	    	'administrator',
-	    	'nh-sidebar-stories',
-	    	array( 'NH_AdminMain', 'show_admin_page' )
-	    );
-
-	    add_submenu_page(
-	    	'nh-front-page',
-	    	'News',
-	    	'News',
-	    	'administrator',
-	    	'nh-news-stories',
-	    	array( 'NH_AdminMain', 'show_admin_page' )
-	    );
-
-	    add_submenu_page(
-	    	'nh-front-page',
-	    	'Reset',
-	    	'Reset',
-	    	'administrator',
-	    	'nh-reset-options',
-	    	array( 'NH_AdminMain', 'show_admin_page' )
-	    );
-
-	    remove_submenu_page( 'nh-front-page', 'nh-front-page' );
-	    unset($GLOBALS['submenu']['nh-front-page'][0]);
+		$page = $_POST['option_page'];
+		$tab = ( !empty($_POST['tab']) ? $_POST['tab'] : null );
+		$post = ( !empty($_POST[$option]) ? $_POST[$option] : null );
+		$options = $nh_config->options();
+		
+		// only running once...
+		
+		if( $tab !== null )
+		$options = apply_filters( $page.'-'.$tab.'-process-input', $options, $page, $tab, $option, $post );
+		
+		$options = apply_filters( $page.'-process-input', $options, $page, $tab, $option, $post );
+		
+		return $options;
 	}
-
 	
-	
-	/**
-	 *
-	 */	
 	public static function show_admin_page()
 	{
-		require_once( ADMIN_PATH.'/admin-page.php' );
-		NH_AdminPage::init();
-		NH_AdminPage::show_page();
+		if( !self::init_page() ) return;
+		self::$_page->show();
 	}
-
 	
 	
-	/**
-	 * Processes AJAX requests from the plugin.
-	 */
 	public static function show_admin_ajax_page( $page )
 	{
 		require_once( ADMIN_PATH.'/admin-ajax-page.php' );
-		NH_AdminAjaxPage::init( $page );
-		NH_AdminAjaxPage::process();
-		NH_AdminAjaxPage::output();
+		NH_AdminAjaxPage::show( $page );
 		exit();
 	}
 	
@@ -133,21 +191,12 @@ class NH_AdminMain
 		self::show_admin_ajax_page( 'banner' );
 	}
 	
+
 	public static function show_stories_ajax_page()
 	{
 		self::show_admin_ajax_page( 'stories' );
 	}
 
-
-	/**
-	 * Adds the needed JavaScript and CSS files needed for the plugin.
-	 */	
-	public static function setup_actions()
-	{
-		require_once( ADMIN_PATH.'/admin-page.php' );
-		NH_AdminPage::init();
-		NH_AdminPage::setup_actions();
-	}
-
 }	
+
 

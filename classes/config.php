@@ -14,7 +14,7 @@ class NH_Config
 	//============================================================= Class Properties =====
 
 
-	const DB_VERSION = '1.0';
+	const DB_VERSION = '1.1';
 	const CONFIG_DEFAULT_INI_FILENAME = 'config/config-default.ini';
 	const CONFIG_INI_FILENAME = 'config/config.ini';
 	const OPTIONS_DEFAULT_INI_FILENAME = 'config/options-default.ini';
@@ -174,6 +174,13 @@ class NH_Config
 		}
 	}
 	
+	
+	
+	public function get_sections()
+	{
+		return $this->sections;
+	}
+	
 
 	//------------------------------------------------------------------------------------
 	// 
@@ -288,7 +295,7 @@ class NH_Config
 		if( !array_key_exists($part, $this->config) )
 			return false;
 		
-		if( $part == 'mobile-menu' )
+		if( $part == 'mobile-menu' && is_numeric($placement) )
 		{
 			if( (array_key_exists('menu-widget', $this->config[$part])) &&
 			    (isset($this->config[$part]['menu-widget'][$placement])) )
@@ -367,6 +374,12 @@ class NH_Config
 	public function get_default_section()
 	{
 		return new NH_Section( 'none', array( 'name' => 'None' ) );
+	}
+	
+	
+	public function get_empty_section()
+	{
+		return new NH_Section( '', array( 'name' => '' ) );
 	}
 	
 	
@@ -580,6 +593,8 @@ class NH_Config
 	{
 		$args = func_get_args();
 		
+		if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
+		
 		$config = $this->config;
 		foreach( $args as $arg )
 		{
@@ -654,7 +669,7 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function save_options()
 	{
-		update_option( 'nh-theme-options', $this->options );
+		update_option( 'nh-options', $this->options );
 		$this->config = array_replace_recursive($this->config, $this->options);
 		$this->create_sections();
 	}
@@ -699,7 +714,7 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function reset_options()
 	{
-		delete_option( 'nh-theme-options' );
+		update_option( 'nh-options', array() );
 	}
 	
 	
@@ -791,15 +806,11 @@ class NH_Config
 	
 	private function check_db()
 	{
-// 		nh_print('check-db');
+// 		nh_print('check_db');
+
 		$db_version = get_option( 'nh-db-version', '1.0' );
+// 		nh_print( $db_version );
 		if( $db_version == self::DB_VERSION ) return;
-		
-// 		nh_print('checked version');
-		$options = get_option('nh-theme-options', false );
-		if( !$options ) return;
-		
-// 		nh_print('check options');
 		
 		switch( $db_version )
 		{
@@ -813,15 +824,17 @@ class NH_Config
 	
 	private function convert_db_from_10_to_11()
 	{
+// 		nh_print( 'convert_db_from_10_to_11' );
+
 		$options = get_option('nh-theme-options', false );
-		
-		//nh_print( $options, 'DB-OPTIONS' );
+		update_option('nh-options', $options);
 	}
 	
 	
 	private function convert_db_from_11_to_12()
 	{
 		// future use...
+// 		nh_print( 'convert_db_from_11_to_12' );
 	}
 
 }
