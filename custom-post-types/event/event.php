@@ -203,6 +203,8 @@ class NH_CustomEventPostType
 	
 	public static function alter_event_query( $wp_query )
 	{
+		if( !isset($wp_query->query['post_type']) ) return;
+		
 		if( is_array($wp_query->query['post_type']) )
 		{
 			if( $wp_query->query['post_type'] != array('event') ) return;
