@@ -18,7 +18,7 @@
 	$nh_template_vars['num-cols'] = $num_cols;
 	?>
 
-	<div id="content" class="<?php echo $key ?>-section num-columnh-<?php echo $num_cols; ?> <?php echo $thumbnail; ?>-thumbnail-image <?php echo $featured; ?>-featured-image clearfix">
+	<div id="content" class="<?php echo $key ?>-section num-columns-<?php echo $num_cols; ?> <?php echo $thumbnail; ?>-thumbnail-image <?php echo $featured; ?>-featured-image clearfix">
 	<?php nh_use_widget( 'content', 'top' ); ?>
 
 	

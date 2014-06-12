@@ -16,8 +16,8 @@
 	
 	<link rel="profile" href="http://gmpg.org/xfn/11" />
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
-	<link rel="shortcut icon" href="<?php echo nh_get_theme_file_url('images/favicon.ico'); ?>" />
-
+	<link rel="shortcut icon" href="<?php echo nh_get_theme_file_url('images/favicon.ico', false); ?>" />
+	
 	<?php if( $nh_mobile_support->is_mobile ): ?>
 		<meta name="viewport" content="user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi">
 	<?php endif; ?>
