@@ -39,60 +39,45 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function load_config()
 	{
+// 		if( empty($_POST) ) nh_print(get_option('nh-options', array()));
+		
 		$this->check_db();
 		$this->config = array();
-		
-		if( file_exists(get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME) )
-			$this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME );
-		elseif( file_exists(get_template_directory().'/'.self::CONFIG_INI_FILENAME) )
-			$this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_INI_FILENAME );
-		else
-			exit( 'Unable to locate theme '.self::CONFIG_DEFAULT_INI_FILENAME.' file.' );
-
-		if( is_child_theme() )
-		{
-			if( file_exists(get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME) )
-				$this->load_from_ini( $this->config, get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME );
-		}
-
-
 		$this->options = array();
-
-		if( file_exists(get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME) )
-			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME );
-		elseif( file_exists(get_template_directory().'/'.self::OPTIONS_INI_FILENAME) )
-			$this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_INI_FILENAME );
-		else
-			exit( 'Unable to locate theme '.self::OPTIONS_DEFAULT_INI_FILENAME.' file.' );
 		
-		if( is_child_theme() )
-		{
-			/* RESTORE THIS CODE FOR PRODUCTION:
-			if( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
-			*/
-			
-			$options_filename = NH_BLOG_NAME;
-// 			nh_print( $options_filename, 'OPTIONS FILENAME' );
-
-			if( file_exists(get_stylesheet_directory().'/config/options-'.$options_filename.'.ini') )
-			{
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/config/options-'.$options_filename.'.ini' );
-			}
-			elseif( file_exists(get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME) )
-			{
-				$this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME );
-			}
-		}
+		$variation = $this->get_current_variation();
+// 		nh_print($variation, 'VARIATION');
 		
-		$this->options = array_replace_recursive( $this->options, get_option('nh-theme-options', array()) );
+		if( $this->load_from_ini( $this->config, get_stylesheet_directory().'/variations/'.$variation.'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->config, get_template_directory().'/variations/'.$variation.'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->config, get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME ) );
+		else exit( 'Unable to locate theme '.self::CONFIG_INI_FILENAME.' file.' );
 
-		$this->config = array_replace_recursive($this->options, $this->config);
+		if( $this->load_from_ini( $this->options, get_stylesheet_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->options, get_template_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME ) );
+		else exit( 'Unable to locate theme '.self::OPTIONS_INI_FILENAME.' file.' );
 
+		$nh_options = get_option( 'nh-options', array() );
+		if( empty($nh_options) || !is_array($nh_options) ) $nh_options = array();
+		
+// 		nh_print( get_stylesheet_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME, 'options filename' );
+// 		nh_print( $this->options, 'options' );
+// 		nh_print( $nh_options, 'nh-options' );
+		
+		$this->options = $this->merge_arrays( $this->options, $nh_options );
+		$this->fix_keys($this->options);
+		$this->config = $this->merge_arrays( $this->options, $this->config );
+		
 		$this->create_sections();
 		$this->populate_widget_areas();
 		
 // 		nh_print( $this->config, 'CONFIG' );
+// 		nh_print( $this->options, 'OPTIONS' );
 		
 		update_option('nh-db-version', self::DB_VERSION);
 	}
@@ -105,9 +90,39 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	private function load_from_ini( &$config, $config_filename )
 	{
-		$ini_config = parse_ini_file( $config_filename, true);
+		if( !file_exists($config_filename) ) return false;
+		
+		$ini_config = parse_ini_file( $config_filename, true);		
+		if( $ini_config === false ) return false;
+		
 		$this->fix_keys( $ini_config );
-		$config = array_replace_recursive($config, $ini_config);
+		$config = $this->merge_arrays( $config, $ini_config );
+		
+		return true;
+    }
+    
+    
+    public function merge_arrays( $array1, $array2, $levels = 2 )
+    {
+		foreach( $array2 as $key => $value )
+		{
+			if( !isset($array1[$key]) )
+			{
+				$array1[$key] = $value;
+				continue;
+			}
+			
+			if( $levels > 0 )
+			{
+				$array1[$key] = $this->merge_arrays( $array1[$key], $value, $levels-1 );
+			}
+			else
+			{
+				$array1[$key] = $value;
+			}
+		}
+		
+		return $array1;
     }
     
 
@@ -698,6 +713,79 @@ class NH_Config
 	}
 	
 	
+	
+	public function get_current_variation()
+	{
+		$variation = get_option( 'nh-variation', false );
+		
+		if( $variation === false ) return $this->reset_variation();
+		
+		$variations = $this->get_variations();
+		foreach( $variations as $var )
+		{
+			if( $variation == $var ) return $variation;
+		}
+		
+		return $this->set_variation();
+	}
+	
+	
+	public function set_variation( $name = 'default' )
+	{
+		update_option( 'nh-variation', $name );
+		return $name;
+	}
+	
+	public function get_variations()
+	{
+		$folders = array( get_template_directory().'/variations' );
+		if( is_child_theme() )
+			array_push( $folders, get_stylesheet_directory().'/variations' );
+
+		return $this->get_directories( $folders );
+	}
+
+
+	public function get_custom_post_types()
+	{
+		$folders = array( get_template_directory().'/custom-post-types' );
+		if( is_child_theme() )
+			array_push( $folders, get_stylesheet_directory().'/custom-post-types' );
+
+		return $this->get_directories( $folders );
+	}
+	
+	public function use_custom_post_type( $type )
+	{
+		if( array_key_exists($type, $this->config['custom-post-type']) )
+			return $this->config['custom-post-type'][$type];
+		return false;
+	}
+	
+	private function get_directories( $folders )
+	{
+		$directories = array();		
+		foreach( $folders as $folder )
+		{
+			$files = scandir( $folder );
+			foreach( $files as $file )
+			{
+				if( (!in_array($file, array('.','..'))) && 
+				    (is_dir($folder.DIRECTORY_SEPARATOR.$file)) )
+				{
+					array_push( $directories, $file );
+				}
+			}
+		}
+		
+		return array_unique( $directories );
+	}
+	
+	
+	public function options()
+	{
+		return $this->options;
+	}
 	
 	
 	

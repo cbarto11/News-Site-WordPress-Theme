@@ -1,4 +1,6 @@
 <?php
+
+
 //========================================================================================
 // 
 //
@@ -57,8 +59,8 @@ if( !function_exists('nh_enqueue_scripts') ):
 function nh_enqueue_scripts()
 {
 	global $nh_mobile_support, $nh_config;
-	$name = NH_BLOG_NAME;
-	$folder = 'styles/'.$name;
+	$name = $nh_config->get_current_variation();
+	$folder = 'variations/'.$name;
 	
 	wp_enqueue_script( 'jquery' );
 	nh_enqueue_files( 'style', 'main-style', 'style.css' );
@@ -68,12 +70,12 @@ function nh_enqueue_scripts()
 	{
 		nh_enqueue_file( 'script', 'mobile-menu', 'scripts/mobile-menu.js' );
 		nh_enqueue_files( 'style', 'mobile-site', 'styles/mobile-site.css');
-		nh_enqueue_files( 'style', 'mobile-site-'.$name, $folder.'/mobile-site.css');
+		nh_enqueue_files( 'style', 'mobile-site-'.$name, $folder.'/styles/mobile-site.css');
 	}
 	else
 	{
 		nh_enqueue_files( 'style', 'full-site', 'styles/full-site.css');
-		nh_enqueue_files( 'style', 'full-site-'.$name, $folder.'/full-site.css');
+		nh_enqueue_files( 'style', 'full-site-'.$name, $folder.'/styles/full-site.css');
 	}
 	
 	if( is_front_page() )
@@ -262,15 +264,24 @@ endif;
 // @return				string|null	The absolute path to the file in the theme.
 //----------------------------------------------------------------------------------------
 if( !function_exists('nh_get_theme_file_path') ):
-function nh_get_theme_file_path( $filepath )
+function nh_get_theme_file_path( $filepath, $return_null = true )
 {
+	global $nh_config;
+	
+	if( file_exists(get_stylesheet_directory().'/'.$nh_config->get_current_variation().'/'.$filepath) )
+		return get_stylesheet_directory().'/'.$nh_config->get_current_variation().'/'.$filepath;
+	
+	if( file_exists(get_template_directory().'/'.$nh_config->get_current_variation().'/'.$filepath) )
+		return get_template_directory().'/'.$nh_config->get_current_variation().'/'.$filepath;
+
 	if( file_exists(get_stylesheet_directory().'/'.$filepath) )
 		return get_stylesheet_directory().'/'.$filepath;
-
+	
 	if( file_exists(get_template_directory().'/'.$filepath) )
 		return get_template_directory().'/'.$filepath;
 	
-	return null;
+	if( $return_null ) return null;
+	return '';
 }
 endif;
 
@@ -283,15 +294,24 @@ endif;
 // @return				string|null	The absolute path to the file in the theme.
 //----------------------------------------------------------------------------------------
 if( !function_exists('nh_get_theme_file_url') ):
-function nh_get_theme_file_url( $filepath )
+function nh_get_theme_file_url( $filepath, $return_null = true )
 {
+	global $nh_config;
+	
+	if( file_exists(get_stylesheet_directory().'/'.$nh_config->get_current_variation().'/'.$filepath) )
+		return get_stylesheet_directory_uri().'/'.$nh_config->get_current_variation().'/'.$filepath;
+	
+	if( file_exists(get_template_directory().'/'.$nh_config->get_current_variation().'/'.$filepath) )
+		return get_template_directory_uri().'/'.$nh_config->get_current_variation().'/'.$filepath;
+
 	if( file_exists(get_stylesheet_directory().'/'.$filepath) )
 		return get_stylesheet_directory_uri().'/'.$filepath;
-
+	
 	if( file_exists(get_template_directory().'/'.$filepath) )
 		return get_template_directory_uri().'/'.$filepath;
 	
-	return null;
+	if( $return_null ) return null;
+	return '';
 }
 endif;
 
@@ -299,31 +319,27 @@ endif;
 
 //----------------------------------------------------------------------------------------
 // Find, then includes the template part.
+// TODO: alter this!!
 // 
 // @param	$name		string		The name of the template part.
 //----------------------------------------------------------------------------------------
 if( !function_exists('nh_get_template_part') ):
 function nh_get_template_part( $name, $folder = '', $key = '' )
 {
-	$site_name = NH_BLOG_NAME;
-	$folders = array(
-		'templates/'.$site_name.'/'.$folder.'/',
-		'templates/default/'.$folder.'/'
-	);
+	global $nh_config;
+	if( $folder ) $folder = 'templates/'.$folder.'/'; else $folder = 'templates/';
 	
-	foreach( $folders as $folder )
+	$filepath = null;
+	if( $key )
+		$filepath = nh_get_theme_file_path( $folder.$name.'-'.$key.'.php' );
+	
+	if( $filepath === null )
+		$filepath = nh_get_theme_file_path( $folder.$name.'.php' );
+	
+	if( $filepath !== null )
 	{
-		if( $key )
-			$filepath = nh_get_theme_file_path( $folder.$name.'-'.$key.'.php' );
-	
-		if( $filepath === null )
-			$filepath = nh_get_theme_file_path( $folder.$name.'.php' );
-	
-		if( $filepath !== null )
-		{
-			include( $filepath );
-			return true;
-		}
+		include( $filepath );
+		return true;
 	}
 	
 	return false;
@@ -447,6 +463,8 @@ endif;
 if( !function_exists('nh_get_image_url') ):
 function nh_get_image_url( $path )
 {
+	global $nh_mobile_support;
+	
 	if( is_array($path) ) $path = $path['url'];
 	
 	$url = '';
@@ -469,6 +487,8 @@ endif;
 if( !function_exists('nh_get_image_info') ):
 function nh_get_image_info( $image_info )
 {
+	global $nh_mobile_support;
+	
 	if( !$image_info ) return $image_info;
 	
 	$image_info['height'] = 'auto';
@@ -732,4 +752,10 @@ foreach( $custom_post_types as $name => $use_custom_type )
 		if( $filepath ) include_once( $filepath );
 	}
 }
+
+// 
+// Include variation's functions.php
+//----------------------------------------------------------------------------------------
+$filepath = nh_get_theme_file_path( 'variations/'.$nh_config->get_current_variation().'/functions.php' );
+if( $filepath ) require_once( $filepath );
 
