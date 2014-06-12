@@ -11,9 +11,6 @@ class NH_Section
 	public $name;
 	public $post_types;
 	public $taxonomies;
-//	public $terms;
-// 	public $category;
-// 	public $tag;
 	public $title;
 	public $featured_image;
 	public $thumbnail_image;
@@ -31,27 +28,59 @@ class NH_Section
 	{
 		global $nh_config;
 		
+// 		nh_print($section, 'section');
+		
 		$this->key = $key;
 		$this->name = $section['name'];
 		$this->title = ( isset($section['title']) ? $section['title'] : strtoupper($this->name) );
 		$this->featured_image = ( isset($section['featured-image']) ? $section['featured-image'] : 'none' );
 		$this->thumbnail_image = ( isset($section['thumbnail-image']) ? $section['thumbnail-image'] : $this->featured_image );
 
-		$this->post_types = ( isset($section['type']) ? array_unique(array_filter(explode(',',$section['type']))) : array('post') );
+		if( isset($section['post-types']) )
+		{
+			if( is_array($section['post-types']) ) $this->post_types = $section['post-types'];
+			else $this->post_types = array_unique(array_filter(explode(',',$section['post-types'])));
+		}
+		else
+		{
+			$this->post_types = array( 'post' );
+		}
 		if( count($this->post_types) == 0 ) $this->post_types = array( 'post' );
 		
 		$this->taxonomies = array();
 		if( isset($section['taxonomies']) )
 		{
-			foreach( array_filter(explode(',',$section['taxonomies'])) as $taxname )
+			if( !is_array($section['taxonomies']) )
 			{
-				$this->taxonomies[$taxname] = ( isset($section[$taxname]) ? array_unique(array_filter(explode(',',$section[$taxname]))) : array() );
+				$section['taxonomies'] = array_filter( explode(',', $section['taxonomies']) );
+			}
+			
+			foreach( $section['taxonomies'] as $taxname )
+			{
+				if( isset($section[$taxname]) )
+				{
+					if( !is_array($section[$taxname]) )
+					{
+						$section[$taxname] = array_unique( array_filter(explode(',', $section[$taxname])) );
+					}
+					$this->taxonomies[$taxname] = $section[$taxname];
+				}
+				else
+				{
+					$this->taxonomies[$taxname] = array();
+				}
 			}
 		}
 		else
 		{
 			if( isset($section['category']) )
-				$this->taxonomies['category'] = array_filter(explode(',',$section['category']));
+			{
+				if( !is_array($section['category']) )
+				{
+					$section['category'] =  array_filter( explode(',',$section['category']) );
+				}
+				$this->taxonomies['category'] = $section['category'];
+			}
 		}
 		
 		foreach( $this->taxonomies as $taxname => $terms )
@@ -61,6 +90,7 @@ class NH_Section
 		
 		$this->num_stories = array();
 		$this->num_stories['front-page'] = ( isset($section['front-page-num-stories']) ? $section['front-page-num-stories'] : 0 );
+		$this->num_stories['sidebar'] = ( isset($section['sidebar-num-stories']) ? $section['sidebar-stories'] : 0 );
 		$this->num_stories['listing'] = ( isset($section['listing-num-stories']) ? $section['listing-num-stories'] : 0 );
 		$this->num_stories['rss-feed'] = ( isset($section['rss-feed-num-stories']) ? $section['rss-feed-num-stories'] : 0 );
 		
@@ -265,9 +295,7 @@ class NH_Section
 			{
 				case 0:
 					// post page
-					if( $this->post_types[0] == 'post' )
-						$link = get_site_url().'/?post_type='.$this->post_types[0];
-					else
+					if( $this->post_types[0] != 'post' )
 						$link = get_site_url().'/'.$this->post_types[0];
 					break;
 					
@@ -476,7 +504,7 @@ class NH_Section
 		
 		while( $query->have_posts() )
 		{
-			$query->the_post;
+			$query->the_post();
 			array_push(
 				$stories,
 				array(
@@ -577,6 +605,9 @@ class NH_Section
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function is_post_type( $post_type )
 	{
 		if( is_array($post_type) )
@@ -590,11 +621,19 @@ class NH_Section
 		return ( in_array($post_type, $this->post_types) );
 	}
 	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function has_taxonomies()
 	{
 		return( count($this->taxonomies) > 0 );
 	}
 	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function has_term( $taxonomy, $term )
 	{
 		if( array_key_exists($taxonomy, $this->taxonomies) )
@@ -603,6 +642,9 @@ class NH_Section
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_taxonomy_count()
 	{
 		$count = 0;
