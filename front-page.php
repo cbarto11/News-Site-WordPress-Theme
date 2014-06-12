@@ -6,7 +6,7 @@
  * @subpackage news-hub-uncc
  */
 
-//nh_print('PAGE:front-page.php');
+// nh_print('PAGE:front-page.php');
 global $nh_config, $nh_template_vars;
 
 $nh_template_vars = array();

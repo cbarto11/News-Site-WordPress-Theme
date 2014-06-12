@@ -6,7 +6,7 @@
  * @subpackage news-hub-uncc
  */
 
-//nh_print('PAGE:search.php');
+// nh_print('PAGE:search.php');
 global $nh_config, $nh_template_vars;
 
 $nh_template_vars = array();
