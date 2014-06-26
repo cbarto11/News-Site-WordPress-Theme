@@ -381,16 +381,35 @@ endif;
 if( !function_exists('nh_image') ):
 function nh_image( $image_info, $echo = true )
 {
-	if( empty($image_info) ) return;
-	
 	global $nh_mobile_support;
 
-	$image_info = nh_get_image_info( $image_info );
+	if( empty($image_info) ) return;
 	
-	$html = '<img src="'.$image_info['url'].'" alt="'.$image_info['title'].'" class="'.$image_info['key'].'" />';
+	if( !isset($image_info['selection-type']) ) $image_info['selection-type'] = 'relative';
+	if( !isset($image_info['use-site-link']) ) $image_info['use-site-link'] = false;
+	
+	switch( $image_info['selection-type'] )
+	{
+		case 'relative':
+			$image_info['path'] = nh_get_theme_file_url( $image_info['path'] );
+			break;
 
+		case 'media':
+			$image_info['path'] = wp_get_attachment_url( $image_info['attachment-id'] );
+			break;
+		
+		default: return;
+	}
+	
+	$html = '<img src="'.$image_info['path'].'" alt="'.$image_info['title'].'" class="'.$image_info['class'].'" />';
+
+	if( isset($image_info['use-site-link']) && ($image_info['use-site-link'] === true) )
+	{
+		$image_info['link'] = get_home_url();
+	}
+	
 	if( !empty($image_info['link']) )
-		$html = nh_get_anchor( $image_info['link'], $image_info['title'], $image_info['key'], $html );
+		$html = nh_get_anchor( $image_info['link'], $image_info['title'], $image_info['class'], $html );
 
 	if( $echo ) echo $html;
 	else return $html;
@@ -440,7 +459,7 @@ function nh_get_image_info( $image_info )
 	$image_info['width'] = 'auto';
 	$image_info['path'] = '';
 
-	$pathinfo = pathinfo( $image_info['url'] );
+	$pathinfo = pathinfo( $image_info['path'] );
 	if( !$pathinfo ) return $image_info;	
 	
 	$full_path = ''; $path = ''; $url = '';
