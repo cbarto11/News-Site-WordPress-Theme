@@ -14,6 +14,9 @@ class NH_Config
 //======================================================================= Properties =====
 	
 	
+	// current database version
+	const DB_VERSION = '1.4';
+	
 	// relative paths to the config and otions files.
 	const CONFIG_DEFAULT_INI_FILENAME = 'config/config-default.ini';
 	const CONFIG_INI_FILENAME = 'config/config.ini';
@@ -52,47 +55,91 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function load_config()
 	{
-// 		if( empty($_POST) ) nh_print(get_option('nh-options', array()));
-		
 		$this->check_db();
-		$this->config = array();
-		$this->options = array();
-		
+
 		$variation = $this->get_current_variation();
-// 		nh_print($variation, 'VARIATION');
 		
-		if( $this->load_from_ini( $this->config, get_stylesheet_directory().'/variations/'.$variation.'/'.self::CONFIG_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->config, get_template_directory().'/variations/'.$variation.'/'.self::CONFIG_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->config, get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->config, get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME ) );
+		$config_ini = array();
+		$options_ini = array();
+		$db_options = array();
+		
+		// 
+		// load config.ini data.
+		// 
+		if( $this->load_from_ini( $config_ini, get_stylesheet_directory().'/variations/'.$variation.'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $config_ini, get_template_directory().'/variations/'.$variation.'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $config_ini, get_stylesheet_directory().'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $config_ini, get_template_directory().'/'.self::CONFIG_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $config_ini, get_template_directory().'/'.self::CONFIG_DEFAULT_INI_FILENAME ) );
 		else exit( 'Unable to locate theme '.self::CONFIG_INI_FILENAME.' file.' );
-
-		if( $this->load_from_ini( $this->options, get_stylesheet_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->options, get_template_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->options, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_INI_FILENAME ) );
-		elseif( $this->load_from_ini( $this->options, get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME ) );
+		
+		// 
+		// load options.ini data.
+		// 
+		if( $this->load_from_ini( $options_ini, get_stylesheet_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $options_ini, get_template_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $options_ini, get_stylesheet_directory().'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $options_ini, get_template_directory().'/'.self::OPTIONS_INI_FILENAME ) );
+		elseif( $this->load_from_ini( $options_ini, get_template_directory().'/'.self::OPTIONS_DEFAULT_INI_FILENAME ) );
 		else exit( 'Unable to locate theme '.self::OPTIONS_INI_FILENAME.' file.' );
+		
+		// 
+		// load database options.
+		// 
+		$db_options = get_option( 'nh-options', array() );
+		if( empty($db_options) || !is_array($db_options) ) $db_options = array();
 
-		$nh_options = get_option( 'nh-options', array() );
-		if( empty($nh_options) || !is_array($nh_options) ) $nh_options = array();
+		$replace = array( 
+			'sections',
+			'front-page-sections', 'sidebar-sections', 
+			'front-page-stories' , 'sidebar-stories' , 'listing-stories', 'rss-feed-stories',
+			'banner-slides',
+		);	
+
+		//
+		// set config data.
+		//
+		$this->config = $config_ini;
+				
+		// 
+		// merge options.ini and database options.
+		// 
+		$this->options = array_replace_recursive( $options_ini, $db_options );
+		foreach( $replace as $key )
+		{
+			if( isset($db_options[$key]) ) { $this->options[$key] = $db_options[$key]; continue; }
+			if( isset($options_ini[$key]) ) { $this->options[$key] = $options_ini[$key]; continue; }
+			$this->options[$key] = array();
+		}
 		
-// 		nh_print( get_stylesheet_directory().'/variations/'.$variation.'/'.self::OPTIONS_INI_FILENAME, 'options filename' );
-// 		nh_print( $this->options, 'options' );
-// 		nh_print( $nh_options, 'nh-options' );
-		
-		$this->options = $this->merge_arrays( $this->options, $nh_options );
-		$this->fix_keys($this->options);
-		$this->config = $this->merge_arrays( $this->options, $this->config );
-		
+		// 
+		// merge config.ini with complete options.
+		// 
+		$this->data = array_replace_recursive( $this->options, $config_ini );
+		foreach( $replace as $key )
+		{
+			if( isset($this->options[$key]) ) { $this->data[$key] = $this->options[$key]; continue; }
+			$this->data[$key] = array();
+		}
+
+		$this->data = apply_filters( 'nh-config-merge-data', $this->data );
+
+		//
+		// convert values.
+		//
+		$this->convert_values( $this->data );
 		$this->create_sections();
 		$this->populate_widget_areas();
 		
-// 		nh_print( $this->config, 'CONFIG' );
-// 		nh_print( $this->options, 'OPTIONS' );
+		//
+		// Update the database version.
+		//
+		update_option( 'nh-db-version', self::DB_VERSION );
 		
-		update_option('nh-db-version', self::DB_VERSION);
+// 		nh_print( $config_ini, 'config-ini' );
+// 		nh_print( $options_ini, 'options-ini' );
+// 		nh_print( $db_options, 'db-options' );
+// 		nh_print( $this->data, 'data' );
 	}
 	
 
@@ -108,34 +155,12 @@ class NH_Config
 		$ini_config = parse_ini_file( $config_filename, true);		
 		if( $ini_config === false ) return false;
 		
-		$this->fix_keys( $ini_config );
-		$config = $this->merge_arrays( $config, $ini_config );
+		$this->convert_values( $ini_config );
+		
+		if( !empty($config) ) $config = array_replace_recursive( $config, $ini_config );
+		else $config = $ini_config;
 		
 		return true;
-    }
-    
-    
-    public function merge_arrays( $array1, $array2, $levels = 2 )
-    {
-		foreach( $array2 as $key => $value )
-		{
-			if( !isset($array1[$key]) )
-			{
-				$array1[$key] = $value;
-				continue;
-			}
-			
-			if( $levels > 0 )
-			{
-				$array1[$key] = $this->merge_arrays( $array1[$key], $value, $levels-1 );
-			}
-			else
-			{
-				$array1[$key] = $value;
-			}
-		}
-		
-		return $array1;
     }
     
 
@@ -144,57 +169,76 @@ class NH_Config
 	// 
 	// @param	
 	//------------------------------------------------------------------------------------
-    private function fix_keys( &$array )
+    private function convert_values( &$array )
     {
-		foreach( $array AS $key => &$value )
+		foreach( $array as $key => &$value )
 		{
 			if( is_array($value) )
 			{
-				$this->fix_keys( $value );
+				$this->convert_values( $value );
 				continue;
 			}
 			
-			if( (strlen($value) > 2) && ($value[1] == ':') )
+			if( (strlen($value) > 2) && ($value[1] === ':') )
 			{
 				switch( $value[0] )
 				{
 					case 'b':
-						if( substr($value, 2) == 'true' )
-							$value = true;
-						else
-							$value = false;
+						$value = ( substr($value, 2) === 'true' ? true : false );
 						break;
 						
 					case 'i':
 						$value = intval( substr($value, 2) );
+						break;
+					
+					case 'd':
+						$value = doubleval( substr($value, 2) );
+						break;
+					
+					case 'a':
+						$value = substr($value, 2);
+						// TODO...
 						break;
 				}
 			}
 		}
 	}
     
+	
+//========================================================================================
+//==================================================================== Template Parts ====
+
 
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	private function create_sections()
+	public function show_template_part( $template_part )
 	{
-		$this->sections = array();
-		foreach( $this->config['sections'] as $key => $section_data )
-		{
-			if( is_array($section_data) )
-				$this->sections[$key] = new NH_Section( $key, $section_data );
-		}
+		if( (array_key_exists($template_part, $this->data)) &&
+		    (array_key_exists('show-part', $this->data[$template_part])) )
+			return $this->data[$template_part]['show-part'];
+		
+		if( $this->is_optional_template_part($template_part) ) return false;
+		return true;
 	}
-	
-	
-	
-	public function get_sections()
+
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function is_optional_template_part( $template_part )
 	{
-		return $this->sections;
+		$optional_template_parts = array( 'header', 'banner', 'subheader', 'mobile-menu', 'footer' );
+		$optional_template_parts = apply_filters( 'nh-config-optional-template-parts', $optional_template_parts );
+
+		return in_array( $template_part, $optional_template_parts );
 	}
 	
 
+//========================================================================================
+//=========================================================================== Widgets ====
+
+	
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
@@ -202,7 +246,7 @@ class NH_Config
 	{
 		$widget_areas = array();
 		
-		foreach( $this->config as $template_part => $settings )
+		foreach( $this->data as $template_part => $settings )
 		{
 			if( (is_array($settings)) && (array_key_exists('widget', $settings)) )
 			{
@@ -220,7 +264,7 @@ class NH_Config
 			
 			if( $template_part === 'mobile-menu' )
 			{
-				foreach( $this->config['mobile-menu']['menu-widget'] as $widget => $name )
+				foreach( $this->data['mobile-menu']['menu-widget'] as $widget => $name )
 				{
 					if( !empty($name) )
 					{
@@ -234,18 +278,29 @@ class NH_Config
 		}
 		
 				
-		$this->config['widget-areas'] = $widget_areas;
+		$this->data['widget-areas'] = $widget_areas;
 	}
 	
 	
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function show_template_part( $template_part )
+	public function use_widget( $part, $placement )
 	{
-		if( (array_key_exists($template_part, $this->config)) &&
-		    (array_key_exists('show-part', $this->config[$template_part])) )
-			return $this->config[$template_part]['show-part'];
+		if( !array_key_exists($part, $this->data) ) return false;
+		if( !$this->show_template_part($part) ) return false;
+		
+		if( $part == 'mobile-menu' && is_numeric($placement) )
+		{
+			if( (array_key_exists('menu-widget', $this->data[$part])) &&
+			    (isset($this->data[$part]['menu-widget'][$placement])) )
+			    return $this->data[$part]['menu-widget'][$placement];
+		}
+		else
+		{
+			if( array_key_exists($placement, $this->data[$part]['widget']) )
+				return $this->data[$part]['widget'][$placement];
+		}
 		
 		return false;
 	}
@@ -256,7 +311,7 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function get_widget_areas()
 	{
-		return $this->config['widget-areas'];
+		return $this->data['widget-areas'];
 	}
 	
 	
@@ -267,7 +322,7 @@ class NH_Config
 	{
 		$mobile_widgets = array();
 		
-		foreach( $this->config['mobile-menu']['menu-widget'] as $widget => $name )
+		foreach( $this->data['mobile-menu']['menu-widget'] as $widget => $name )
 		{
 			if( !empty($name) )
 			{
@@ -292,36 +347,16 @@ class NH_Config
 		
 		for( $i = 0; $i < 4; $i++ )
 		{
-			if( $this->config['footer']['widget']['column-'.($i+1)] )
+			if( $this->data['footer']['widget']['column-'.($i+1)] )
 				$footer_widgets[] = 'column-'.($i+1);
 		}
 		
 		return $footer_widgets;
 	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function use_widget( $part, $placement )
-	{
-		if( !array_key_exists($part, $this->config) )
-			return false;
-		
-		if( $part == 'mobile-menu' && is_numeric($placement) )
-		{
-			if( (array_key_exists('menu-widget', $this->config[$part])) &&
-			    (isset($this->config[$part]['menu-widget'][$placement])) )
-			    return $this->config[$part]['menu-widget'][$placement];
-		}
-		else
-		{
-			if( array_key_exists($placement, $this->config[$part]['widget']) )
-				return $this->config[$part]['widget'][$placement];
-		}
-		
-		return false;
-	}
+
+
+//========================================================================================
+//=========================================================================== Columns ====
 
 
 	//------------------------------------------------------------------------------------
@@ -329,13 +364,13 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function get_column( $part, $name )
 	{
-		if( !array_key_exists($part, $this->config) )
+		if( !array_key_exists($part, $this->data) )
 			return null;
 			
-		if( !array_key_exists($name, $this->config[$part]) )
+		if( !array_key_exists($name, $this->data[$part]) )
 			return null;
 			
-		return $this->config[$part][$name];
+		return $this->data[$part][$name];
 	}
 
 
@@ -347,8 +382,8 @@ class NH_Config
 		if( ($section !== null) && (array_key_exists($name, $section->num_columns)) )
 			return $section->num_columns[$name];
 		
-		if( isset($this->config['content']['num-columns'][$name]) )
-			return $this->config['content']['num-columns'][$name];
+		if( isset($this->data['content']['num-columns'][$name]) )
+			return $this->data['content']['num-columns'][$name];
 			
 		return 1;
 	}
@@ -359,28 +394,37 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function get_timezone()
 	{
-		return $this->config['timezone'];
+		return $this->data['timezone'];
+	}
+
+
+//========================================================================================
+//========================================================================== Sections ====
+
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	private function create_sections()
+	{
+		$this->sections = array();
+		foreach( $this->data['sections'] as $key => $section_data )
+		{
+			if( is_array($section_data) )
+				$this->sections[$key] = new NH_Section( $key, $section_data );
+		}
 	}
 	
 	
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_categories()
+	public function get_sections()
 	{
-		return $this->config['categories'];
+		return $this->sections;
 	}
 	
-
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function get_tags()
-	{
-		return $this->config['tags'];
-	}
-
-
+	
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
@@ -390,6 +434,9 @@ class NH_Config
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_empty_section()
 	{
 		return new NH_Section( '', array( 'name' => '' ) );
@@ -496,27 +543,76 @@ class NH_Config
 	}
 	
 	
+//========================================================================================
+//=========================================================================== Options ====
+
+
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_options( $key, $default = false )
+	public function get_value()
 	{
-		if( array_key_exists($key, $this->config) )
-			return $this->config[$key];
+		$args = func_get_args();
+		
+		if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
+		
+		$config = $this->data;
+		foreach( $args as $arg )
+		{
+			if( array_key_exists($arg, $config) )
+			{
+				$config = $config[$arg];
+			}
+			else
+			{
+				$config = null;
+				break;
+			}
+		}
+
+		return $config;
+	}
+	
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function get_option( $key, $default = false )
+	{
+		if( array_key_exists($key, $this->options) )
+			return $this->convert_value( $this->options[$key] );
 			
 		return $default;
+	}
+
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function get_options()
+	{
+		return $this->options;
+	}
+
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function reset_options()
+	{
+		update_option( 'nh-options', array() );
 	}
 	
 	
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_banner_images()
+	public function get_banner_slides()
 	{
 		global $nh_mobile_support;
 		
-		$options = $this->get_value( 'banner', 'images' );
-		if( $options == null ) $options = array();
+		$options = $this->get_value( 'banner-slides' );
+		if( $options === null ) return array();
 		
 		$image_type = 'full';
 		if( $nh_mobile_support->use_mobile_site )
@@ -534,8 +630,8 @@ class NH_Config
 			$images[] = array(
 				'id'  => $option['id'],
 				'src' => $src,
-				'url' => $option['url'],
-				'alt' => stripslashes($option['alt'])
+				'link' => $option['link'],
+				'title' => stripslashes($option['title'])
 			);
 		}
 		
@@ -546,224 +642,51 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_admin_options( $page )
-	{
-		$options = array();
-		
-		switch( $page )
-		{
-			case( 'front-page' ):
-				
-				$options['num-columns'] = $this->config['content']['num-columns']['front-page'];
-				
-				$options['sections'] = array();
-				for( $i = 0; $i < $options['num-columns']; $i++ )
-				{
-					$column_name = 'column-'.($i+1);
-					if( isset($this->config['front-page-sections'][$column_name]) )
-						$options['sections'][$column_name] = $this->config['front-page-sections'][$column_name];
-					else
-						$options['sections'][$column_name] = array();
-				}
-				
-				$options['stories'] = array();
-				if( isset($this->config['front-page-stories']) )
-					$options['stories'] = $this->config['front-page-stories'];
-				
-				break;
-				
-			case( 'sidebar' ):
-
-				$options['sections'] = array();
-				if( isset($this->config['sidebar-sections']['column-1']) )
-					$options['sections']['column-1'] = $this->config['sidebar-sections']['column-1'];
-
-				$options['stories'] = array();
-				if( isset($this->config['sidebar-stories']) )
-					$options['stories'] = $this->config['sidebar-stories'];
-					
-				break;
-				
-			case( 'news' ):
-				
-				if( isset($this->config['news-stories']) )
-					$options['stories'] = $this->config['news-stories'];
-				else
-					$options['stories'] = array();
-				
-				break;
-		}
-		
-		$options = apply_filters( 'nh-get-admin-options', $options, $page );
-		return $options;
-	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function get_value()
-	{
-		$args = func_get_args();
-		
-		if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
-		
-		$config = $this->config;
-		foreach( $args as $arg )
-		{
-			if( array_key_exists($arg, $config) )
-			{
-				$config = $config[$arg];
-			}
-			else
-			{
-				$config = null;
-				break;
-			}
-		}
-
-		return $config;
-	}
-	
-
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function get_option_value()
-	{
-		$args = func_get_args();
-		
-		$config = $this->options;
-		foreach( $args as $arg )
-		{
-			if( array_key_exists($arg, $config) )
-			{
-				$config = $config[$arg];
-			}
-			else
-			{
-				$config = null;
-				break;
-			}
-		}
-
-		return $config;
-	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function set_option_value()
-	{
-		$args = func_get_args();
-		$value = array_pop($args);
-		$key = array_pop($args);
-		
-		if( ($key === null) || ($value === null) ) return;
-		
-		$config = &$this->options;		
-		foreach( $args as $arg )
-		{
-			if( !array_key_exists($arg, $config) )
-			{
-				$config[$arg] = array();
-			}
-
-			$config = &$config[$arg];
-		}
-		
-		$config[$key] = $value;
-	}
-		
-		
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function save_options()
-	{
-		update_option( 'nh-options', $this->options );
-		$this->config = array_replace_recursive($this->config, $this->options);
-		$this->create_sections();
-	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function set_stories( $page, $stories )
-	{
-		$this->options[$page.'-stories'] = $stories;
-	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function set_num_stories( $page, $num_stories )
-	{
-		foreach( $num_stories as $key => $num )
-		{
-			if( !empty($this->options['sections'][$key]) )
-				$this->options['sections'][$key][$page.'-num-stories'] = $num;
-		}
-	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
 	public function get_todays_datetime()
 	{
-		if( isset($this->config['timezone']) )
-			date_default_timezone_set('America/New_York');
+		if( isset($this->data['timezone']) )
+			date_default_timezone_set( $this->data['timezone'] );
 		$todays_datetime = new DateTime;
 		return $todays_datetime;
 	}
 	
 	
+//========================================================================================
+//======================================================================== Variations ====
+
+
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function reset_options()
-	{
-		update_option( 'nh-options', array() );
-	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	public function set_header( $title, $description )
-	{
-		$this->options['header']['title'] = $title;
-		$this->options['header']['description'] = $description;
-	}
-	
-	
-	
 	public function get_current_variation()
 	{
 		$variation = get_option( 'nh-variation', false );
 		
-		if( $variation === false ) return $this->reset_variation();
+		if( $variation === false ) return $this->set_variation();
 		
 		$variations = $this->get_variations();
 		foreach( $variations as $var )
 		{
-			if( $variation == $var ) return $variation;
+			if( $variation === $var ) return $variation;
 		}
 		
 		return $this->set_variation();
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function set_variation( $name = 'default' )
 	{
 		update_option( 'nh-variation', $name );
 		return $name;
 	}
 	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_variations()
 	{
 		$folders = array( get_template_directory().'/variations' );
@@ -772,8 +695,15 @@ class NH_Config
 
 		return $this->get_directories( $folders );
 	}
-
-
+	
+	
+//========================================================================================
+//================================================================= Custom Post Types ====
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function get_custom_post_types()
 	{
 		$folders = array( get_template_directory().'/custom-post-types' );
@@ -783,13 +713,25 @@ class NH_Config
 		return $this->get_directories( $folders );
 	}
 	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	public function use_custom_post_type( $type )
 	{
-		if( array_key_exists($type, $this->config['custom-post-type']) )
-			return $this->config['custom-post-type'][$type];
+		if( array_key_exists($type, $this->data['custom-post-type']) )
+			return $this->data['custom-post-type'][$type];
 		return false;
 	}
 	
+
+//========================================================================================
+//======================================================================= Directories ====
+
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	private function get_directories( $folders )
 	{
 		$directories = array();		
@@ -808,22 +750,19 @@ class NH_Config
 		
 		return array_unique( $directories );
 	}
+
+
+//========================================================================================
+//========================================================================== Database ====
 	
 	
-	public function options()
-	{
-		return $this->options;
-	}
-	
-	
-	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	private function check_db()
 	{
-// 		nh_print('check_db');
-
-		$db_version = get_option( 'nh-db-version', '1.0' );
-// 		nh_print( $db_version );
-		if( $db_version == self::DB_VERSION ) return;
+		$db_version = get_option( 'nh-db-version', false );
+		if( ($db_version === false) || ($db_version === self::DB_VERSION) ) return;
 		
 		switch( $db_version )
 		{
@@ -831,24 +770,74 @@ class NH_Config
 				$this->convert_db_from_10_to_11();
 			case '1.1':
 				$this->convert_db_from_11_to_12();
+			case '1.2':
+				$this->convert_db_from_12_to_13();
+			case '1.3':
+				$this->convert_db_from_13_to_14();
+			case '1.4':
+				// new version function here...
+			default:
+				break;
 		}
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	private function convert_db_from_10_to_11()
 	{
-// 		nh_print( 'convert_db_from_10_to_11' );
-
-		$options = get_option('nh-theme-options', false );
-		update_option('nh-options', $options);
+		$options = get_option( 'nh-theme-options', array() );
+		update_option( 'nh-options', $options );
 	}
 	
 	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
 	private function convert_db_from_11_to_12()
 	{
-		// future use...
-// 		nh_print( 'convert_db_from_11_to_12' );
+		$options = get_option( 'nh-options', array() );
+		if( empty($options['banner-images']) )
+		{ 
+			if( !empty($options['banner']['images']) ) 
+				$options['banner-images'] = $options['banner']['images'];
+			else
+				$options['banner-images'] = array();
+		}
+		unset( $options['banner']['images'] );
+		update_option( 'nh-options', $options );
 	}
 
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	private function convert_db_from_12_to_13()
+	{
+		$options = get_option( 'nh-options', array() );
+		if( isset($options['news-stories']) )
+		{
+			if( !isset($options['rss-feed-stories']) ) $options['rss-feed-stories'] = array();
+			$options['rss-feed-stories']['news'] = $options['news-stories'];
+			unset($options['news-stories']);
+		}
+		update_option( 'nh-options', $options );
+	}
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	private function convert_db_from_13_to_14()
+	{
+		$options = get_option( 'nh-options', array() );
+		if( isset($options['banner-images']) )
+		{
+			$options['banner-slides'] = $options['banner-images'];
+			unset($options['banner-images']);
+		}
+		update_option( 'nh-options', $options );
+	}
+	
 }
 

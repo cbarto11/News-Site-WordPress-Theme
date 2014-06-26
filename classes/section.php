@@ -36,10 +36,10 @@ class NH_Section
 		$this->featured_image = ( isset($section['featured-image']) ? $section['featured-image'] : 'none' );
 		$this->thumbnail_image = ( isset($section['thumbnail-image']) ? $section['thumbnail-image'] : $this->featured_image );
 
-		if( isset($section['post-types']) )
+		if( isset($section['type']) )
 		{
-			if( is_array($section['post-types']) ) $this->post_types = $section['post-types'];
-			else $this->post_types = array_unique(array_filter(explode(',',$section['post-types'])));
+			if( is_array($section['type']) ) $this->post_types = $section['type'];
+			else $this->post_types = array_unique(array_filter(explode(',',$section['type'])));
 		}
 		else
 		{
@@ -90,7 +90,7 @@ class NH_Section
 		
 		$this->num_stories = array();
 		$this->num_stories['front-page'] = ( isset($section['front-page-num-stories']) ? $section['front-page-num-stories'] : 0 );
-		$this->num_stories['sidebar'] = ( isset($section['sidebar-num-stories']) ? $section['sidebar-stories'] : 0 );
+		$this->num_stories['sidebar'] = ( isset($section['sidebar-num-stories']) ? $section['sidebar-num-stories'] : 0 );
 		$this->num_stories['listing'] = ( isset($section['listing-num-stories']) ? $section['listing-num-stories'] : 0 );
 		$this->num_stories['rss-feed'] = ( isset($section['rss-feed-num-stories']) ? $section['rss-feed-num-stories'] : 0 );
 		

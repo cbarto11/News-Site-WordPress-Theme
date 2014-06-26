@@ -507,22 +507,7 @@ endif;
 if( !function_exists('nh_alter_news_section_query') ):
 function nh_alter_news_section_query( $wp_query )
 {
-	if( (!isset($wp_query->query['category_name'])) || 
-	    ($wp_query->query['category_name'] !== 'news') ||
-	    (!isset($wp_query->query['category'])) )
-	{
-		return;
-	}
-	
-	$news_id = get_cat_ID( 'news' );
-	if( ($wp_query->query['category'] !== $news_id) ||
-	    (!is_array($wp_query->query['category'])) || 
-	    (!in_array($news_id, $wp_query->query['category'])) )
-	{
-		return;
-	}
-
-	if( is_feed() )
+	if( is_feed() && is_category('news') )
 	{
 		$wp_query->query_vars['posts_per_page'] = 5;
 	}
@@ -557,11 +542,11 @@ function nh_alter_news_posts( $posts, $wp_query )
 	$section = $nh_config->get_section_by_key( 'news' );
 
 	if( is_feed() )
-		$posts = $section->get_stories('rss-feed', $posts);
+		$posts = $section->get_stories( 'rss-feed', $posts );
 	else if( is_front_page() )
-		$posts = $section->get_stories('front-page', $posts);
+		$posts = $section->get_stories( 'front-page', $posts );
 	else
-		$posts = $section->get_stories('listing', $posts);
+		$posts = $section->get_stories( 'listing', $posts );
 
 	if( is_feed() )
 	{
@@ -631,7 +616,7 @@ function nh_get_taxonomies( $post_id = -1 )
 	if( $post_id == -1 )
 		$post_id = $post->ID;
 		
-	$all_taxonomies = get_taxonomies('', 'names');
+	$all_taxonomies = get_taxonomies( '', 'names' );
 	
 	$taxonomies = array();
 	foreach( $all_taxonomies as $taxname )
@@ -688,7 +673,8 @@ require_once( dirname(__FILE__).'/widgets/sections-widget.php' );
 // 
 // Include custom post types.
 //----------------------------------------------------------------------------------------
-$custom_post_types = $nh_config->get_value('custom-post-type');
+$custom_post_types = $nh_config->get_value( 'custom-post-type' );
+if( $custom_post_types !== null ):
 foreach( $custom_post_types as $name => $use_custom_type )
 {
 	if( $use_custom_type )
@@ -697,6 +683,7 @@ foreach( $custom_post_types as $name => $use_custom_type )
 		if( $filepath ) include_once( $filepath );
 	}
 }
+endif;
 
 // 
 // Include variation's functions.php
