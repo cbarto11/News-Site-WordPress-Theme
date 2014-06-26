@@ -3,15 +3,13 @@
  * 
  */
  
+require_once( dirname(__FILE__).'/functions.php' );
 require_once( dirname(__FILE__).'/todays-events-widget.php' );
 
 add_action( 'init', array('NH_CustomEventPostType', 'create_custom_post') );
 add_filter( 'post_updated_messages', array('NH_CustomEventPostType', 'update_messages') );
 add_action( 'add_meta_boxes', array('NH_CustomEventPostType', 'info_box') );
 add_action( 'save_post', array('NH_CustomEventPostType', 'info_box_save') );
-
-add_filter( 'nh-event-featured-story', array('NH_CustomEventPostType', 'get_featured_story'), 99, 2 );
-add_filter( 'nh-event-listing-story', array('NH_CustomEventPostType', 'get_listing_story'), 99, 2 );
 
 add_filter( 'pre_get_posts', array('NH_CustomEventPostType', 'alter_event_query') );
 add_filter( 'get_post_time', array('NH_CustomEventPostType', 'update_event_publication_date'), 9999, 3 );
@@ -147,36 +145,16 @@ class NH_CustomEventPostType
 		return;
 
 		$datetime = DateTime::createFromFormat( 'Y-m-d h:i A', $_POST['nh-event-date'].' '.$_POST['nh-event-time'] );
-		update_post_meta( $post_id, 'datetime', $datetime->format('Y-m-d H:i:s') );
+		if( $datetime )
+			update_post_meta( $post_id, 'datetime', $datetime->format('Y-m-d H:i:s') );
+		else
+			update_post_meta( $post_id, 'datetime', $datetime->format('Y-m-d H:i:s') );
 
 		$location = $_POST['nh-event-location'];
 		update_post_meta( $post_id, 'location', $location );
 	}
 	
 	
-	
-	public static function get_featured_story( $story, $post )
-	{
-		unset($story['description']['excerpt']);
-
-		$datetime = self::get_datetime( $post->ID );
-		$story['datetime'] = $datetime['datetime'];
-		$story['description']['datetime'] = $datetime['date'].', '.$datetime['time'];
-		$story['description']['location'] = self::get_location( $post->ID );
-		
-		return $story;
-	}
-
-	public static function get_listing_story( $story, $post )
-	{
-		$datetime = self::get_datetime( $post->ID );
-		$story['datetime'] = $datetime['datetime'];
-		$story['description']['event-info'] = array();
-		$story['description']['event-info']['datetime'] = $datetime['date'].', '.$datetime['time'];
-		$story['description']['event-info']['location'] = self::get_location( $post->ID );
-		
-		return $story;
-	}
 	
 	public static function get_datetime( $post_id )
 	{
@@ -203,8 +181,6 @@ class NH_CustomEventPostType
 	
 	public static function alter_event_query( $wp_query )
 	{
-		if( !isset($wp_query->query['post_type']) ) return;
-		
 		if( is_array($wp_query->query['post_type']) )
 		{
 			if( $wp_query->query['post_type'] != array('event') ) return;
@@ -218,12 +194,21 @@ class NH_CustomEventPostType
 		$todays_date = $nh_config->get_todays_datetime()->format('Y-m-d');
 	
 		$wp_query->query_vars['meta_key'] = 'datetime';
+
+		if( !is_admin() ):
 		$wp_query->query_vars['meta_compare'] = '>=';
 		$wp_query->query_vars['meta_value'] = $todays_date.' 00:00:00';
+		$wp_query->query_vars['where'] .= " AND datetime >= '" . $todays_date . " 00:00:00'";
+		endif;
+
 		$wp_query->query_vars['orderby'] = 'meta_value';
 		$wp_query->query_vars['order'] = 'ASC';
 
-		$wp_query->query_vars['where'] .= " AND datetime >= '" . $todays_date . " 00:00:00'";
+		if( is_admin() ):
+		$wp_query->query_vars['order'] = 'DESC';
+		endif;
+		
+
 	
 		if( is_feed() )
 		{
@@ -250,28 +235,8 @@ class NH_CustomEventPostType
 	
 		return $time;
 	}
-
 	
-
-
 }
 
 
-function nh_event_get_datetime( $post_id, $format = false )
-{
-	$datetime = '';
-	$datetime = get_post_meta( $post_id, 'datetime', true );
-	if( !empty($datetime) )
-	{
-		$datetime = DateTime::createFromFormat('Y-m-d H:i:s', $datetime);
-		if( $format ) $datetime = $datetime->format('F d, Y g:i A');
-	}
-	else
-	{
-		$datetime = null;
-		if( $format ) $datetime = 'No date provided.';
-	}
-	
-	return $datetime;
-}
 
