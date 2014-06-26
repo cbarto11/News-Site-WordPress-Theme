@@ -63,10 +63,10 @@ jQuery(document).ready(function()
 			data['section'] = section;
 			
 			$.ajax( {
-				type: "POST",
+				type: 'POST',
 				url: ajaxurl,
 				data: data,
-				dataType: "json"
+				dataType: 'json'
 			})
 			.done(function( data ) {
 				if( data['status'] == false )
@@ -75,7 +75,7 @@ jQuery(document).ready(function()
 				}
 				else
 				{
-					//alert( data['output'] );
+// 					console.log( data ); return;
 
 					if( data['output'].length == 0 )
 					{
@@ -145,34 +145,6 @@ jQuery(document).ready(function()
 		//--------------------------------------------------------------------------------
 		function setup( item_tag )
 		{
-			/*
-			<div class="selected-story-wrapper">
-			  <input type="hidden" 
-			         name="section[]"
-			         value="id" 
-			         post_title="title" 
-			         section="section" 
-			         class="story-selector">
-
-			  <div class="search-posts">
-
-				<input type="text">
-
-				<div class="search-results">
-				  <div class="result odd">
-					<input type="hidden" value="id" post_title="title1">
-					title1
-				  </div>
-				</div>
-
-			  </div>
-
-			  <div class="selected-item">
-				<span class="selected-post">title</span>
-			  </div>
-
-			</div>
-			*/
 			
 			//----------------------------------------------------------------------------
 			// get section of the current stories section.

@@ -1,10 +1,9 @@
 <?php global $nh_config, $nh_mobile_support, $nh_template_vars, $wp_query; ?>
 <?php
-$options = $nh_config->get_admin_options( 'front-page' );
 ?>
 
 
-<?php foreach( $options['sections'] as $column_name => $sections ): ?>
+<?php foreach( $nh_config->get_value( 'front-page-sections' ) as $column_name => $sections ): ?>
 
 	<div class="column <?php echo 'front-page-'.$column_name; ?>">
 
@@ -55,5 +54,5 @@ $options = $nh_config->get_admin_options( 'front-page' );
 	<?php nh_use_widget( 'content', 'bottom' ); ?>
 	</div><!-- .column -->
 
-<?php endforeach; // foreach( $options['sections'] as $column_name => $sections ) ?>
+<?php endforeach; // foreach( $nh_config->get_value( 'front-page-sections' ) as $column_name => $sections ) ?>
 

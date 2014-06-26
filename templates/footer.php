@@ -17,7 +17,7 @@
 		</div>
 
 	<div class="copyright">
-	<?php echo $nh_config->get_value('footer', 'copyright'); ?>
+	<?php echo $nh_config->get_value( 'footer', 'copyright' ); ?>
 	</div>
 	
 	<?php nh_use_widget( 'footer', 'bottom' ); ?>

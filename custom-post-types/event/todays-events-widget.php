@@ -1,7 +1,7 @@
 <?php
 
-add_action('widgets_init',
-     create_function('', 'return register_widget("NH_TodaysEventsWidget");')
+add_action( 'widgets_init',
+     create_function( '', 'return register_widget("NH_TodaysEventsWidget");' )
 );
 
 class NH_TodaysEventsWidget extends WP_Widget
@@ -13,8 +13,6 @@ class NH_TodaysEventsWidget extends WP_Widget
 	public function __construct()
 	{
 		// widget actual processes
-		
-		//nh_print('construct');
 		
 		parent::__construct(
 			'nh_todays_events_widget', // Base ID
@@ -42,7 +40,7 @@ class NH_TodaysEventsWidget extends WP_Widget
 		endif;
 
 		$events = nh_event_get_todays_events();
-		$event_section = $nh_config->get_section_by_key('events');
+		$event_section = $nh_config->get_section_by_key( 'events' );
 		
 		//nh_print($events);
 					

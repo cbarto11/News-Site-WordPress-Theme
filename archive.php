@@ -6,7 +6,7 @@
  * @subpackage news-hub-uncc
  */
 
-nh_print('PAGE:archive.php');
+nh_print( 'PAGE:archive.php' );
 global $wp_query, $nh_config, $nh_template_vars;
 
 $nh_template_vars = array();

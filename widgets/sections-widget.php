@@ -1,7 +1,7 @@
 <?php
 
-add_action('widgets_init',
-     create_function('', 'return register_widget("NH_SectionsWidget");')
+add_action( 'widgets_init',
+     create_function( '', 'return register_widget("NH_SectionsWidget");' )
 );
 
 class NH_SectionsWidget extends WP_Widget
@@ -13,8 +13,6 @@ class NH_SectionsWidget extends WP_Widget
 	public function __construct()
 	{
 		// widget actual processes
-		
-		//nh_print('construct');
 		
 		parent::__construct(
 			'nh_sections_widget', // Base ID
@@ -46,7 +44,7 @@ class NH_SectionsWidget extends WP_Widget
 			$exclude_list = array_map( 'trim', explode( ',', $instance['exclude-list'] ) );
 		endif;
 
-		$sections = $nh_config->get_value('sections');
+		$sections = $nh_config->get_sections();
 		usort($sections, function($a, $b)
 		{
 			return strcmp($a->name, $b->name);
@@ -78,8 +76,6 @@ class NH_SectionsWidget extends WP_Widget
 	{
 		// outputs the options form on admin
 
-		//nh_print('options of the widget');
-		
 		if( isset($instance['title']) )
 			$title = $instance['title'];
 			

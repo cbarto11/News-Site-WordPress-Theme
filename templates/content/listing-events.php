@@ -22,7 +22,7 @@ if( !have_posts() ):
 else:
 
 	$current_date = new DateTime;
-	$current_date->sub(new DateInterval('P1D')); 
+	$current_date->sub( new DateInterval('P1D') ); 
 	$close_previous_day = false;
 	
 	while( have_posts() ):

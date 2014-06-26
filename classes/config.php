@@ -10,22 +10,31 @@ require_once( dirname(__FILE__).'/section.php' );
 class NH_Config
 {
 
-	//====================================================================================
-	//============================================================= Class Properties =====
-
-
-	const DB_VERSION = '1.1';
+//========================================================================================
+//======================================================================= Properties =====
+	
+	
+	// relative paths to the config and otions files.
 	const CONFIG_DEFAULT_INI_FILENAME = 'config/config-default.ini';
 	const CONFIG_INI_FILENAME = 'config/config.ini';
 	const OPTIONS_DEFAULT_INI_FILENAME = 'config/options-default.ini';
 	const OPTIONS_INI_FILENAME = 'config/options.ini';
+	
+	// complete set of data with config and options
+	private $data;
+	
+	// config from config.ini
 	private $config;
+	
+	// options from options.ini and database options
 	private $options;
+	
+	// converted section info from data into section objects
 	private $sections;
 	
 
-	//====================================================================================
-	//=============================================================== Class Behavior =====
+//========================================================================================
+//====================================================================== Constructor =====
 
 
 	//------------------------------------------------------------------------------------
@@ -33,6 +42,10 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function __construct() { }
 	
+
+//========================================================================================
+//================================================================ Load Configuration ====
+
 	
 	//------------------------------------------------------------------------------------
 	// Loads the default configuration, then configuration file, if exists.

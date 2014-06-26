@@ -1,7 +1,6 @@
-<?php //nh_print('SIDEBAR-PAGE'); ?>
+<?php //nh_print( 'SIDEBAR-PAGE' ); ?>
 <?php global $nh_config, $nh_mobile_support, $nh_template_vars; ?>
 <?php
-$options = $nh_config->get_admin_options( 'sidebar' );
 ?>
 
 
@@ -10,7 +9,7 @@ $options = $nh_config->get_admin_options( 'sidebar' );
 	<div id="sidebar" class="clearfix">
 	<?php nh_use_widget( 'sidebar', 'top' ); ?>
 
-	<?php foreach( $options['sections'] as $column_name => $sections ): ?>
+	<?php foreach( $nh_config->get_value( 'sidebar-sections' ) as $column_name => $sections ): ?>
 
 		<div class="column <?php echo 'front-page-'.$column_name; ?>">
 
@@ -61,7 +60,7 @@ $options = $nh_config->get_admin_options( 'sidebar' );
 		<?php nh_use_widget( 'sidebar', 'bottom' ); ?>
 		</div><!-- .column -->
 
-	<?php endforeach; // foreach( $options['sections'] as $column_name => $sections ) ?>
+	<?php endforeach; // foreach( $nh_config->get_value( 'sidebar-sections' ) as $column_name => $sections ) ?>
 	
 	</div><!-- #sidebar -->
 	

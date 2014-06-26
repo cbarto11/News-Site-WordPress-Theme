@@ -23,17 +23,17 @@
 	});
 	</script>
 
-	<?php $banner_images = $nh_config->get_banner_images(); ?>
+	<?php $banner_images = $nh_config->get_banner_slides(); ?>
 	
 	<div id="featured-slider-wrapper">
 			
 		<div id="featured-slider">
 			<?php foreach( $banner_images as $slide ): ?>
 				<?php echo nh_get_anchor( 
-					$slide['url'], 
-					htmlentities($slide['alt']), 
+					$slide['link'], 
+					htmlentities($slide['title']), 
 					null, 
-					'<img src="'.$slide['src'].'" alt="'.htmlentities($slide['alt']).'" />' ); ?>
+					'<img src="'.$slide['src'].'" alt="'.htmlentities($slide['title']).'" />' ); ?>
 			<?php endforeach; ?>
 		</div>
 	</div>

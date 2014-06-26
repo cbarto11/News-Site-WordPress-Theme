@@ -11,23 +11,23 @@
 
 
 	<?php
-	$image_info = nh_get_image_info($nh_config->get_value('header', 'image'));
+	$image_info = nh_get_image_info( $nh_config->get_value( 'header', 'image' ) );
 	
 	?>
 	
 	<div class="masthead" style="background-image:url('<?php echo $image_info['url']; ?>'); height:<?php echo $image_info['height']; ?>px;">
 	
 		<?php 
-		$title_box_info = $nh_config->get_value('header', 'title-box'); 
+		$title_box_info = $nh_config->get_value( 'header', 'title-box' ); 
 		if( $title_box_info['show-title'] || $title_box_info['show-description'] ):
 		?>
 			<div class="title-box-wrapper" style="height:<?php echo $image_info['height']; ?>px;">
 			<div class="title-box <?php echo $title_box_info['position'] ?>">
 				<?php if( $title_box_info['show-title'] ): ?>
-					<div class="name"><?php echo get_bloginfo('name'); ?></div>
+					<div class="name"><?php echo get_bloginfo( 'name' ); ?></div>
 				<?php endif; ?>
 				<?php if( $title_box_info['show-description'] ): ?>
-					<div class="description"><?php echo get_bloginfo('description'); ?></div>
+					<div class="description"><?php echo get_bloginfo( 'description' ); ?></div>
 				<?php endif; ?>
 			</div>
 			</div>

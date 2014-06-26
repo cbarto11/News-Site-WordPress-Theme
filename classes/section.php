@@ -151,7 +151,7 @@ class NH_Section
 			'tax_query' => $this->create_tax_query(),
 			'section' => $this
 		);
-	
+		
 		$query = new WP_Query( $args );
 		
 		if( $query->have_posts() )
@@ -203,11 +203,10 @@ class NH_Section
 		global $nh_config;
 		
 		$stories_ids = $nh_config->get_value( $type.'-stories', $this->key );		
-		if( $type == 'sidebar' ) $type = 'front-page';
 		
 		if( $recent_posts == null )
 			$recent_posts = $this->get_post_list( 0, $this->num_stories[$type] );
-	
+		
 		$story_posts = array();
 		
 		if( $stories_ids == null )
@@ -499,7 +498,7 @@ class NH_Section
 			'tax_query' => $this->create_tax_query(),
 			'section' => $this
 		);
-	
+		
 		$query = new WP_Query( $args );
 		
 		while( $query->have_posts() )
