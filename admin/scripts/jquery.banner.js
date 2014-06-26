@@ -31,17 +31,23 @@ jQuery(document).ready(function()
 		//--------------------------------------------------------------------------------
 		function add_to_slider_list( banner_img )
 		{
-			var banner_id = $(banner_img).attr('banner_id');
+			var banner_id = $(banner_img).attr('banner-id');
 			var banner_src = $(banner_img).attr('src');
 		
 			$(slider_list)
 				.append('<li class="banner">'+
-					'<img src="'+banner_src+'" /><br/>'+
-					'<input type="hidden" name="banner_id[]" value="'+banner_id+'" />'+
-					'<label>URL</label>'+
-					'<input type="text" name="banner_url[]" value="" />'+
-					'<label>ALT</label>'+
-					'<input type="text" name="banner_alt[]" value="" />'+
+					'<div class="image">'+
+						'<img src="'+banner_src+'" />'+
+					'</div>'+
+					'<input type="hidden" name="nh-options[banner][banner-id][]" value="'+banner_id+'" />'+
+					'<div class="link">'+
+						'<label>Link</label>'+
+						'<input type="text" name="nh-options[banner][banner-link][]" value="" />'+
+					'</div>'+
+					'<div class="title">'+
+						'<label>Title</label>'+
+						'<input type="text" name="nh-options[banner][banner-title][]" value="" />'+
+					'</div>'+
 					'</li>');
 			
 			refresh_slider_list();
@@ -67,7 +73,7 @@ jQuery(document).ready(function()
 			data['action'] = 'nh-banner-options';
 			data['nonce'] = get_nonce();
 			data['ajax-action'] = 'delete-banner';
-			data['banner_id'] = banner_id;
+			data['banner-id'] = banner_id;
 			
 			$.ajax( {
 				type: "POST",
@@ -82,9 +88,9 @@ jQuery(document).ready(function()
 				}
 				else
 				{
-					$('.banner[banner_id="'+banner_id+'"]')
+					$('.banner[banner-id="'+banner_id+'"]')
 						.parent().remove();
-					$('.banner input[name="banner_id[]"][value="'+banner_id+'"]')
+					$('.banner input[name="nh-options[banner][banner-id][]"][value="'+banner_id+'"]')
 						.parent().remove();
 				}
 			})
@@ -113,7 +119,7 @@ jQuery(document).ready(function()
 			
 			$(banner_list).find('.delete-button').click(function()
 			{
-				delete_banner( $(this).attr('banner_id') );
+				delete_banner( $(this).attr('banner-id') );
 			});
 			
 			refresh_slider_list();

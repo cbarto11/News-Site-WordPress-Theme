@@ -10,6 +10,7 @@ class NH_AdminPage_Layout extends NH_AdminPage
 	
 	
 	public $slug = null;
+	public $tabs = array();
 	public $tag = null;
 	
 
@@ -17,6 +18,15 @@ class NH_AdminPage_Layout extends NH_AdminPage
 	private function __construct( $slug )
 	{
 		$this->slug = $slug;
+		
+		$this->tabs = array(
+			'columns' => 'Columns',
+			'front-page' => 'Front Page',
+			'sidebar' => 'Sidebar',
+		);
+		$this->tabs = apply_filters( $this->slug.'-tabs', $this->tabs );
+		
+        $this->tab = ( !empty($_GET['tab']) && array_key_exists($_GET['tab'], $this->tabs) ? $_GET['tab'] : apply_filters( $this->slug.'-default-tab', 'columns' ) );		
 	}
 	
 	
@@ -66,7 +76,7 @@ class NH_AdminPage_Layout extends NH_AdminPage
 			padding:6px;
 			background-color:#eee;
 			border:solid 1px #ccc;
-			width:100px;
+			width:25%;
 			float:left;
 			margin-right:10px;
 		}
@@ -78,8 +88,8 @@ class NH_AdminPage_Layout extends NH_AdminPage
 		
 		.section {
 			padding:3px;
-			background-color:#ccc;
-			border:solid 1px #aaa;
+			background-color:#fff;
+			border:solid 1px #000;
 			margin:3px;
 			font-size:10px;
 			height:40px;
@@ -90,7 +100,9 @@ class NH_AdminPage_Layout extends NH_AdminPage
 			white-space:nowrap;
 			text-overflow:ellipsis;
 			overflow:hidden;
-			background-color:#aaa;
+			background-color:#f6f6f6;
+			border-bottom:solid 1px #bbb;
+			color:#006633;
 			cursor:move;
 		}
 		
@@ -98,8 +110,8 @@ class NH_AdminPage_Layout extends NH_AdminPage
 			font-size:10px;
 			line-height:1.4em;
 			height:1.4em;
-			width:75px;
-			margin:2px 5px;
+			width:100%;
+			margin-top:2px;
 		}
 		
 		.section-placeholder {
@@ -113,6 +125,19 @@ class NH_AdminPage_Layout extends NH_AdminPage
 		.column-list {
 			padding:10px 0px;
 		}
+
+		.column-sections {
+			margin-right:15%;
+		}
+		
+		.column-sections .section select {
+			display:none;
+		}
+		
+		.column-sections .section {
+			height:auto !important;
+		}
+				
 		
 		</style>
   		<script type="text/javascript">
@@ -310,14 +335,13 @@ class NH_AdminPage_Layout extends NH_AdminPage
 				}
 				$current_layout['column-'.$current_column_index] = $current_column_sections;
 				$options[$tab.'-sections'] = $current_layout;
-				nh_print( $current_layout, 'current layout' );
 				
 				foreach( $tab_input['layout']['column'] as $key => $columns )
 				{
 					if( isset($options['sections'][$key]) )
 						$options['sections'][$key][$tab.'-num-stories'] = intval($columns);
 				}
-				
+
 				endif;
 				
 				break;
@@ -335,16 +359,6 @@ class NH_AdminPage_Layout extends NH_AdminPage
 	public function show()
 	{
 		global $nh_admin_pages;
-		
-		$tabs = array(
-			'columns' => 'Columns',
-			'front-page' => 'Front Page',
-			'sidebar' => 'Sidebar',
-		);
-		
-		$tabs = apply_filters( $this->slug.'-tabs', $tabs );
-
-        $this->tab = ( !empty($_GET['tab']) && array_key_exists($_GET['tab'], $tabs) ? $_GET['tab'] : apply_filters( $this->slug.'-default-tab', 'columns' ) );
 		?>
 		
 		<div class="wrap">
@@ -354,16 +368,13 @@ class NH_AdminPage_Layout extends NH_AdminPage
 			<?php settings_errors(); ?>
 		 
 			<h2 class="nav-tab-wrapper">
-				<?php foreach( $tabs as $k => $t ): ?>
+				<?php foreach( $this->tabs as $k => $t ): ?>
 					<a href="?page=<?php echo $this->slug; ?>&tab=<?php echo $k; ?>" class="nav-tab <?php if($k==$this->tab) echo 'active'; ?>"><?php echo $t; ?></a>
 				<?php endforeach; ?>
 			</h2>
 		
-			<?php
-			//nh_print( get_option($this->slug.':') );
-			?>
-				 
 			<form method="post" action="options.php">
+				<?php submit_button(); ?>
 				<?php settings_fields( $this->slug ); ?>
 				<input type="hidden" name="tab" value="<?php echo $this->tab; ?>" />
 				<?php do_settings_sections( $this->slug.':'.$this->tab ); ?>
@@ -399,7 +410,6 @@ class NH_AdminPage_Layout extends NH_AdminPage
 	{
 		global $nh_config;
 		$num_columns = $nh_config->get_number_of_columns( $args[0] );
-// 		nh_print($num_columns, $args[0]);
 		$nc = array( 1, 2 );
 		?>
 		
@@ -446,8 +456,6 @@ class NH_AdminPage_Layout extends NH_AdminPage
 		$num_columns = $nh_config->get_number_of_columns( $args[0] );
 		$layout = $nh_config->get_value( $args[0].'-sections' );
 		$sections = $nh_config->get_sections();
-		
-		nh_print( $layout, 'layout' );
 		
 		$used_section_keys = array();
 		foreach( $layout as $column => $keys )
@@ -507,7 +515,7 @@ class NH_AdminPage_Layout extends NH_AdminPage
 					
 						<?php $section = $nh_config->get_section_by_key($key, true); ?>
 						<?php if( !$section ) continue; ?>
-						
+
 						<div class="section">
 							<input type="hidden" 
 							       name="<?php nh_input_name_e( $this->tab, 'layout', 'key', '' ); ?>" 

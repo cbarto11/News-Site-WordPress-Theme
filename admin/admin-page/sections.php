@@ -38,8 +38,8 @@ class NH_AdminPage_Sections extends NH_AdminPage
 	 */
 	public function enqueue_scripts()
 	{
-		wp_deregister_script('jquery');
-		wp_enqueue_script('jquery', '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		wp_deregister_script( 'jquery' );
+		wp_enqueue_script( 'jquery', '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js' );
 	}
 	
 	
@@ -69,7 +69,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		.taxonomy .term { display:inline-block; margin-left:10px; }
 		
 		#no-taxonomies { display:none; }
-				
+		
 		</style>
   		<script type="text/javascript">
   		
@@ -192,12 +192,12 @@ class NH_AdminPage_Sections extends NH_AdminPage
 	public function add_settings_sections()
 	{
 		add_settings_section(
-			'edit', 'Edit Section', array( get_class(), 'print_edit_section' ),
+			'edit', 'Edit Section', array( $this, 'print_edit_section' ),
 			$this->slug.':edit'
 		);
 
 		add_settings_section(
-			'delete', 'Delete', array( get_class(), 'print_delete_section' ),
+			'delete', 'Delete', array( $this, 'print_delete_section' ),
 			$this->slug.':delete'
 		);
 	}
@@ -213,37 +213,37 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		//
 		
 		add_settings_field( 
-			'key', 'Key', array( get_class(), 'print_section_key' ),
+			'key', 'Key', array( $this, 'print_section_key' ),
 			$this->slug.':edit', 'edit', array(  )
 		);
 
 		add_settings_field( 
-			'name', 'Name', array( get_class(), 'print_section_name' ),
+			'name', 'Name', array( $this, 'print_section_name' ),
 			$this->slug.':edit', 'edit', array(  )
 		);
 
 		add_settings_field( 
-			'title', 'Title', array( get_class(), 'print_section_title' ),
+			'title', 'Title', array( $this, 'print_section_title' ),
 			$this->slug.':edit', 'edit', array(  )
 		);
 
 		add_settings_field( 
-			'post-types', 'Post Types', array( get_class(), 'print_section_post_types' ),
+			'post-types', 'Post Types', array( $this, 'print_section_post_types' ),
 			$this->slug.':edit', 'edit', array(  )
 		);
 
 		add_settings_field( 
-			'taxonomies', 'Taxonomies', array( get_class(), 'print_section_taxonomies' ),
+			'taxonomies', 'Taxonomies', array( $this, 'print_section_taxonomies' ),
 			$this->slug.':edit', 'edit', array(  )
 		);
 
 		add_settings_field( 
-			'orientations', 'Orientations', array( get_class(), 'print_section_image_orientations' ),
+			'orientations', 'Orientations', array( $this, 'print_section_image_orientations' ),
 			$this->slug.':edit', 'edit', array(  )
 		);
 
 		add_settings_field( 
-			'layout', 'Layout', array( get_class(), 'print_section_layout' ),
+			'layout', 'Layout', array( $this, 'print_section_layout' ),
 			$this->slug.':edit', 'edit', array(  )
 		);
 		
@@ -256,12 +256,6 @@ class NH_AdminPage_Sections extends NH_AdminPage
 	public function process_input( $options, $page, $tab, $option, $input )
 	{
 
-// nh_print($page, 'page');
-// nh_print($tab, 'tab');
-// nh_print($option, 'name');
-// nh_print($options, 'options');
-// nh_print($input, 'input');
-	
 		if( $option !== 'nh-options' ) return $options;
 		if( !isset($input['action']) ) return $options;
 		if( !isset($input['section-key']) ) return $options;
@@ -280,7 +274,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 				if( empty($section['name']) )
 				{
 					add_settings_error( '', 'name', 'Name is required.' );
-					set_transient( 'section', $section );
+					set_transient( 'section', $input['section'] );
 					return $options;
 				}
 				
@@ -294,7 +288,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 				if( empty($section['key']) )
 				{
 					add_settings_error( '', 'key', 'Error creating key.' );
-					set_transient( 'section', $section );
+					set_transient( 'section', $input['section'] );
 					return $options;
 				}
 				
@@ -305,7 +299,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 				if( ($check_key !== false) && (null !== $nh_config->get_section_by_key($check_key, true)) )
 				{
 					add_settings_error( '', 'key', 'Key already in use.' );
-					set_transient( 'section', $section );
+					set_transient( 'section', $input['section'] );
 					return $options;
 				}
 				
@@ -346,11 +340,9 @@ class NH_AdminPage_Sections extends NH_AdminPage
 					unset( $options['sections'][$check_key] );
 				
 				$options['sections'][$section['key']] = $section;
-// 				nh_print( $section, 'after' );
 				
 				$referer_action = 'edit';
 				$referer_key = $section['key'];
-
 				break;
 			
 			case 'delete':
@@ -371,7 +363,6 @@ class NH_AdminPage_Sections extends NH_AdminPage
 					add_settings_error( '', '', 'Section "'.$input['section-key'].'" was NOT deleted.', 'updated' );
 				}
 				$referer_action = 'list';
-
 				break;
 		}
 
@@ -398,6 +389,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		if( $referer_action == 'edit' ) $new_query = add_query_arg( 'key', $referer_key, $new_query );
 		$_REQUEST['_wp_http_referer'] = wp_slash( $parts['path'].$new_query );
 		
+		delete_transient( 'section' );
 		return $options;
 	}
 
@@ -473,7 +465,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		
 		if( get_transient( 'section' ) !== false )
 		{
-			$section = get_transient('section');
+			$section = get_transient( 'section' );
 			$section = new NH_Section( $section['key'], $section );
 		}
 		else
@@ -494,7 +486,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		$section = self::get_section();
 		if( $section === null )
 		{
-			nh_print('error'); return;
+			nh_print( 'error' ); return;
 		}
 		$this->display_form( 'edit', $section );
 	}
@@ -517,6 +509,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		<?php settings_errors(); ?>
 
 			<form method="post" action="options.php">
+				<?php submit_button(); ?>
 				<?php settings_fields( $this->slug ); ?>
 				<input type="hidden" 
 				       name="<?php nh_input_name_e( 'action' ); ?>" 
@@ -531,10 +524,6 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		</div>
 		
 		<?php
-// 		nh_print($section);
-// 		nh_print(array_keys($GLOBALS));
-// 		nh_print($_SERVER);
-// 		nh_print($_GET);
 	}
 
 
@@ -587,7 +576,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 
 	public static function print_section_post_types( $args )
 	{
-		$all_post_types = get_post_types( array('public' => true), 'objects' );
+		$all_post_types = get_post_types( array( 'public' => true ), 'objects' );
 		$section_post_types = self::$section->post_types;
 		?>
 		
@@ -746,7 +735,7 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		$section = self::get_section();
 		if( $section === null )
 		{
-			nh_print('error'); return;
+			nh_print( 'error' ); return;
 		}
 		
 		?>
@@ -780,14 +769,23 @@ class NH_AdminPage_Sections extends NH_AdminPage
 	
 	
 	
-	private static function get_section()
+	private function get_section()
 	{
 		global $nh_config;
 		
-		$section_key = ( isset($_GET['key']) ? $_GET['key'] : null );
-		if( $section_key === null ) return null;
+		if( isset($_GET['settings-updated']) && get_transient('section') )
+		{
+			$section = get_transient( 'section' );
+			return new NH_Section( $section['key'], $section );
+		}
 		
-		return $nh_config->get_section_by_key( $section_key, true );
+		$section = ( isset($_GET['key']) ? 
+			$nh_config->get_section_by_key( $_GET['key'], true ) : 
+			$nh_config->get_empty_section()
+		);
+		
+		if( $section === null ) return $nh_config->get_empty_section();
+		return $section;
 	}
 	
 	/**
