@@ -17,7 +17,6 @@
 add_action( 'init', 'nh_setup_widget_areas' );
 add_action( 'after_setup_theme', 'nh_add_featured_image_support' );
 add_action( 'wp_enqueue_scripts', 'nh_enqueue_scripts', 0 );
-add_action( 'admin_notices', 'nh_validate_categories_and_tags', 0 );
 
 add_filter( 'pre_get_posts', 'nh_alter_news_section_query' );
 add_filter( 'the_posts', 'nh_alter_news_posts', 9999, 2 );
@@ -153,60 +152,6 @@ if( !function_exists('nh_add_featured_image_support') ):
 function nh_add_featured_image_support()
 {
 	add_theme_support( 'post-thumbnails' );
-}
-endif;
-
-
-
-//----------------------------------------------------------------------------------------
-// Validates that the correct categories and tags are present in the WordPress site.
-//----------------------------------------------------------------------------------------
-if( !function_exists('nh_validate_categories_and_tags') ):
-function nh_validate_categories_and_tags()
-{
-	global $nh_config;
-	
-	$terms = $nh_config->get_categories();
-	foreach( $terms as $slug => $name )
-	{
-		$term = get_category_by_slug( $slug );
-		if( $term == null || $term == false )
-		{
-			?>
-			<div class="error"><p>No category found with <b><?php echo $slug; ?></b> slug.</p></div>
-			<?php
-			continue;
-		}
-		
-		if( htmlspecialchars_decode($term->name) != $name )
-		{
-			?>
-			<div class="updated"><p>The <b><?php echo $slug; ?></b> category is not named <b><?php echo $name; ?></b>.</p></div>
-			<?php
-			continue;
-		}
-	}
-
-	$terms = $nh_config->get_tags();
-	foreach( $terms as $slug => $name )
-	{
-		$term = nh_get_tag_by_slug( $slug );
-		if( $term == null || $term == false )
-		{
-			?>
-			<div class="error"><p>No tag found with <b><?php echo $slug; ?></b> slug.</p></div>
-			<?php
-			continue;
-		}
-		
-		if( htmlspecialchars_decode($term->name) != $name )
-		{
-			?>
-			<div class="updated"><p>The <b><?php echo $slug; ?></b> tag is not named <b><?php echo $name; ?></b>.</p></div>
-			<?php
-			continue;
-		}
-	}
 }
 endif;
 
