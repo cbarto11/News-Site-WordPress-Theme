@@ -44,6 +44,7 @@ class NH_AdminMain
 	    
 	    foreach( $nh_admin_pages as $page => $info )
 	    {
+	    	if( substr_compare('nh-ajax-', $page, 0, 8) ):
 			add_submenu_page(
 				'nh-settings',
 				$info['title'],
@@ -52,6 +53,7 @@ class NH_AdminMain
 				$page,
 				array( 'NH_AdminMain', 'show_admin_page' )
 			);
+			endif;
 	    }
 	    
 		remove_submenu_page( 'nh-settings', 'nh-settings' );
@@ -147,8 +149,6 @@ class NH_AdminMain
 		
 		register_setting( self::$_page->slug, 'nh-options' );
 		add_filter( 'sanitize_option_nh-options', array(get_class(), 'process_input'), 10, 2 );
-
-		// only one filter at this point...
 	}
 	
 	
@@ -159,9 +159,7 @@ class NH_AdminMain
 		$page = $_POST['option_page'];
 		$tab = ( !empty($_POST['tab']) ? $_POST['tab'] : null );
 		$post = ( !empty($_POST[$option]) ? $_POST[$option] : null );
-		$options = $nh_config->options();
-		
-		// only running once...
+		$options = $nh_config->get_options();
 		
 		if( $tab !== null )
 		$options = apply_filters( $page.'-'.$tab.'-process-input', $options, $page, $tab, $option, $post );
@@ -178,10 +176,24 @@ class NH_AdminMain
 	}
 	
 	
-	public static function show_admin_ajax_page( $page )
+	private static function show_admin_ajax_page( $page )
 	{
-		require_once( ADMIN_PATH.'/admin-ajax-page.php' );
-		NH_AdminAjaxPage::show( $page );
+		global $nh_admin_pages;
+		if( !array_key_exists('nh-ajax-'.$page, $nh_admin_pages) ) exit();
+		
+		$info = $nh_admin_pages['nh-ajax-'.$page];
+		
+		$path = nh_get_theme_file_path( 'admin/admin-ajax-page/'.$info['file'] );
+		if( $path === null ) exit();
+	
+		require_once( dirname(__FILE__).'/admin-ajax-page.php' );
+		require_once( $path );
+		
+		if( !class_exists($info['class']) ) exit();
+
+		$page = call_user_func( array($info['class'], 'get_instance') );
+		$page->show();
+		
 		exit();
 	}
 	
