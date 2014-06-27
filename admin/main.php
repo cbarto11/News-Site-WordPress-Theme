@@ -12,7 +12,7 @@ if( is_admin() ):
 add_action( 'admin_menu', array('NH_AdminMain', 'setup_config'), 9 );
 add_action( 'admin_menu', array('NH_AdminMain', 'setup_admin_pages'), 10 );
 add_action( 'admin_init', array('NH_AdminMain', 'setup_config'), 9 );
-add_action( 'admin_init', array('NH_AdminMain', 'setup_actions'), 9 );
+add_action( 'admin_init', array('NH_AdminMain', 'setup_actions'), 5 );
 add_action( 'admin_init', array('NH_AdminMain', 'register_settings'), 10 );
 
 //----------------------------------------------------------------------------------------

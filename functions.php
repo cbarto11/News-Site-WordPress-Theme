@@ -1,6 +1,4 @@
 <?php
-
-
 //========================================================================================
 // 
 //
@@ -209,22 +207,32 @@ endif;
 // @return				string|null	The absolute path to the file in the theme.
 //----------------------------------------------------------------------------------------
 if( !function_exists('nh_get_theme_file_path') ):
-function nh_get_theme_file_path( $filepath, $return_null = true )
+function nh_get_theme_file_path( $filepath, $search_type = 'both', $return_null = true )
 {
 	global $nh_config;
 	
-	if( file_exists(get_stylesheet_directory().'/'.$nh_config->get_current_variation().'/'.$filepath) )
-		return get_stylesheet_directory().'/'.$nh_config->get_current_variation().'/'.$filepath;
+	if( (strlen($filepath) > 0) && ($filepath[0] === '/') ) $filepath = substr( $filepath, 1 );
 	
-	if( file_exists(get_template_directory().'/'.$nh_config->get_current_variation().'/'.$filepath) )
-		return get_template_directory().'/'.$nh_config->get_current_variation().'/'.$filepath;
-
+	if( $search_type === 'both' || $search_type === 'variation' ):
+	
+	if( file_exists(get_stylesheet_directory().'/variations/'.$nh_config->get_current_variation().'/'.$filepath) )
+		return get_stylesheet_directory().'/variations/'.$nh_config->get_current_variation().'/'.$filepath;
+	
+	if( file_exists(get_template_directory().'/variations/'.$nh_config->get_current_variation().'/'.$filepath) )
+		return get_template_directory().'/variations/'.$nh_config->get_current_variation().'/'.$filepath;
+	
+	endif;
+	
+	if( $search_type === 'both' || $search_type === 'theme' ):
+	
 	if( file_exists(get_stylesheet_directory().'/'.$filepath) )
 		return get_stylesheet_directory().'/'.$filepath;
 	
 	if( file_exists(get_template_directory().'/'.$filepath) )
 		return get_template_directory().'/'.$filepath;
-	
+
+	endif;
+		
 	if( $return_null ) return null;
 	return '';
 }
@@ -686,7 +694,20 @@ $nh_config->load_config();
 //
 // Include the admin backend. 
 //----------------------------------------------------------------------------------------
-require_once( dirname(__FILE__).'/admin/main.php' );
+if( is_admin() ):
+
+require_once( get_template_directory().'/admin/main.php' );
+if( (is_child_theme()) && (file_exists(get_stylesheet_directory().'/admin/main.php')) ) 
+	require_once( get_stylesheet_directory().'/admin/main.php' );
+
+$filepath = nh_get_theme_file_path( '/admin/main.php', 'variation' );
+if( $filepath ) require_once( $filepath );
+
+endif;
+
+//
+// Include widgets.
+//----------------------------------------------------------------------------------------
 require_once( dirname(__FILE__).'/widgets/sections-widget.php' );
 
 // 
