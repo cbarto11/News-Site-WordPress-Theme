@@ -16,7 +16,6 @@ class NH_Section
 	public $thumbnail_image;
 	public $num_stories;
 	public $num_columns;
-	public $listing_labels;
 
 
 	
@@ -99,11 +98,6 @@ class NH_Section
 			$this->num_columns['listing'] = $section['listing-num-columns'];
 		else
 			$this->num_columns['listing'] = $nh_config->get_number_of_columns($this->thumbnail_image);
-			
-		$this->listing_labels = array(
-			'prev' => ( isset($section['listing-prev']) ? $section['listing-prev'] : null ),
-			'next' => ( isset($section['listing-next']) ? $section['listing-next'] : null )
-		);
 	}
 	
 	
@@ -589,18 +583,6 @@ class NH_Section
 		}
 		
 		return $embed;
-	}
-	
-	
-	//------------------------------------------------------------------------------------
-	// 
-	//------------------------------------------------------------------------------------
-	function get_listing_label( $key )
-	{
-		global $nh_config;
-		if( (array_key_exists($key, $this->listing_labels)) && ($this->listing_labels[$key] !== null) )
-			return $this->listing_labels[$key];
-		return $nh_config->get_value( 'content', 'listing-'.$key );
 	}
 	
 	
