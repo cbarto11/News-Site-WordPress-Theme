@@ -11,7 +11,7 @@
 
 
 	<?php
-	$image_info = nh_get_image_info( $nh_config->get_value( 'header', 'image' ) );
+	$image_info = nh_get_image_info( $nh_config->get_image_data( 'header', 'image' ) );
 	
 	?>
 	

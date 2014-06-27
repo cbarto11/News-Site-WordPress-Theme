@@ -553,7 +553,6 @@ class NH_Config
 	public function get_value()
 	{
 		$args = func_get_args();
-		
 		if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
 		
 		$config = $this->data;
@@ -573,18 +572,52 @@ class NH_Config
 		return $config;
 	}
 	
-
+	
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_option( $key, $default = false )
+	public function get_image_data()
 	{
-		if( array_key_exists($key, $this->options) )
-			return $this->convert_value( $this->options[$key] );
-			
-		return $default;
+		$args = func_get_args();
+		if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
+		
+		$image_data = $this->get_value( $args );
+		if( $image_data === null ) return null;
+		
+		$defaults = array(
+			'selection-type' => 'relative',
+			'attachment-id' => -1,
+			'path' => '',
+			'use-site-link' => false,
+			'link' => '',
+		);
+		
+		$image_data = array_merge( $defaults, $image_data );
+		return $image_data;
 	}
-
+	
+	
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function get_text_data()
+	{
+		$args = func_get_args();
+		if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
+		
+		$text_data = $this->get_value( $args );
+		if( $text_data === null ) return null;
+		
+		$defaults = array(
+			'text' => null,
+			'use-site-link' => false,
+			'link' => '',
+		);
+		
+		$text_data = array_merge( $defaults, $text_data );
+		return $text_data;
+	}
+	
 
 	//------------------------------------------------------------------------------------
 	// 
@@ -629,7 +662,7 @@ class NH_Config
 			
 			$images[] = array(
 				'id'  => $option['id'],
-				'src' => $src,
+				'path' => $src,
 				'link' => $option['link'],
 				'title' => stripslashes($option['title'])
 			);

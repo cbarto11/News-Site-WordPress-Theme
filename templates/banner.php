@@ -33,7 +33,7 @@
 					$slide['link'], 
 					htmlentities($slide['title']), 
 					null, 
-					'<img src="'.$slide['src'].'" alt="'.htmlentities($slide['title']).'" />' ); ?>
+					'<img src="'.$slide['path'].'" alt="'.htmlentities($slide['title']).'" />' ); ?>
 			<?php endforeach; ?>
 		</div>
 	</div>

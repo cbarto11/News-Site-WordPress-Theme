@@ -11,7 +11,7 @@
 	
 	
 	<?php
-	$image = $nh_config->get_value( 'subheader', 'image' );
+	$image = $nh_config->get_image_data( 'subheader', 'image' );
 	$image['link'] = get_home_url();
 	nh_image( $image );
 	?>

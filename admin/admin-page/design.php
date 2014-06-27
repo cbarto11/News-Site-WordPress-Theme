@@ -710,7 +710,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 		//
 
 		add_settings_field(
-			'image-title-positin', 'Position', array( $this, 'print_header_title_position' ),
+			'image-title-position', 'Position', array( $this, 'print_header_title_position' ),
 			$this->slug.':header:title', 'header-title', array( 'header', 'title' )
 		);
 		add_settings_field(
@@ -1495,7 +1495,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_image_source( $args )
 	{
 		global $nh_config;
-		$image = $nh_config->get_value( $args );
+		$image = $nh_config->get_image_data( $args );
 	
 		$image_type_selection = array(
 			'relative' => 'Relative Path',
@@ -1530,7 +1530,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_image_source_media_library( $args )
 	{
 		global $nh_config;
-		$image = $nh_config->get_value( $args );
+		$image = $nh_config->get_image_data( $args );
 		?>
 		
 		<div class="media-select" selector-id="<?php echo implode('-',$args); ?>">
@@ -1561,7 +1561,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_image_source_relative_path( $args )
 	{
 		global $nh_config;
-		$image = $nh_config->get_value( $args );
+		$image = $nh_config->get_image_data( $args );
 		?>
 		
 		<div class="relative-path" selector-id="<?php echo implode('-',$args); ?>">
@@ -1581,7 +1581,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_image_class( $args )
 	{
 		global $nh_config;
-		$image = $nh_config->get_value( $args );
+		$image = $nh_config->get_image_data( $args );
 		?>
 
 		<input type="text" 
@@ -1600,7 +1600,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_image_title( $args )
 	{
 		global $nh_config;
-		$image = $nh_config->get_value( $args );
+		$image = $nh_config->get_image_data( $args );
 		?>
 
 		<input type="text" 
@@ -1617,7 +1617,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_image_link( $args )
 	{
 		global $nh_config;
-		$image = $nh_config->get_value( $args );
+		$image = $nh_config->get_image_data( $args );
 		?>
 		
 		<input type="hidden" 
@@ -1649,8 +1649,8 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_header_title_position( $args )
 	{
 		global $nh_config;
-		$title = $nh_config->get_value( 'header','title' );
-		$description = $nh_config->get_value( 'header','description' );
+		$title = $nh_config->get_text_data( 'header', 'title' );
+		$description = $nh_config->get_text_data( 'header', 'description' );
 		?>
 		
 	    <div class="position">
@@ -1669,8 +1669,8 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_header_title_text( $args )
 	{
 		global $nh_config;
-		$title = $nh_config->get_value( 'header','title' );
-		$description = $nh_config->get_value( 'header','description' );
+		$title = $nh_config->get_text_data( 'header','title' );
+		$description = $nh_config->get_text_data( 'header','description' );
 		?>
 
 		<input type="text" 
@@ -1688,8 +1688,8 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_header_title_link( $args )
 	{
 		global $nh_config;
-		$title = $nh_config->get_value( 'header','title' );
-		$description = $nh_config->get_value( 'header','description' );
+		$title = $nh_config->get_text_data( 'header','title' );
+		$description = $nh_config->get_text_data( 'header','description' );
 		?>
 
 		<input type="hidden" 
@@ -1720,8 +1720,8 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_header_description_text( $args )
 	{
 		global $nh_config;
-		$title = $nh_config->get_value( 'header','title' );
-		$description = $nh_config->get_value( 'header','description' );
+		$title = $nh_config->get_text_data( 'header','title' );
+		$description = $nh_config->get_text_data( 'header','description' );
 		?>
 
 		<input type="text" 
@@ -1739,8 +1739,8 @@ class NH_AdminPage_Design extends NH_AdminPage
 	public function print_header_description_link( $args )
 	{
 		global $nh_config;
-		$title = $nh_config->get_value( 'header','title' );
-		$description = $nh_config->get_value( 'header','description' );
+		$title = $nh_config->get_text_data( 'header','title' );
+		$description = $nh_config->get_text_data( 'header','description' );
 		?>
 
 		<input type="hidden" 
@@ -1864,7 +1864,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 	{
 		global $nh_config;
 		
-		$copyright = $nh_config->get_value( 'footer','copyright' );
+		$copyright = $nh_config->get_text_data( 'footer', 'copyright' );
 		?>
 		
 		<input type="text" 
