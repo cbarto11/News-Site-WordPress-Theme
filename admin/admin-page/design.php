@@ -868,7 +868,7 @@ class NH_AdminPage_Design extends NH_AdminPage
 					}
 					else
 					{
-						$new_options['banner-images'] = $options['banner-images'];
+						$new_options['banner-slides'] = $options['banner-slides'];
 					}
 
 					add_settings_error( '', '', 'Reset options for variation: '.$chosen_variation, 'updated' );
