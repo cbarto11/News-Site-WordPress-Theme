@@ -833,8 +833,6 @@ class NH_AdminPage_Design extends NH_AdminPage
 					if( isset($tab_input['clear-sections']) )
 					{
 						add_settings_error( '', '', 'Clear sections', 'updated' );
-						$tab_input['reset-layout'] = true;
-						$tab_input['reset-stories'] = true;
 					}
 					else
 					{
