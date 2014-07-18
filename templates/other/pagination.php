@@ -7,10 +7,10 @@ if( $wp_query->max_num_pages > 1 ):
 	?>
 	<div id="page-navigation" class="clearfix" role="navigation">
 		<div class="nav-next">
-			<?php next_posts_link( 'Older Posts' ); ?>
+			<?php next_posts_link( '&laquo; Older Posts' ); ?>
 		</div>
 		<div class="nav-prev">
-			<?php previous_posts_link( 'Newer Posts' ); ?>
+			<?php previous_posts_link( 'Newer Posts &raquo;' ); ?>
 		</div>
 	</div>
 	<?php
