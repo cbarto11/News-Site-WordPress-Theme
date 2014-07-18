@@ -16,8 +16,8 @@ add_action( 'init', 'nh_setup_widget_areas' );
 add_action( 'after_setup_theme', 'nh_add_featured_image_support' );
 add_action( 'wp_enqueue_scripts', 'nh_enqueue_scripts', 0 );
 
-add_filter( 'pre_get_posts', 'nh_alter_news_section_query' );
-add_filter( 'the_posts', 'nh_alter_news_posts', 9999, 2 );
+add_filter( 'pre_get_posts', 'nh_alter_main_query' );
+add_filter( 'the_posts', 'nh_alter_main_posts', 10, 2 );
 
 
 //----------------------------------------------------------------------------------------
@@ -547,14 +547,98 @@ endif;
 
 
 //----------------------------------------------------------------------------------------
+// 
+//----------------------------------------------------------------------------------------
+if( !function_exists('nh_get_section') ):
+function nh_get_section( $wpquery = null )
+{
+	global $wp_query, $nh_config;
+
+	if( $wpquery === null ) $wpquery = $wp_query;
+	if( $wpquery->get('section') ) return $wpquery->get('section');
+	
+	$qo = $wpquery->get_queried_object();
+	
+	if( $wpquery->is_archive() )
+	{
+		if( $wpquery->is_tax() || $wpquery->is_tag() || $wpquery->is_category() )
+		{
+			$section = $nh_config->get_section( null, array( $qo->taxonomy => $qo->slug ), false );
+			$wpquery->set( 'section', $section );
+			return $section;
+		}
+		elseif( $wpquery->is_post_type_archive() )
+		{
+			$section = $nh_config->get_section( $qo->name, null, false );
+			$wpquery->set( 'section', $section );
+			return $section;
+		}
+
+		return $nh_config->get_default_section();
+	}
+	
+	if( $wpquery->is_single() )
+	{
+		if( $qo === null )
+		{
+			$post_id = $wp_query->get( 'p' );
+
+			if( !$post_id )
+			{
+				global $wpdb;
+				
+				$post_type = $wp_query->get( 'post_type', false );
+				if( !$post_type ) $post_type = 'post';
+				
+				$post_slug = $wp_query->get( 'name', false );
+				
+				if( $post_slug !== false )
+					$post_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_type = '$post_type' AND post_name = '$post_slug'" );
+			}
+		}
+		else
+		{
+			$post_id = $qo->ID;
+		}
+		
+		if( $post_id )
+		{
+			$post_type = get_post_type( $post_id );
+			$taxonomies = nh_get_taxonomies( $post_id );
+			$section = $nh_config->get_section( $post_type, $taxonomies, false, array('news') );
+		}
+		else
+		{
+			$section = $nh_config->get_default_section();
+		}
+		
+		$wpquery->set( 'section', $section );
+		return $section;
+	}
+	
+	return $nh_config->get_default_section();
+}
+endif;
+
+
+
+//----------------------------------------------------------------------------------------
 // Alters the default query made when querying the News section.
 //----------------------------------------------------------------------------------------
-if( !function_exists('nh_alter_news_section_query') ):
-function nh_alter_news_section_query( $wp_query )
+if( !function_exists('nh_alter_main_query') ):
+function nh_alter_main_query( $wp_query )
 {
-	if( is_feed() && is_category('news') )
+	if( !$wp_query->is_main_query() ) return;
+
+	$section = nh_get_section();
+	if( $section->key === 'none' ) return;
+
+	if( is_archive() )
 	{
-		$wp_query->query_vars['posts_per_page'] = 5;
+		if( is_feed() )
+			$wp_query->set( 'posts_per_page', $section->num_stories['rss-feed'] );
+		else
+			$wp_query->set( 'posts_per_page', $section->num_stories['listing'] );
 	}
 }
 endif;
@@ -564,44 +648,22 @@ endif;
 //----------------------------------------------------------------------------------------
 // 
 //----------------------------------------------------------------------------------------
-if( !function_exists('nh_alter_news_posts') ):
-function nh_alter_news_posts( $posts, $wp_query )
+if( !function_exists('nh_alter_main_posts') ):
+function nh_alter_main_posts( $posts, $wp_query )
 {
-	global $nh_config;
+	if( !$wp_query->is_main_query() ) return $posts;
 
-	if( (!isset($wp_query->query['category_name'])) || 
-	    ($wp_query->query['category_name'] !== 'news') ||
-	    (!isset($wp_query->query['category'])) )
+	$section = nh_get_section();
+	if( $section->key === 'none' ) return $posts;
+
+	if( is_archive() )
 	{
-		return $posts;
-	}
-	
-	$news_id = get_cat_ID( 'news' );
-	if( ($wp_query->query['category'] !== $news_id) ||
-	    (!is_array($wp_query->query['category'])) || 
-	    (!in_array($news_id, $wp_query->query['category'])) )
-	{
-		return $posts;
+		if( is_feed() )
+			$posts = $section->get_stories( 'rss-feed', $posts, false );
+		else
+			$posts = $section->get_stories( 'listing', $posts, false );
 	}
 
-	$section = $nh_config->get_section_by_key( 'news' );
-
-	if( is_feed() )
-		$posts = $section->get_stories( 'rss-feed', $posts );
-	else if( is_front_page() )
-		$posts = $section->get_stories( 'front-page', $posts );
-	else
-		$posts = $section->get_stories( 'listing', $posts );
-
-	if( is_feed() )
-	{
-		for( $i = 0; $i < count($posts); $i++ )
-		{
-			$publication_date = date( 'Y-m-d H:i:s', time() - ($i * 86400) );
-			$posts[$i]->post_date = $posts[$i]->post_date_gmt = $posts[$i]->post_modified = $posts[$i]->post_modified_gmt = $publication_date;
-		}
-	}
-	
 	return $posts;
 }
 endif;
@@ -666,7 +728,7 @@ function nh_get_taxonomies( $post_id = -1 )
 	$taxonomies = array();
 	foreach( $all_taxonomies as $taxname )
 	{
-		$terms = wp_get_post_terms( $post_id, $taxname, array('fields' => 'names') );
+		$terms = wp_get_post_terms( $post_id, $taxname, array('fields' => 'slugs') );
 		if( count($terms) > 0 )
 			$taxonomies[$taxname] = $terms;
 	}
@@ -748,4 +810,5 @@ endif;
 //----------------------------------------------------------------------------------------
 $filepath = nh_get_theme_file_path( 'variations/'.$nh_config->get_current_variation().'/functions.php' );
 if( $filepath ) require_once( $filepath );
+
 
