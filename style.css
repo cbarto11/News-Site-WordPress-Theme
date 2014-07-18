@@ -422,7 +422,7 @@ Tags:
 	
 	.story .image {
 		text-align:center;
-		background-color:#ccc;
+		/* background-color:#ccc; */
 	}
 	
 	.story .image img {
@@ -674,6 +674,21 @@ Tags:
 	
 	#page-navigation .nav-prev {
 		float:right;
+	}
+	
+	.author-info {
+		border: solid 1px #ccc;
+		padding: 10px;
+		margin-bottom: 10px;
+	}
+	
+	.author-info .avatar {
+		float:left;
+		margin-right:10px;
+	}
+	
+	.story.events-section h3 {
+		color:#000;
 	}
 	
 /****************************************************************************************
