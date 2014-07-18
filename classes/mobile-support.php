@@ -28,9 +28,11 @@ class Mobile_Support
 		//$this->set_use_mobile_site(true);
 		//return;
 		
-		if( isset($_GET['use_mobile_site']) )
+		if( isset($_GET['mobile']) )
 		{
-			switch( $_GET['use_mobile_site'] )
+			$this->set_use_mobile_site(true);
+			/*
+			switch( $_GET['mobile'] )
 			{
 				case '0':
 					$this->set_use_mobile_site(false);
@@ -40,6 +42,12 @@ class Mobile_Support
 					$this->set_use_mobile_site(true);
 					return; break;
 			}
+			*/
+		}
+
+		if( isset($_GET['full']) )
+		{
+			$this->set_use_mobile_site(false);
 		}
 		
 		if( isset($_SESSION['use_mobile_site']) )
