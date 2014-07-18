@@ -463,12 +463,12 @@ class NH_AdminPage_Layout extends NH_AdminPage
 		$sections = $nh_config->get_sections();
 		
 		$used_section_keys = array();
-		foreach( $layout as $column => $keys )
+		for( $i = 0; $i < $num_columns; $i++ )
 		{
+			$column = 'column-'.($i+1);
+			$keys = ( isset($layout[$column]) ? $layout[$column] : array() );
 			foreach( $keys as $key )
-			{
 				array_push( $used_section_keys, $key );
-			}
 		}
 		?>
 		
