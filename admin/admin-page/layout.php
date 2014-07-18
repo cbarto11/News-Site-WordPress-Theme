@@ -257,6 +257,11 @@ class NH_AdminPage_Layout extends NH_AdminPage
 			$this->slug.':columns', 'columns', array( 'none' )
 		);
 		
+		add_settings_field( 
+			'author', 'Author', array( $this, 'print_columns_selection' ),
+			$this->slug.':columns', 'columns', array( 'author' )
+		);
+		
 		//
 		// Front Page
 		//
