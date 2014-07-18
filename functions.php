@@ -271,6 +271,24 @@ endif;
 
 
 //----------------------------------------------------------------------------------------
+// 
+// 
+// @param	$filepath	string		The relative path within the theme to the file.
+//----------------------------------------------------------------------------------------
+if( !function_exists('nh_include_files') ):
+function nh_include_files( $filepath )
+{
+	if( is_child_theme() && file_exists(get_stylesheet_directory().'/'.$filepath) )
+		include_once( get_stylesheet_directory().'/'.$filepath );
+	
+	if( file_exists(get_template_directory().'/'.$filepath) )
+		include_once( get_template_directory().'/'.$filepath );
+}
+endif;
+
+
+
+//----------------------------------------------------------------------------------------
 // Find, then includes the template part.
 // TODO: alter this!!
 // 

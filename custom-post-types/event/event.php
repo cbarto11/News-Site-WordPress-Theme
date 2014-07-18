@@ -2,9 +2,16 @@
 /**
  * 
  */
- 
-require_once( dirname(__FILE__).'/functions.php' );
-require_once( dirname(__FILE__).'/todays-events-widget.php' );
+
+//========================================================================================
+//============================================================ Event Post Type files =====
+
+nh_include_files( 'custom-post-types/event/functions.php' );
+nh_include_files( 'custom-post-types/event/todays-events-widget.php' );
+
+
+//========================================================================================
+//============================================== Event Post Type filters and actions =====
 
 add_action( 'init', array('NH_CustomEventPostType', 'create_custom_post') );
 add_filter( 'post_updated_messages', array('NH_CustomEventPostType', 'update_messages') );
@@ -13,6 +20,10 @@ add_action( 'save_post', array('NH_CustomEventPostType', 'info_box_save') );
 
 add_filter( 'pre_get_posts', array('NH_CustomEventPostType', 'alter_event_query') );
 add_filter( 'get_post_time', array('NH_CustomEventPostType', 'update_event_publication_date'), 9999, 3 );
+
+
+//========================================================================================
+//======================================================= Event Post Type definition =====
 
 class NH_CustomEventPostType
 {
@@ -181,43 +192,28 @@ class NH_CustomEventPostType
 	
 	public static function alter_event_query( $wp_query )
 	{
-		if( is_array($wp_query->query['post_type']) )
-		{
-			if( $wp_query->query['post_type'] != array('event') ) return;
-		}
-		else
-		{
-			if( $wp_query->query['post_type'] != 'event' ) return;
-		}
-		
+		$section = nh_get_section( $wp_query );
+		if( $section->key !== 'events' ) return;
+		if( $wp_query->is_single() ) return;
+
 		global $nh_config;
 		$todays_date = $nh_config->get_todays_datetime()->format('Y-m-d');
 	
 		$wp_query->query_vars['meta_key'] = 'datetime';
 
-		if( !is_admin() ):
-		$wp_query->query_vars['meta_compare'] = '>=';
-		$wp_query->query_vars['meta_value'] = $todays_date.' 00:00:00';
-		$wp_query->query_vars['where'] .= " AND datetime >= '" . $todays_date . " 00:00:00'";
-		endif;
+		if( !is_admin() )
+		{
+			$wp_query->query_vars['meta_compare'] = '>=';
+			$wp_query->query_vars['meta_value'] = $todays_date.' 00:00:00';
+			$wp_query->query_vars['where'] .= " AND datetime >= '" . $todays_date . " 00:00:00'";
+		}
 
 		$wp_query->query_vars['orderby'] = 'meta_value';
 		$wp_query->query_vars['order'] = 'ASC';
 
-		if( is_admin() ):
-		$wp_query->query_vars['order'] = 'DESC';
-		endif;
-		
-
-	
-		if( is_feed() )
+		if( is_admin() )
 		{
-			$wp_query->query_vars['posts_per_page'] = 5;
-		}
-	
-		if( is_post_type_archive('event') && !isset($wp_query->query_vars['section']) )
-		{
-			$wp_query->query_vars['posts_per_page'] = -1;
+			$wp_query->query_vars['order'] = 'DESC';
 		}
 	}
 	
@@ -237,6 +233,5 @@ class NH_CustomEventPostType
 	}
 	
 }
-
 
 

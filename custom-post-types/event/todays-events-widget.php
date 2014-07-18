@@ -4,6 +4,7 @@ add_action( 'widgets_init',
      create_function( '', 'return register_widget("NH_TodaysEventsWidget");' )
 );
 
+if( !class_exists('NH_TodaysEventsWidget') ):
 class NH_TodaysEventsWidget extends WP_Widget
 {
 
@@ -175,7 +176,6 @@ function nh_event_get_todays_events()
 	
 	return $events;
 }
-
-
+endif;
 
 
