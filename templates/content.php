@@ -10,19 +10,18 @@
 	$key = $section->key;
 	$thumbnail = $section->thumbnail_image;
 	$featured = $section->featured_image;
-	
-	if( $section->key !== 'none' )
-		$num_cols = $nh_config->get_number_of_columns( $nh_template_vars['content-type'], $section );
-	else
-		$num_cols = $nh_config->get_number_of_columns( $nh_template_vars['content-type'] );
-	$nh_template_vars['num-cols'] = $num_cols;
+
+	$num_columns = 1;
+	if( !$nh_mobile_support->use_mobile_site )
+		$num_columns = $section->get_number_of_columns( $nh_template_vars['content-type'] );
 	?>
 
-	<div id="content" class="<?php echo $key ?>-section num-columns-<?php echo $num_cols; ?> <?php echo $thumbnail; ?>-thumbnail-image <?php echo $featured; ?>-featured-image clearfix">
+	<div id="content" class="<?php echo $key ?>-section num-columns-<?php echo $num_columns; ?> <?php echo $thumbnail; ?>-thumbnail-image <?php echo $featured; ?>-featured-image clearfix">
 	<?php nh_use_widget( 'content', 'top' ); ?>
 
 	
 	<?php
+// 	nh_print( $nh_template_vars['content-type'].' : content : '.$key );
 	nh_get_template_part( $nh_template_vars['content-type'], 'content', $key );
 	?>
 

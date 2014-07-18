@@ -96,16 +96,20 @@ class NH_Section
 		$this->num_columns = array();
 		if( isset($section['listing-num-columns']) )
 			$this->num_columns['listing'] = $section['listing-num-columns'];
-		else
-			$this->num_columns['listing'] = $nh_config->get_number_of_columns($this->thumbnail_image);
 	}
 	
 	
 	public function get_number_of_columns( $page )
 	{
+		global $nh_config;
+		
 		if( array_key_exists($page, $this->num_columns) )
 			return $this->num_columns[$page];
-		return 1;
+		
+		if( $page === 'listing' )
+			return $nh_config->get_number_of_columns($this->thumbnail_image);
+		else
+			return $nh_config->get_number_of_columns($page);
 	}
 
 
@@ -192,14 +196,16 @@ class NH_Section
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_stories( $type = 'front-page', $recent_posts = null )
+	public function get_stories( $type = 'front-page', $recent_posts = null, $post_process = true )
 	{
 		global $nh_config;
 		
-		$stories_ids = $nh_config->get_value( $type.'-stories', $this->key );		
+		$stories_ids = $nh_config->get_value( $type.'-stories', $this->key );
 		
 		if( $recent_posts == null )
 			$recent_posts = $this->get_post_list( 0, $this->num_stories[$type] );
+		
+// 		nh_print($stories_ids);
 		
 		$story_posts = array();
 		
@@ -240,35 +246,35 @@ class NH_Section
 
 			$story_posts = array_slice( array_merge($story_posts, $recent_posts), 0, $this->num_stories[$type] );
 		}
-
-		$stories = array();
+		
+		if( $post_process ):
 		switch( $type )
 		{
 			case 'front-page':
 			case 'sidebar':
-				foreach( $story_posts as $post )
+				foreach( $story_posts as &$sp )
 				{
-					$stories[] = $this->get_featured_story( $post );
+					$sp = $this->get_featured_story( $sp );
 				}
 				break;
-				
+
 			case 'listing':
-				foreach( $story_posts as $post )
+				foreach( $story_posts as &$sp )
 				{
-					$stories[] = $this->get_listing_story( $post );
+					$sp = $this->get_listing_story( $sp );
 				}
 				break;
-				
+
 			case 'rss-feed':
-				$stories = $story_posts;
-				foreach( $story_posts as $post )
+				foreach( $story_posts as &$sp )
 				{
-					$stories[] = $this->get_rss_story( $post );
+					$sp = $this->get_rss_story( $sp );
 				}
 				break;
 		}
+		endif;
 		
-		return $stories;
+		return $story_posts;
 	}
 
 
@@ -325,6 +331,8 @@ class NH_Section
 	//------------------------------------------------------------------------------------
 	public function get_featured_story( $post )
 	{
+// 		nh_print($this);
+		
 		if( empty($post) ) return null;
 
 		$story = array();

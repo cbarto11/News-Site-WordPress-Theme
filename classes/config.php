@@ -94,7 +94,13 @@ class NH_Config
 			'front-page-sections', 'sidebar-sections', 
 			'front-page-stories' , 'sidebar-stories' , 'listing-stories', 'rss-feed-stories',
 			'banner-slides',
-		);	
+		);
+		
+// 		if( !isset($_POST) || empty($_POST) )
+// 		{
+// 		nh_print( $options_ini, 'options ini' );
+// 		nh_print( $db_options, 'db options' );
+// 		}
 
 		//
 		// set config data.
@@ -228,12 +234,19 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	public function is_optional_template_part( $template_part )
 	{
+		return in_array( $template_part, $this->get_optional_template_parts() );
+	}
+
+
+	//------------------------------------------------------------------------------------
+	// 
+	//------------------------------------------------------------------------------------
+	public function get_optional_template_parts()
+	{
 		$optional_template_parts = array( 'header', 'banner', 'subheader', 'mobile-menu', 'footer' );
 		$optional_template_parts = apply_filters( 'nh-config-optional-template-parts', $optional_template_parts );
-
-		return in_array( $template_part, $optional_template_parts );
+		return $optional_template_parts;
 	}
-	
 
 //========================================================================================
 //=========================================================================== Widgets ====
@@ -377,11 +390,8 @@ class NH_Config
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_number_of_columns( $name, $section = null )
+	public function get_number_of_columns( $name )
 	{
-		if( ($section !== null) && (array_key_exists($name, $section->num_columns)) )
-			return $section->num_columns[$name];
-		
 		if( isset($this->data['content']['num-columns'][$name]) )
 			return $this->data['content']['num-columns'][$name];
 			
@@ -461,7 +471,7 @@ class NH_Config
 		if( empty($post_types) ) $post_types = array( 'post' );
 		if( !is_array($post_types) ) $post_types = array( $post_types );
 		if( empty($taxonomies) ) $taxonomies = array();
-
+		
 
 		// 
 		// 
@@ -469,6 +479,7 @@ class NH_Config
 		// cycle through each section looking for exact taxonomy and post type match
 		foreach( $this->sections as $key => $section )
 		{
+			if( in_array($key, $exclude_sections) ) continue;
 			if( !$section->is_post_type($post_types) ) continue;
 			
 			if( !$section->has_taxonomies() )
