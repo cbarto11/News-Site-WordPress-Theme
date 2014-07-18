@@ -3,7 +3,7 @@
  * Displays when a requested page is not found (404 error).
  *
  * @package WordPress
- * @subpackage news-hub-uncc
+ * @subpackage news-hub
  */
 
 // nh_print( 'PAGE:404.php' );
