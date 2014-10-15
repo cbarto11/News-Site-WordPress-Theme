@@ -700,6 +700,10 @@ class NH_AdminPage_Sections extends NH_AdminPage
 		
 		<label>Number of stories on archive page</label>
 		<select name="<?php nh_input_name_e( 'section', 'num-stories', 'listing' ); ?>">
+			<option value="-1" 
+				    <?php selected( -1, self::$section->num_stories['listing'] ); ?>>
+				All
+			</option>
 			<?php for( $i = 9; $i < 100; $i += 10 ): ?>
 				<?php $val = $i+1; ?>
 				<option value="<?php echo $val; ?>" 
@@ -711,6 +715,10 @@ class NH_AdminPage_Sections extends NH_AdminPage
 
 		<label>Number of stories on rss feed</label>
 		<select name="<?php nh_input_name_e( 'section', 'num-stories', 'rss-feed' ); ?>">
+			<option value="-1" 
+				    <?php selected( -1, self::$section->num_stories['rss-feed'] ); ?>>
+				All
+			</option>
 			<?php for( $i = 9; $i < 100; $i += 10 ): ?>
 				<?php $val = $i+1; ?>
 				<option value="<?php echo $val; ?>" 
