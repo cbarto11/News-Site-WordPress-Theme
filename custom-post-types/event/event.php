@@ -22,6 +22,9 @@ add_filter( 'pre_get_posts', array('NH_CustomEventPostType', 'alter_event_query'
 add_filter( 'posts_where', array('NH_CustomEventPostType', 'alter_event_where'), 9999, 2 );
 add_filter( 'get_post_time', array('NH_CustomEventPostType', 'update_event_publication_date'), 9999, 3 );
 
+add_filter( 'manage_edit-event_columns', array( 'NH_CustomEventPostType', 'all_columns_key' ) );
+add_filter( 'manage_edit-event_sortable_columns', array( 'NH_CustomEventPostType', 'all_sortable_columns_key' ) );
+add_action( 'manage_event_posts_custom_column', array( 'NH_CustomEventPostType', 'all_columns_value' ), 10, 2 );
 
 //========================================================================================
 //======================================================= Event Post Type definition =====
@@ -278,6 +281,17 @@ class NH_CustomEventPostType
 
 		if( is_admin() )
  		{
+ 			if( !$wp_query->is_main_query() ) return;
+
+ 			$screen = get_current_screen();
+ 			if( $screen->base != 'edit' ) return;
+
+			$wp_query->set( 'posts_per_page', get_user_option('edit_event_per_page') );
+
+ 			if( ($wp_query->get('orderby')) && ($wp_query->get('orderby') != 'datetime') ) return;
+ 			
+ 			$wp_query->set( 'meta_key', 'datetime' );
+			$wp_query->set( 'orderby', 'meta_value' );
  			return;
  		}
 
@@ -314,6 +328,69 @@ class NH_CustomEventPostType
 		}
 	
 		return $time;
+	}
+	
+	
+		/**
+	 * 
+	 */
+	public static function all_columns_key( $columns )
+	{
+		unset($columns['categories']);
+		unset($columns['tags']);
+		unset($columns['date']);
+
+		$columns['location'] = 'Location';
+		$columns['datetime'] = 'Date and Time';
+
+		return $columns;
+	}
+	
+	
+	public static function all_sortable_columns_key( $columns )
+	{
+		$columns['datetime'] = array( 'datetime', false );
+		
+		unset($columns['categories']);
+		unset($columns['tags']);
+		unset($columns['date']);
+		
+		return $columns;
+	}
+	
+
+	/**
+	 * 
+	 */
+	public static function all_columns_value( $column_name, $post_id )
+	{
+		switch( $column_name )
+		{
+			case 'location':
+				$location = get_post_meta( $post_id, 'location', true );
+				if( $location )
+					echo $location;
+				else
+					echo 'No location specified.';
+				break;
+				
+			case 'datetime':
+				$datetime = get_post_meta( $post_id, 'datetime', true );
+				if( $datetime )
+				{
+					$dt = new DateTime( $datetime );
+					echo $dt->format( 'F d, Y h:m A' );
+				}
+				else
+				{
+					echo 'No datetime specified.';
+				}
+				break;
+				
+			default:
+				echo '';
+				break;
+		}
 	}
 	
 }
