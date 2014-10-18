@@ -19,6 +19,24 @@ add_action( 'wp_enqueue_scripts', 'nh_enqueue_scripts', 0 );
 add_filter( 'pre_get_posts', 'nh_alter_main_query' );
 add_filter( 'the_posts', 'nh_alter_main_posts', 10, 2 );
 
+//----------------------------------------------------------------------------------------
+// Debugging WP_Query
+//----------------------------------------------------------------------------------------
+/*
+add_filter( 'posts_request', 'dump_request' );
+if( !function_exists('dump_request') ):
+function dump_request( $input )
+{
+	echo '<pre>';
+    var_dump($input);
+	echo '</pre>';
+
+    return $input;
+}
+endif;
+*/
+
+
 
 //----------------------------------------------------------------------------------------
 // Sets up the widget areas.
