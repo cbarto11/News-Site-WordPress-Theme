@@ -695,6 +695,55 @@ Tags:
  * - Events Archive Page
  ****************************************************************************************/
 
+	body.archive .date-controls {
+		border:solid 1px #ccb55c;
+		text-align:center;
+		margin:1em 0em;
+		border-radius:5px;
+	}
+	
+	body.archive .date-controls .year {
+		background-color:#eedeb9;
+		padding:0.5em;
+		border-radius:5px 5px 0px 0px;
+	}
+
+	body.archive .date-controls .year > a {
+		margin:0 1em;
+		display:inline-block;
+		color:#000;
+	}
+	
+	body.archive .date-controls .year > a:hover {
+		text-decoration:none;
+		font-weight:bold;
+	}
+
+	body.archive .date-controls .months {
+		background-color:#f6f6f6;
+		border-radius:0px 0px 5px 5px;
+	}
+
+	body.archive .date-controls .months > a,
+	body.archive .date-controls .months > span {
+		margin:0.2em;
+		padding:0.2em 0.4em;
+		border:solid 1px #999;
+		border-radius:5px;
+		display:inline-block;
+		background-color:#eee;
+		color:#000;
+	}
+	
+	body.archive .date-controls .months > a:hover {
+		text-decoration:none;
+		background-color:#ddd;
+	}
+	
+	body.archive .date-controls .months > span {
+		background-color:#cbb563;
+	}
+
 	body.archive #content.events-section .agenda-day {
 		padding:5px 0px;
 		margin-bottom:20px;

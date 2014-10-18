@@ -1,5 +1,4 @@
 
-
 <?php global $nh_config, $nh_mobile_support, $nh_template_vars, $wp_query; ?>
 <?php $nh_section = $nh_template_vars['section']; ?>
 
@@ -8,6 +7,69 @@
 <?php if( isset($nh_template_vars['description']) ): ?>
 	<div class="description"><?php echo $nh_template_vars['description']; ?></div>
 <?php endif; ?>
+
+
+<?php
+
+list( $month, $year, $start_datetime, $end_datetime ) = array_values( NH_CustomEventPostType::get_events_datetime() );
+$end_datetime->sub( new DateInterval('PT1S') );
+
+?>
+<div class="date-range">
+	<?php echo $start_datetime->format('F d, Y') . ' to ' . $end_datetime->format('F d, Y'); ?>
+</div>
+<?php
+
+$events_url = get_site_url().'/event';
+$prev_year = new DateTime( $start_datetime->format('Y-m-d') ); 
+$prev_year->sub( new DateInterval('P1Y') );
+$next_year = new DateTime( $start_datetime->format('Y-m-d') ); 
+$next_year->add( new DateInterval('P1Y') );
+
+?>
+<div class="date-controls">
+	<div class="year">
+		<a href="<?php echo $events_url; ?>?event-date=12-<?php echo $prev_year->format("Y"); ?>">
+			<
+			<?php /* TOOD: replace with image. */ ?>
+		</a>
+		<?php echo $start_datetime->format('Y'); ?>
+		<a href="<?php echo $events_url; ?>?event-date=12-<?php echo $next_year->format("Y"); ?>">
+			>
+			<?php /* TOOD: replace with image. */ ?>
+		</a>
+	</div>
+	<div class="months">
+		<?php
+		$months = array(
+			1 => 'JAN',
+			2 => 'FEB',
+			3 => 'MAR',
+			4 => 'APR',
+			5 => 'MAY',
+			6 => 'JUN',
+			7 => 'JUL',
+			8 => 'AUG',
+			9 => 'SEP',
+			10 => 'OCT',
+			11 => 'NOV',
+			12 => 'DEC',
+		);
+		?>
+		<?php foreach( $months as $m => $name ): ?>
+			<?php if( $month == $m ): ?>
+			<span>
+				<?php echo $name; ?>
+			</span>
+			<?php else: ?>
+			<a href="<?php echo $events_url; ?>?event-date=<?php echo sprintf("%02s", $m); ?>-<?php echo $start_datetime->format('Y'); ?>">
+				<?php echo $name; ?>
+			</a>
+			<?php endif; ?>
+		<?php endforeach; ?>
+	</div>
+</div>
+
 
 <?php
 //------------------------------------------------------------------------------------
@@ -21,7 +83,7 @@ if( !have_posts() ):
 
 else:
 
-	$current_date = new DateTime;
+	$current_date = new DateTime( $start_datetime->format('Y-m-d') );
 	$current_date->sub( new DateInterval('P1D') ); 
 	$close_previous_day = false;
 	

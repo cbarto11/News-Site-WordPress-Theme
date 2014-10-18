@@ -19,6 +19,7 @@ add_action( 'add_meta_boxes', array('NH_CustomEventPostType', 'info_box') );
 add_action( 'save_post', array('NH_CustomEventPostType', 'info_box_save') );
 
 add_filter( 'pre_get_posts', array('NH_CustomEventPostType', 'alter_event_query') );
+add_filter( 'posts_where', array('NH_CustomEventPostType', 'alter_event_where'), 9999, 2 );
 add_filter( 'get_post_time', array('NH_CustomEventPostType', 'update_event_publication_date'), 9999, 3 );
 
 
@@ -190,31 +191,114 @@ class NH_CustomEventPostType
 		return get_post_meta( $post_id, 'location', true );
 	}
 	
+	public static function get_events_datetime()
+	{
+		global $nh_config;
+		$todays_date = $nh_config->get_todays_datetime();
+
+		$event_date = ( !empty($_GET['event-date']) ? $_GET['event-date'] : 0 );
+		$start_datetime = NULL; $end_datetime = NULL;
+		$month = 0; $year = 0;
+		
+		if( $event_date != 0 )
+		{
+			$matches = NULL;
+			$num_matches = preg_match("/(([0-9]{1,2})-)?([0-9]{4})/", $event_date, $matches);
+
+			if( $num_matches != FALSE )
+			{
+				$month = ( $matches[2] ? $matches[2] : 0 );
+				$year = $matches[3];
+				
+				// generate errors??
+				$month = ( ($month > 0) && ($month < 13) ? intval($month) : 0 );
+				$year = ( ($year >= 1900) && ($year <= 9999) ? intval($year) : 0 );
+				
+				if( $year == 0 ) $year = $todays_date->format('Y');
+
+				if( $month == 0 ) 
+				{
+					$start_datetime = new DateTime("$year-01-01");
+					$end_datetime = new DateTime("$year-01-01");
+					$end_datetime->add( new DateInterval('P1Y') );
+				}
+				else
+				{
+					$start_datetime = new DateTime("$year-$month-01");
+					$end_datetime = new DateTime("$year-$month-01");
+					$end_datetime->add( new DateInterval('P1M') );
+				}
+			}
+		}
+		
+		if( !$start_datetime )
+		{
+			$start_datetime = new DateTime( $todays_date->format('Y-m-d') );
+			$end_datetime = new DateTime( $todays_date->format('Y-m-d') );
+			$end_datetime->add( new DateInterval('P1M') );
+		}
+		
+		return array(
+			'month' => $month,
+			'year' => $year,
+			'start' => $start_datetime,
+			'end' => $end_datetime,
+		);
+	}
+	
+	public static function alter_event_where( $where , $wp_query )
+	{
+		if( is_admin() ) return $where;
+		if( !$wp_query->is_main_query() ) return $where;
+		if( $wp_query->is_single() ) return $where;
+
+		$section = nh_get_section( $wp_query );
+		if( $section->key !== 'events' ) return $where;
+		
+		list( $month, $year, $start_datetime, $end_datetime ) = array_values( NH_CustomEventPostType::get_events_datetime() );
+		
+		if( !empty($where) )
+			$where .= " AND ";
+		$where .= " meta_value >= '" . $start_datetime->format('Y-m-d') . " 00:00:00'";
+		$where .= " AND meta_value < '" . $end_datetime->format('Y-m-d') . " 00:00:00'";
+		
+		return $where;
+	}
+	
+	
 	public static function alter_event_query( $wp_query )
 	{
+		if( $wp_query->is_single() ) return;
+	
 		$section = nh_get_section( $wp_query );
 		if( $section->key !== 'events' ) return;
-		if( $wp_query->is_single() ) return;
-
-		global $nh_config;
-		$todays_date = $nh_config->get_todays_datetime()->format('Y-m-d');
 	
-		$wp_query->query_vars['meta_key'] = 'datetime';
-
-		if( !is_admin() )
-		{
-			$wp_query->query_vars['meta_compare'] = '>=';
-			$wp_query->query_vars['meta_value'] = $todays_date.' 00:00:00';
-			$wp_query->query_vars['where'] .= " AND datetime >= '" . $todays_date . " 00:00:00'";
-		}
-
-		$wp_query->query_vars['orderby'] = 'meta_value';
-		$wp_query->query_vars['order'] = 'ASC';
+		global $nh_config;
+		$todays_date = $nh_config->get_todays_datetime();
 
 		if( is_admin() )
-		{
-			$wp_query->query_vars['order'] = 'DESC';
-		}
+ 		{
+ 			return;
+ 		}
+
+		$wp_query->set( 'meta_key', 'datetime' );
+		$wp_query->set( 'orderby', 'meta_value' );
+		$wp_query->set( 'order', 'ASC' );
+
+		if( $wp_query->is_main_query() ) return;
+
+		$start_datetime = new DateTime( $todays_date->format('Y-m-d') );
+		$end_datetime = new DateTime( $todays_date->format('Y-m-d') );
+		$end_datetime->add( new DateInterval('P1M') );
+
+		$wp_query->set( 'meta_query', array(
+				array(
+					'key'     => 'datetime',
+					'value'   => $start_datetime->format('Y-m-d') . " 00:00:00",
+					'compare' => '>=',
+				),
+			)
+		);
 	}
 	
 	
