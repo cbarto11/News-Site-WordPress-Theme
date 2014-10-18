@@ -202,9 +202,9 @@ class NH_Section
 		
 		$stories_ids = $nh_config->get_value( $type.'-stories', $this->key );
 		
-		if( $recent_posts == null )
+		if( $recent_posts === null )
 			$recent_posts = $this->get_post_list( 0, $this->num_stories[$type] );
-		
+
 // 		nh_print($stories_ids);
 		
 		$story_posts = array();
@@ -334,17 +334,17 @@ class NH_Section
 // 		nh_print($this);
 		
 		if( empty($post) ) return null;
-
+		
 		$story = array();
 		$story['title'] = $this->get_title( $post );
 		$story['link'] = $this->get_link( $post );
 		$story['target'] = $this->get_link_target( $story['link'] );
-
+		
 		if( $this->thumbnail_image == 'embed' )
 			$story['embed'] = $this->get_embed_code( $post->post_content );
 		else
 			$story['image'] = $this->get_image( $post->ID, 'thumbnail' );
-
+		
 		$story['description'] = array();
 		$story['description']['excerpt'] = $this->get_excerpt( $post );
 		
