@@ -153,6 +153,9 @@ class NH_CustomEventPostType
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
 		return;
 		
+		if ( !isset($_POST) || !isset($_POST['nh-custom-event-post']) )
+		return;
+		
 		if ( !wp_verify_nonce( $_POST['nh-custom-event-post'], plugin_basename( __FILE__ ) ) )
 		return;
 		
