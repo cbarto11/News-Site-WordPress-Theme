@@ -278,10 +278,6 @@
  * Single Page
  ****************************************************************************************/
 
-	body.single #content .story {
-		margin:0px;
-	}
-	
 	body.single #content .story.portrait-image .image,
 	body.single #content .story.portrait-image .image img {
 		width:300px;

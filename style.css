@@ -539,10 +539,6 @@ Tags:
 		margin-left:0px;
 	}
 	
-	body.single #content .story {
-		padding:0px;
-	}
-	
 	body.single #content .story .description,
 	body.page #content {
 		color:#000;

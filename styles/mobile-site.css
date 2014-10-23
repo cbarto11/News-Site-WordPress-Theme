@@ -195,16 +195,6 @@
 		margin-bottom:2px;
 	}
 	
-	/*
-	<div id="search-2" class="widget section-box widget_search"><form role="search" method="get" id="searchform" class="searchform" action="http://localhost/wordpress-ms/news-site/">
-				<div>
-					<label class="screen-reader-text" for="s">Search for:</label>
-					<input type="text" value="" name="s" id="s">
-					<input type="submit" id="searchsubmit" value="Search">
-				</div>
-			</form></div>
-	*/
-	
 	#mobile-menu > .menu .widget_search > form > div {
 		text-align:center;
 	}
@@ -287,10 +277,14 @@
 		margin:5px;
 	}
 	
+	body.single #content .story,
+	body.archive #content .story,
+	body.search #content .story,
 	.story {
-		padding:5px 0px;
+		margin:0px -5px;
+		padding:5px;
 	}
-	
+		
 	.story.portrait-image .image,
 	.story.landscape-image .image {
 		float:left;
@@ -524,8 +518,8 @@
 		
 	body.archive #content.num-columns-1 .story,
 	body.search #content.num-columns-1 .story {
-		border:none;
-		margin:0px;
+		margin:0px -5px;
+		padding:5px;
 	}
 
 	body.archive #content.num-columns-1 .story.portrait-image .description,
