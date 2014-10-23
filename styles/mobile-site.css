@@ -442,12 +442,6 @@
 		display:inline;
 	}
 	
-	body.archive #main #content.events-section .event-info {
-		margin-bottom:5px;
-		border-bottom:solid 1px #efefef;
-		padding-bottom:5px;
-	}
-	
 	body.archive #main #content.events-section .story {
 		padding:0px;
 	}
@@ -472,9 +466,11 @@
 	}
 	
 	body.archive #main #content.events-section .event-info > div {
-		display:inline;
-		padding-top:5px;
 		padding-bottom:5px;
+	}
+
+	body.archive #main #content.events-section .event-info > div.datetime {
+		padding-bottom:0px;
 	}
 	
 	body.archive #main #content.events-section .event-info > div.time {
@@ -484,7 +480,6 @@
 	}
 	
 	body.archive #main #content.events-section .event-info > div.location {
-		float:right;
 	}
 
 

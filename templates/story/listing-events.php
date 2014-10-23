@@ -32,29 +32,27 @@ $story = $nh_template_vars['story'];
 		<?php if( count($story['description']) > 0 ): ?>
 
 			<div class="contents">
-
-			<?php 
-			foreach( $story['description'] as $key => $value ):
-				if( is_array($value) ):
-					
-					?><div class="<?php echo $key; ?>"><?php
-					
-					foreach( $value as $k => $v ):
-						?><div class="<?php echo $k; ?>"><?php echo $v; ?></div><?php
-					endforeach;
-				
-					?></div><?php
-					
-				else:
-
-					?><div class="<?php echo $key; ?>"><?php echo $value; ?></div><?php
-					
-				endif;
+			
+			<?php
+			$excerpt = '<div class="excerpt">'.$story['description']['excerpt'].'</div>';
+			
+			$event_info = '<div class="event-info">';
+			foreach( $story['description']['event-info'] as $key => $value ):
+				$event_info .= '<div class="'.$key.'">'.$value.'</div>';
 			endforeach;
-			?>
-	
-			</div><!-- .contents -->
+			$event_info .= '</div>';
 
+			if( $nh_mobile_support->use_mobile_site ):
+				echo $event_info;
+				echo $excerpt;
+			else:
+				echo $excerpt;
+				echo $event_info;
+			endif;
+			?>
+
+			</div><!-- .contents -->
+			
 		<?php endif; ?>
 	
 	</div><!-- .description -->
