@@ -303,6 +303,18 @@ class NH_CustomEventPostType
 		$wp_query->set( 'order', 'ASC' );
 
 		if( $wp_query->is_main_query() ) return;
+				
+		$datetime_meta_found = false;
+		$current_meta_query = $wp_query->get( 'meta_query' );
+		if( is_array($current_meta_query) )
+		{
+			foreach( $current_meta_query as $mq )
+			{
+				if( isset($mq['key']) && $mq['key'] == 'datetime' )
+					$datetime_meta_found = true;
+			}
+		}
+		if( $datetime_meta_found ) return;
 
 		$start_datetime = new DateTime( $todays_date->format('Y-m-d') );
 		$end_datetime = new DateTime( $todays_date->format('Y-m-d') );
