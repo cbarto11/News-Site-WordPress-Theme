@@ -16,9 +16,9 @@ class NH_SectionsWidget extends WP_Widget
 		
 		parent::__construct(
 			'nh_sections_widget', // Base ID
-			__("Section List", 'text_domain'), // Name
+			'Section List', // Name
 			array( 
-				'description' => __( 'Displays a list of news sections.', 'text_domain' ), 
+				'description' => 'Displays a list of news sections.', 
 			) // Args
 		);
 	}
@@ -50,11 +50,9 @@ class NH_SectionsWidget extends WP_Widget
 			return strcmp($a->name, $b->name);
 		});
 		
-		//nh_print($sections);
-		
 		?><ul><?php
 		foreach( $sections as $s ):
-
+			
 			if( !in_array($s->key, $exclude_list) ):
 			?>
 			<li><a href="<?php echo $s->get_section_link(); ?>"><?php echo $s->name; ?></a></li>
