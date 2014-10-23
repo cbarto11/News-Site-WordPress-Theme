@@ -300,9 +300,16 @@ class NH_Section
 					
 				case 1:
 					// taxonomy page?
-					reset($this->taxonomies); $taxname = key($this->taxonomies);
+					foreach( $this->taxonomies as $tn => $tax )
+					{
+						$taxname = $tn;
+						break;
+					}
 					if( count($this->taxonomies[$taxname]) == 1 )
+					{
 						$link = get_term_link( $this->taxonomies[$taxname][0], $taxname );
+						if( is_wp_error($link) ) $link = '';
+					}
 					break;
 			}
 		}
