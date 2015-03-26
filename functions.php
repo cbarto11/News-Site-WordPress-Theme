@@ -669,7 +669,7 @@ endif;
 if( !function_exists('nh_alter_main_posts') ):
 function nh_alter_main_posts( $posts, $wp_query )
 {
-	if( is_admin() || !$wp_query->is_main_query() ) return;
+	if( is_admin() || !$wp_query->is_main_query() ) return $posts;
 	
 	$section = nh_get_section();
 	if( $section->key === 'none' ) return $posts;
