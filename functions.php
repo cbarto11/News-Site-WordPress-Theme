@@ -646,7 +646,7 @@ endif;
 if( !function_exists('nh_alter_main_query') ):
 function nh_alter_main_query( $wp_query )
 {
-	if( !$wp_query->is_main_query() ) return;
+	if( is_admin() || !$wp_query->is_main_query() ) return;
 
 	$section = nh_get_section();
 	if( $section->key === 'none' ) return;
@@ -669,11 +669,11 @@ endif;
 if( !function_exists('nh_alter_main_posts') ):
 function nh_alter_main_posts( $posts, $wp_query )
 {
-	if( !$wp_query->is_main_query() ) return $posts;
-
+	if( is_admin() || !$wp_query->is_main_query() ) return;
+	
 	$section = nh_get_section();
 	if( $section->key === 'none' ) return $posts;
-
+	
 	if( is_archive() )
 	{
 		if( is_feed() )
@@ -681,7 +681,7 @@ function nh_alter_main_posts( $posts, $wp_query )
 		else
 			$posts = $section->get_stories( 'listing', $posts, false );
 	}
-
+	
 	return $posts;
 }
 endif;

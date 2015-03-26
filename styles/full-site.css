@@ -92,8 +92,8 @@
 		border-left:solid 1px #CCCCCC;
 		padding-left:20px;
 		position:relative;
-		left:-1px;
-		margin-right:-1px;
+//		left:-1px;
+		margin-right:-2px;
 	}
 
 	#content.num-columns-2 .column {
@@ -111,8 +111,8 @@
 	#content.num-columns-2 .column.even {
 		border-left:solid 1px #CCCCCC;
 		position:relative;
-		left:-1px;
-		margin-right:-1px;
+//		left:-1px;
+		margin-right:-2px;
 		padding-left:20px;
 	}
 	
