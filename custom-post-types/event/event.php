@@ -66,11 +66,37 @@ class NH_CustomEventPostType
 			'public'        => true,
 			'menu_position' => 5,
 			'supports'      => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ),
-			'taxonomies'	=> array('category', 'post_tag'),
+			'taxonomies'	=> array(),
 			'has_archive'   => true,
 		);
 		
 		register_post_type( 'event', $args );
+
+		// Add new taxonomy, make it hierarchical (like categories)
+		$labels = array(
+			'name'              => 'Event Categories',
+			'singular_name'     => 'Event Category',
+			'search_items'      => "Search Event Categories",
+			'all_items'         => "All Event Categories",
+			'parent_item'       => "Parent Event Category",
+			'parent_item_colon' => "Parent Event Category:",
+			'edit_item'         => "Edit Event Category",
+			'update_item'       => "Update Event Category",
+			'add_new_item'      => "Add New Event Category",
+			'new_item_name'     => "New Event Category Name",
+			'menu_name'         => 'Event Categories',
+		);
+
+		$args = array(
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'rewrite'           => array( 'slug' => 'event-category' ),
+		);
+
+		register_taxonomy( 'event-category', 'event', $args );		
 		
 		flush_rewrite_rules();
 	}
