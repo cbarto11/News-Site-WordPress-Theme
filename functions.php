@@ -581,8 +581,14 @@ function nh_get_section( $wpquery = null )
 	{
 		if( $wpquery->is_tax() || $wpquery->is_tag() || $wpquery->is_category() )
 		{
-			$section = $nh_config->get_section( null, array( $qo->taxonomy => $qo->slug ), false );
+			$post_types = null;
+			
+			$taxonomy = get_taxonomy( $qo->taxonomy );
+			if( $taxonomy ) $post_types = $taxonomy->object_type;
+			
+			$section = $nh_config->get_section( $post_types, array( $qo->taxonomy => $qo->slug ), false );
 			$wpquery->set( 'section', $section );
+			
 			return $section;
 		}
 		elseif( $wpquery->is_post_type_archive() )
