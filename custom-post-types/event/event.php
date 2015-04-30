@@ -242,7 +242,6 @@ class NH_CustomEventPostType
 				$month = ( $matches[2] ? $matches[2] : 0 );
 				$year = $matches[3];
 				
-				// generate errors??
 				$month = ( ($month > 0) && ($month < 13) ? intval($month) : 0 );
 				$year = ( ($year >= 1900) && ($year <= 9999) ? intval($year) : 0 );
 				
@@ -292,7 +291,9 @@ class NH_CustomEventPostType
 		if( !empty($where) )
 			$where .= " AND ";
 		$where .= " meta_value >= '" . $start_datetime->format('Y-m-d') . " 00:00:00'";
-		$where .= " AND meta_value < '" . $end_datetime->format('Y-m-d') . " 00:00:00'";
+		
+		if( !is_feed() )
+			$where .= " AND meta_value < '" . $end_datetime->format('Y-m-d') . " 00:00:00'";
 		
 		return $where;
 	}
