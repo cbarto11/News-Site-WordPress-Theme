@@ -327,6 +327,8 @@ class NH_Section
 		
 		$story = apply_filters( 'nh-'.$name, $story, $post );
 		$story = apply_filters( 'nh-'.$this->key.'-'.$name, $story, $post );
+		
+		if( is_a($post, 'WP_Post') )
 		$story = apply_filters( 'nh-'.$post->post_type.'-'.$name, $story, $post );
 		
 		return $story;
@@ -345,7 +347,7 @@ class NH_Section
 		$story = array();
 		$story['title'] = $this->get_title( $post );
 		$story['link'] = $this->get_link( $post );
-		$story['target'] = $this->get_link_target( $story['link'] );
+		$story['target'] = $this->get_link_target( $post, $story['link'] );
 		
 		if( $this->thumbnail_image == 'embed' )
 			$story['embed'] = $this->get_embed_code( $post->post_content );
@@ -371,7 +373,7 @@ class NH_Section
 		$story = array();
 		$story['title'] = $this->get_title( $post );
 		$story['link'] = $this->get_link( $post );
-		$story['target'] = $this->get_link_target( $story['link'] );
+		$story['target'] = $this->get_link_target( $post, $story['link'] );
 		
 		if( $this->thumbnail_image == 'embed' )
 			$story['embed'] = $this->get_embed_code( $post->post_content );
@@ -434,10 +436,10 @@ class NH_Section
 	//------------------------------------------------------------------------------------
 	// 
 	//------------------------------------------------------------------------------------
-	public function get_link_target( $link )
+	public function get_link_target( $post, $link )
 	{
 		$target = '';
-		return $this->apply_filters( 'story-link-target', $target, $post );
+		return $this->apply_filters( 'story-link-target', $target, $link );
 		return $target;
 	}
 	
